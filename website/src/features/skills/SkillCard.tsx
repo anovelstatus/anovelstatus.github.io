@@ -1,0 +1,53 @@
+import { Card, CardHeader, CardContent, Box, Stack, Grid } from "@mui/material";
+import { RarityChip } from "@/components/chips";
+import { findByIds, sameId, toIdString } from "@/data/helpers";
+import { AttributeSummary } from "@/features/attributes";
+import { useSkills } from "@/data/api";
+import RarityButton from "@/components/TieredButton";
+import { PopoverButton } from "@/components/PopoverButton";
+
+type SkillCardProps = { id: TieredId } & PropsWithStyle;
+
+export default function SkillCard({ id, sx }: SkillCardProps) {
+	if (!id) return <Box>Skill not found</Box>;
+
+	const { data: skills } = useSkills();
+	const skill = skills.find((x) => sameId(x, id));
+	if (!skill) return <Box>Skill not found</Box>;
+
+	const previousSkills = findByIds(skills, skill.previous);
+
+	return (
+		<Card sx={sx}>
+			<CardHeader
+				title={
+					<Grid container spacing={1} alignItems="center">
+						{skill.name} <RarityChip name={skill.tier} />
+					</Grid>
+				}
+			/>
+			<CardContent>
+				<Stack>
+					<AttributeSummary item={skill} />
+					{previousSkills.length > 0 ? (
+						<>
+							<Box sx={{ marginTop: "20px" }}>Previous/Merged Skill(s):</Box>
+							<Stack spacing={1}>
+								{previousSkills.map((x, index) => {
+									return (
+										<PopoverButton
+											key={index}
+											id={toIdString(x)}
+											trigger={<RarityButton item={x} variant="outlined" />}
+											popover={() => <SkillCard id={x} sx={{ maxWidth: 500 }} />}
+										/>
+									);
+								})}
+							</Stack>
+						</>
+					) : null}
+				</Stack>
+			</CardContent>
+		</Card>
+	);
+}

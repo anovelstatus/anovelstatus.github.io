@@ -1,0 +1,21 @@
+{
+	"name": "priam",
+	"version": "0.1.0",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"prettier": "prettier . --write",
+		"lint": "eslint",
+		"lint-fix": "eslint --fix"
+	},
+	"devDependencies": {
+		"@eslint/eslintrc": "^3.3.1",
+		"@eslint/js": "^9.39.1",
+		"eslint": "^9.39.1",
+		"eslint-config-prettier": "^10.1.8",
+		"eslint-plugin-react": "^7.37.5",
+		"globals": "^16.5.0",
+		"typescript": "^5.9.3",
+		"typescript-eslint": "^8.46.4"
+	}
+}
