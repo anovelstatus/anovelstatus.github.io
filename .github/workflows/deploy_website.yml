@@ -38,9 +38,9 @@ jobs:
           cache: npm
           cache-dependency-path: "package-lock.json"
       - name: Install packages
-        run: cd website && npm ci
+        run: npm ci
       - name: Build app
-        run: cd website && npm run build
+        run: npm run build-website
         env:
           VITE_API_URL: ${{ secrets.VITE_API_URL }}
       - name: Setup Pages
