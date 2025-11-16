@@ -15,4 +15,5 @@ Join the community on [Discord](https://discord.gg/HQDDnwpFmS) to discuss the la
 
 - [website/](website/) contains the source that is built for the GitHub Pages site linked to this repo.
 - [shared/](shared/) contains TS types used by both the website and the API.
-- `api/` will eventually contain the source for Apps Script project serving as the API
+- [api/](api/) contains the source for Apps Script project serving as the API.
+- [spreadsheet/](spreadsheet/) contains some functions to make importing new chapters a little easier.
