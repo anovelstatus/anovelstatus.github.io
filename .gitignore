@@ -1,4 +1,5 @@
-clasp.json
+.clasp.json
+.clasprc.json
 
 # dependencies
 /node_modules

@@ -1,0 +1,50 @@
+name: Deploy spreadsheet script
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "shared/**"
+      - "spreadsheet/**"
+      - ".github/workflows/deploy_spreadsheet.yml"
+      - "config-clasp.ts"
+      - "package-lock.json"
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: "spreadsheet"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment: spreadsheet
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup node
+        uses: actions/setup-node@v6.0.0
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: "package-lock.json"
+      - name: Install packages
+        run: npm ci
+      - name: Build script
+        run: npm run build-spreadsheet
+      - name: Test script
+        run: npm run test-spreadsheet
+      - name: Configure Clasp
+        run: npm run config-spreadsheet
+        env:
+          CLASPRC: ${{ secrets.CLASPRC }}
+          SCRIPT_ID: ${{ secrets.SCRIPT_ID_SPREADSHEET }}
+      - run: cd spreadsheet/dist/ && ls -a
+      - name: Deploy script
+        run: npm run deploy-spreadsheet

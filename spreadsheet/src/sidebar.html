@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<base target="_top">
+	<style>
+		html,
+		body {
+			padding: 0;
+			margin: 0;
+		}
+
+		* {
+			font-family: Roboto, sans-serif;
+			box-sizing: border-box;
+		}
+
+		.container {
+			padding: 8px;
+		}
+
+		hr {
+			background: #000;
+			height: 8px;
+		}
+
+		label,
+		textarea,
+		input,
+		button,
+		select {
+			width: 100%;
+		}
+
+		button,
+		select {
+			cursor: pointer;
+		}
+
+		button {
+			margin: 4px 0;
+			padding: 8px;
+			font-size: 1em;
+			font-weight: bold;
+		}
+
+		input {
+			font-size: 1em;
+		}
+
+		textarea {
+			resize: vertical;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container">
+		<h3>Save Official Status</h3>
+		<p>Paste official status from the chapter into this box, set the chapter number, then click Save to update the
+			Statuses sheet.</p>
+		<form>
+			<label for="chapter">Chapter: </label>
+			<br>
+			<input type="number" min="1" name="chapter" placeholder="Chapter #" id="chapter" required>
+			<br>
+			<br>
+			<label for="input">Status: </label>
+			<br>
+			<textarea name="input" id="input" placeholder="Paste end of chapter status here" required rows="30">
+</textarea>
+			<br>
+			<button name="submit" onclick="save();">💾 Save</button>
+		</form>
+		<p id="result"></p>
+	</div>
+</body>
+<script>
+	const resultBox = document.getElementById("result");
+
+	function save() {
+		resultBox.textContent = "Saving";
+		const status = document.getElementById("input").value;
+		const chapter = parseInt(document.getElementById("chapter").value, 10);
+
+		google.script.run
+			.withFailureHandler(error => resultBox.textContent = error)
+			.withSuccessHandler(() => resultBox.textContent = "Success")
+			.save(status, chapter);
+	}
+</script>
+
+</html>
