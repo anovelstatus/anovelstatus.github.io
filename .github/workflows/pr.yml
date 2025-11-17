@@ -1,0 +1,42 @@
+name: Builds & Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup node
+        uses: actions/setup-node@v6.0.0
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: "package-lock.json"
+      - name: Install packages
+        run: npm ci
+      - name: Lint (run `npm run lint-fix` to fix issues)
+        run: npm run lint
+      - name: Prettier (run `npm run prettier-fix` to fix issues)
+        run: npm run prettier
+      - name: Build API script
+        run: npm run build-api
+        env:
+          PATREON_KEY: ${{ secrets.PATREON_KEY }}
+          SS_LINK: ${{ secrets.SS_LINK }}
+      - name: Build Spreadsheet script
+        run: npm run build-spreadsheet
+      - name: Test Spreadsheet script
+        run: npm run test-spreadsheet
+      - name: Build website
+        run: npm run build-website
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}

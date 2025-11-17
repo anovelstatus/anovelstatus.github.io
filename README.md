@@ -1,9 +1,8 @@
-
 # What is this?
 
 This repo contains everything needed for https://anovelstatus.github.io/ to run and be powered by the community-maintained character sheet.
 
-While there is no data in this repo, looking at the code *may spoil* information about the world of A Novel Concept.
+While there is no data in this repo, looking at the code _may spoil_ information about the world of A Novel Concept.
 
 ## About A Novel Concept
 
