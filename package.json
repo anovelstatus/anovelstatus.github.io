@@ -40,7 +40,7 @@
 		"@types/react-dom": "^19.2.3",
 		"@vitejs/plugin-react": "^5.1.1",
 		"dotenv": "^17.2.3",
-		"es-toolkit": "^1.41.0",
+		"es-toolkit": "^1.42.0",
 		"esbuild": "0.27.0",
 		"eslint": "^9.39.1",
 		"eslint-config-prettier": "^10.1.8",
