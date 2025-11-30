@@ -1,5 +1,6 @@
-import { Typography, Card, CardHeader, CardContent, Stack, Grid, Box } from "@mui/material";
+import { Typography, Stack, Grid, Box } from "@mui/material";
 import { useGroupedAttributes } from "@/data/api";
+import { AttributeGroupCard } from "./AttributeGroupCard";
 
 export type AttributeDescriptionsProps = {
 	name: string;
@@ -17,11 +18,12 @@ export function AttributeDescriptions({ name, getNotes }: AttributeDescriptionsP
 			<Grid container spacing={1}>
 				{groups.map(([groupName, groupAttributes]) => (
 					<Grid key={groupName} size={{ xs: 12, md: 6, lg: 4 }}>
-						<Card sx={{ height: "100%" }}>
-							<CardHeader title={groupName} />
-							<CardContent>
+						<AttributeGroupCard
+							groupName={groupName}
+							attributes={groupAttributes}
+							formatAttributes={(attributes) => (
 								<Stack spacing={2}>
-									{groupAttributes.map((attribute) => (
+									{attributes.map((attribute) => (
 										<Box key={attribute.name}>
 											<Typography variant="subtitle2" sx={{ fontWeight: "bold" }}>
 												{attribute.name}
@@ -34,8 +36,8 @@ export function AttributeDescriptions({ name, getNotes }: AttributeDescriptionsP
 										</Box>
 									))}
 								</Stack>
-							</CardContent>
-						</Card>
+							)}
+						/>
 					</Grid>
 				))}
 			</Grid>

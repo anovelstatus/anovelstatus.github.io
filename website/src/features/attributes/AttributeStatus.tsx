@@ -1,17 +1,13 @@
-import { Typography, Card, CardHeader, CardContent, Stack, Grid, Box } from "@mui/material";
-import { useChapter, useGroupedAttributes, useStatuses } from "@/data/api";
-import { ChaptersChip } from "@/components/chips";
+import { Typography, Grid, Box } from "@mui/material";
+import { useGroupedAttributes } from "@/data/api";
 import { formatNumber } from "@/data/helpers";
-import { getEvolvedName, getCurrentBoost, getStatus } from "./helpers";
+import { getEvolvedName, getCurrentBoost } from "./helpers";
 import { BoostList } from "./BoostList";
 import { useState } from "react";
+import { AttributeGroupCard } from "./AttributeGroupCard";
 
-export function AttributeStatus() {
-	const chapter = useChapter();
-
+export function AttributeStatus({ status, previousStatus }: { status: Status; previousStatus?: Status }) {
 	const groups = useGroupedAttributes();
-	const { data: statuses } = useStatuses();
-	const status = getStatus(statuses, chapter);
 	const [selectedAttribute, setSelectedAttribute] = useState<Attribute.Details | undefined>(undefined);
 
 	const toggleAttribute = (attribute: Attribute.Details) => {
@@ -22,28 +18,22 @@ export function AttributeStatus() {
 		}
 	};
 
-	if (!status) return <></>;
-
-	const previousStatus = getStatus(statuses, chapter - 1);
-
 	return (
-		<Stack spacing={1}>
-			<Typography variant="h3" gutterBottom>
-				Priam's Status <ChaptersChip chapters={[chapter]} />
-			</Typography>
+		<>
 			<Typography variant="body2">Click an attribute to view details on where the % boost comes from.</Typography>
 			<Grid container spacing={1}>
 				{groups.map(([groupName, groupAttributes]) => {
 					return (
 						<Grid key={groupName} size={{ xs: 12, md: 6, lg: 4 }}>
-							<Card sx={{ height: "100%" }}>
-								<CardHeader title={groupName} />
-								<CardContent>
-									{groupAttributes.map((attribute) => (
+							<AttributeGroupCard
+								groupName={groupName}
+								attributes={groupAttributes}
+								formatAttributes={(attributes) =>
+									attributes.map((attribute) => (
 										<Box
 											key={attribute.name}
 											sx={{
-												backgroundColor: selectedAttribute === attribute ? "action.selected" : "inherit",
+												backgroundColor: selectedAttribute === attribute ? "action.selected" : "none",
 											}}
 										>
 											<Typography
@@ -58,14 +48,14 @@ export function AttributeStatus() {
 											</Typography>
 											{selectedAttribute === attribute ? <BoostList attribute={attribute} /> : null}
 										</Box>
-									))}
-								</CardContent>
-							</Card>
+									))
+								}
+							/>
 						</Grid>
 					);
 				})}
 			</Grid>
-		</Stack>
+		</>
 	);
 }
 
@@ -74,5 +64,8 @@ function getStatusLine(status: Status, attribute: Attribute.Details, previousSta
 	const evolvedName = getEvolvedName(attribute, status);
 	const improvement = previousStatus ? baseValue - previousStatus[attribute.name]! : 0;
 	const improvementSuffix = improvement ? " (" + (improvement > 0 ? "+" : "") + improvement + ")" : "";
-	return `${evolvedName}: ${formatNumber(baseValue)}` + improvementSuffix + getCurrentBoost(status.chapter, attribute);
+	const boost = getCurrentBoost(status.chapter, attribute);
+	const boostSuffix = boost === 0 ? "" : ` (${Math.round(boost * 100)}%)`;
+
+	return `${evolvedName}: ${formatNumber(baseValue)}${improvementSuffix}${boostSuffix}`;
 }
