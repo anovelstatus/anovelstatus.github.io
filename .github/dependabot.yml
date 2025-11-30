@@ -4,3 +4,15 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    groups:
+      tanstack:
+        patterns:
+          - "@tanstack/*"
+      mui:
+        patterns:
+          - "@mui/*"
+      react:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "@types/react"
