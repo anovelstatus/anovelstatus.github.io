@@ -17,16 +17,14 @@ export function AttributePage() {
 	return (
 		<Stack spacing={2}>
 			<AttributeStatus />
-			<AttributeDescriptions name="Descriptions" getNote={(attribute) => attribute.note} />
+			<AttributeDescriptions name="Descriptions" getNotes={(attribute) => [attribute.note]} />
 			<AttributeDescriptions
 				name="Milestones"
-				getNote={(attribute) =>
-					getPastMilestones(status, attribute).map((milestone) => `${milestone.milestone}: ${milestone.note}`)
-				}
+				getNotes={(attribute) => getPastMilestones(status, attribute).map((x) => `${x.milestone}: ${x.note}`)}
 			/>
 			<AttributeDescriptions
 				name="Evolutions"
-				getNote={(attribute) =>
+				getNotes={(attribute) =>
 					getPastEvolutions(status, attribute)
 						.slice(-1)
 						.map((evolution) => `${evolution.name || "None"}: ${evolution.note}`)

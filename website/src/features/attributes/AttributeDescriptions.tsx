@@ -3,10 +3,10 @@ import { useGroupedAttributes } from "@/data/api";
 
 export type AttributeDescriptionsProps = {
 	name: string;
-	getNote: (attribute: Attribute.Details) => React.ReactNode;
+	getNotes: (attribute: Attribute.Details) => string[];
 };
 
-export function AttributeDescriptions({ name, getNote }: AttributeDescriptionsProps) {
+export function AttributeDescriptions({ name, getNotes }: AttributeDescriptionsProps) {
 	const groups = useGroupedAttributes();
 
 	return (
@@ -26,9 +26,11 @@ export function AttributeDescriptions({ name, getNote }: AttributeDescriptionsPr
 											<Typography variant="subtitle2" sx={{ fontWeight: "bold" }}>
 												{attribute.name}
 											</Typography>
-											<Typography variant="body2" color="text.secondary">
-												{getNote(attribute)}
-											</Typography>
+											{getNotes(attribute).map((note, index) => (
+												<Typography key={index} variant="body2" color="text.secondary">
+													{note}
+												</Typography>
+											))}
 										</Box>
 									))}
 								</Stack>
