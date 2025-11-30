@@ -1,14 +1,16 @@
 import { getBoosts } from "./boosts";
 import { getEvolutions } from "./evolutions";
+import { getGains } from "./gains";
 import { getMilestones } from "./milestones";
 
-type InternalAttribute = Omit<Attribute.Details, "milestones" | "evolutions" | "boosts">;
+type InternalAttribute = Omit<Attribute.Details, "milestones" | "evolutions" | "boosts" | "gains">;
 type Columns = Record<keyof InternalAttribute, number>;
 
 export const getAttributes: CacheableFunc<Attribute.Details[]> = (ss, ranges, attributes, chapterLimit) => {
 	const milestones = getMilestones(ss, ranges, attributes, chapterLimit);
 	const evolutions = getEvolutions(ss, ranges, attributes, chapterLimit);
 	const boosts = getBoosts(ss, ranges, attributes, chapterLimit);
+	const gains = getGains(ss, ranges, attributes, chapterLimit);
 
 	const data = ss.getRange(ranges.Attributes).getValues();
 	const headers = mapColumns(data[0]!);
@@ -20,6 +22,7 @@ export const getAttributes: CacheableFunc<Attribute.Details[]> = (ss, ranges, at
 			...mapRow(row, headers),
 			milestones: milestones.filter(attributeFilter).map((x) => ({ milestone: x.milestone, note: x.note })),
 			evolutions: evolutions.filter(attributeFilter).map((x) => ({ note: x.note, chapter: x.chapter, name: x.name })),
+			gains: gains.filter(attributeFilter),
 			boosts: boosts.filter(attributeFilter).map((x) => ({
 				note: x.note,
 				chapter: x.chapter,

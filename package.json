@@ -12,7 +12,7 @@
 		"build-website": "cd website && tsc -b && vite build",
 		"build-api": "cd api && tsc && node build.ts",
 		"config-api": "node config-clasp.ts api",
-		"deploy-api": "clasp --project api/dist/.clasp.json push && clasp --project api/dist/.clasp.json update-deployment ${DEPLOYMENT_ID}",
+		"deploy-api": "clasp --project api/dist/.clasp.json push -f && clasp --project api/dist/.clasp.json update-deployment $DEPLOYMENT_ID",
 		"build-spreadsheet": "cd spreadsheet && tsc && node build.ts",
 		"config-spreadsheet": "node config-clasp.ts spreadsheet",
 		"deploy-spreadsheet": "clasp --project spreadsheet/dist/.clasp.json push",

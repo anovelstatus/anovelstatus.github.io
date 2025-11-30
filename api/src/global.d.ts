@@ -15,6 +15,7 @@ declare type RangeKey =
 	| "Attribute Milestones"
 	| "Attribute Evolutions"
 	| "Attribute Boosts"
+	| "Attribute Gains"
 	| "Chapter Shortcuts"
 	| "Titles"
 	| "Tiers";

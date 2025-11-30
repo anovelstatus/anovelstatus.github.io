@@ -17,6 +17,13 @@ declare namespace Attribute {
 		title: string;
 	};
 
+	type Gain = {
+		chapter: number;
+		attribute: string;
+		gain: number;
+		note: string;
+	};
+
 	type Details = {
 		name: string;
 		abbreviation: string;
@@ -27,6 +34,7 @@ declare namespace Attribute {
 		milestones: Milestone[];
 		evolutions: Evolution[];
 		boosts: Boost[];
+		gains: Gain[];
 	};
 }
 

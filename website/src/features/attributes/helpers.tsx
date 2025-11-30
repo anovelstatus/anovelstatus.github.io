@@ -1,4 +1,6 @@
-import { sum } from "@/data/helpers";
+import { useAttributes, useSkills } from "@/data/api";
+import { getCurrentLevel, sum } from "@/data/helpers";
+import { useMemo } from "react";
 
 export function getEvolvedName(attribute: Attribute.Details, status: Status): string {
 	const evolution = getCurrentEvolution(status, attribute);
@@ -44,8 +46,36 @@ export function getCurrentEvolution(status?: Status, attribute?: Attribute.Detai
 	return attribute.evolutions?.findLast((x) => x.chapter <= status.chapter);
 }
 
-export function getCurrentBoost(chapter: number, attribute?: Attribute.Details): string {
+export function getCurrentBoost(chapter: number, attribute?: Attribute.Details): number {
 	const boosts = getPastBoosts(chapter, attribute);
 	const total = sum(boosts, (x) => x.boost);
-	return total === 0 ? "" : ` (${Math.round(total * 100)}%)`;
+	return Math.round(total * 100) / 100;
+}
+
+export function useCalculatedStatus(chapter: number): Status | undefined {
+	const { data: skills } = useSkills();
+	const { data: attributes } = useAttributes();
+	if (!skills || !attributes) return undefined;
+
+	return useMemo(() => calculateStatus(chapter, skills, attributes), [chapter, skills, attributes]);
+}
+
+export function calculateStatus(chapter: number, skills: Skill[], attributes: Attribute.Details[]): Status | undefined {
+	const status: Status = { chapter: chapter };
+
+	for (const attribute of attributes) {
+		const attributeSkills = skills.filter((skill) => skill[attribute.name] && skill[attribute.name]! > 0);
+		let baseValue = sum(
+			attribute.gains.filter((x) => x.chapter <= chapter),
+			(x) => x.gain,
+		);
+		for (const skill of attributeSkills) {
+			baseValue += getCurrentLevel(skill, chapter) * skill[attribute.name]!;
+		}
+
+		const boost = getCurrentBoost(chapter, attribute);
+		console.log(`Attribute ${attribute.name}: baseValue=${baseValue}, boost=${boost}`);
+		status[attribute.name] = Math.round(baseValue * (1 + boost));
+	}
+	return status;
 }
