@@ -14,6 +14,14 @@ export function AttributeStatus() {
 	const status = getStatus(statuses, chapter);
 	const [selectedAttribute, setSelectedAttribute] = useState<Attribute.Details | undefined>(undefined);
 
+	const toggleAttribute = (attribute: Attribute.Details) => {
+		if (selectedAttribute === attribute) {
+			setSelectedAttribute(undefined);
+		} else {
+			setSelectedAttribute(attribute);
+		}
+	};
+
 	if (!status) return <></>;
 
 	const previousStatus = getStatus(statuses, chapter - 1);
@@ -44,7 +52,7 @@ export function AttributeStatus() {
 													padding: 0.5,
 													cursor: "pointer",
 												}}
-												onClick={() => setSelectedAttribute(attribute)}
+												onClick={() => toggleAttribute(attribute)}
 											>
 												{getStatusLine(status, attribute, previousStatus)}
 											</Typography>
