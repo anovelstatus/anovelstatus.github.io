@@ -37,6 +37,7 @@ function mapColumns(headerRow: string[]): Columns {
 		category: headerRow.indexOf("Category"),
 		categoryAbbreviation: headerRow.indexOf("CategoryShort"),
 		note: headerRow.indexOf("Description"),
+		color: headerRow.indexOf("Color"),
 	};
 }
 
@@ -51,5 +52,6 @@ function mapRow(row: SpreadsheetValue[], headers: Columns): InternalAttribute {
 		category: row[headers.category] as string,
 		categoryAbbreviation: row[headers.categoryAbbreviation] as string,
 		note: row[headers.note] as string,
+		color: row[headers.color] as string,
 	};
 }

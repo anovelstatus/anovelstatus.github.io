@@ -22,6 +22,7 @@ declare namespace Attribute {
 		abbreviation: string;
 		category: string;
 		categoryAbbreviation: string;
+		color: string;
 		note: string;
 		milestones: Milestone[];
 		evolutions: Evolution[];
