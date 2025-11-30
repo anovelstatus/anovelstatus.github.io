@@ -4,9 +4,9 @@ import { exit } from "process";
 
 const [_nodePath, _scriptPath, projectFolder] = process.argv;
 
-// Make sure a valid project is being deployed
+// Make sure a valid project is being configured
 if (!projectFolder) {
-	console.error("Provide the project folder as an argument.");
+	console.error("Provide the project folder as an argument (api or spreadsheet).");
 	exit(1);
 }
 
@@ -14,7 +14,7 @@ if (!existsSync(`${projectFolder}/dist`)) {
 	console.error(`The ${projectFolder}/dist/ does not exist. Build the project before deploying.`);
 	exit(1);
 }
-console.log(`Deploying project in folder: ${projectFolder}`);
+console.log(`Configuring project in folder: ${projectFolder}`);
 
 // Prefer environment variables from .env file, but fall back to environment in GitHub Actions
 const envPath = `.env.${projectFolder}`;
@@ -22,7 +22,7 @@ if (existsSync(envPath)) {
 	console.log(`Loading environment variables from ${envPath}`);
 	dotenv.config({ path: envPath, quiet: true });
 } else {
-	console.log("Using script and deployment ID from environment variables.");
+	console.log("Using Clasp configuration already in environment variables.");
 }
 
 // Create a temporary .clasp.json file for project
@@ -56,4 +56,4 @@ if (!existsSync(rcPath)) {
 	exit(1);
 }
 
-console.log("Done with setup, now deploying...");
+console.log("Done with setup.");
