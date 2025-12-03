@@ -1,6 +1,10 @@
 import { useAttributes, useSkills } from "@/data/api";
-import { getCurrentLevel, sum } from "@/data/helpers";
+import { getCurrentLevel, sum, toIdString } from "@/data/helpers";
+import { Typography } from "@mui/material";
 import { useMemo } from "react";
+import { PopoverButton } from "@/components/PopoverButton";
+import TieredButton from "@/components/TieredButton";
+import { SkillCard } from "../skills";
 
 export function getEvolvedName(attribute: Attribute.Details, status: Status): string {
 	const evolution = getCurrentEvolution(status, attribute);
@@ -74,8 +78,46 @@ export function calculateStatus(chapter: number, skills: Skill[], attributes: At
 		}
 
 		const boost = getCurrentBoost(chapter, attribute);
-		console.log(`Attribute ${attribute.name}: baseValue=${baseValue}, boost=${boost}`);
 		status[attribute.name] = Math.round(baseValue * (1 + boost));
 	}
 	return status;
+}
+
+export function getChapterGains(chapter: number): React.ReactNode[] {
+	const { data: skills } = useSkills();
+	const { data: attributes } = useAttributes();
+	const notes: React.ReactNode[] = [];
+
+	for (const attribute of attributes || []) {
+		attribute.boosts
+			.filter((x) => x.chapter === chapter)
+			.forEach((boost) => {
+				notes.push(
+					<Typography
+						component="div"
+						key={`${attribute.name}-boost-${boost.title}`}
+					>{`+${Math.round(boost.boost * 100)}% ${attribute.name} from "${boost.title}" (${boost.note})`}</Typography>,
+				);
+			});
+	}
+	for (const skill of skills || []) {
+		const skillLevels = skill.gains.find((x) => x.chapter === chapter);
+		if (skillLevels) {
+			const skillAttributes = attributes
+				.filter((x) => skill[x.name])
+				.map((x) => `${skill[x.name]! * skillLevels.count} ${x.abbreviation}`);
+			if (skillAttributes.length === 0) continue;
+			notes.push(
+				<Typography component="div" key={`${skill.name}-levels`}>
+					{`${skillAttributes.join(", ")} from ${skillLevels.count} levels in `}
+					<PopoverButton
+						id={toIdString(skill)}
+						trigger={<TieredButton item={skill} variant="outlined" sx={{ display: "inline-block" }} />}
+						popover={() => <SkillCard id={skill} sx={{ maxWidth: 500 }} />}
+					/>
+				</Typography>,
+			);
+		}
+	}
+	return notes;
 }

@@ -4,7 +4,7 @@ import { findByIds, getCurrentLevel, toIdString } from "@/data/helpers";
 import { ChaptersChip, RarityChip } from "@/components/chips";
 import SkillCard from "./SkillCard";
 import type { ColumnDef } from "@tanstack/react-table";
-import RarityButton from "@/components/TieredButton";
+import TieredButton from "@/components/TieredButton";
 import { useChapter, useSkills, useSkillTiers } from "@/data/api";
 import { PopoverButton } from "@/components/PopoverButton";
 import { createCollapsedTierColumn } from "@/components/AppTable/columns";
@@ -86,7 +86,7 @@ export const useColumns = () => {
 							<PopoverButton
 								key={index}
 								id={toIdString(x)}
-								trigger={<RarityButton item={x} variant="outlined" />}
+								trigger={<TieredButton item={x} variant="outlined" />}
 								popover={() => <SkillCard id={x} sx={{ maxWidth: 500 }} />}
 							/>
 						))}

@@ -1,9 +1,9 @@
-import { Card, CardHeader, CardContent, Box, Stack, Grid } from "@mui/material";
+import { Card, CardHeader, CardContent, Box, Stack, Grid, Typography } from "@mui/material";
 import { RarityChip } from "@/components/chips";
 import { findByIds, sameId, toIdString } from "@/data/helpers";
 import { AttributeSummary } from "@/features/attributes";
 import { useSkills } from "@/data/api";
-import RarityButton from "@/components/TieredButton";
+import TieredButton from "@/components/TieredButton";
 import { PopoverButton } from "@/components/PopoverButton";
 
 type SkillCardProps = { id: TieredId } & PropsWithStyle;
@@ -16,6 +16,7 @@ export default function SkillCard({ id, sx }: SkillCardProps) {
 	if (!skill) return <Box>Skill not found</Box>;
 
 	const previousSkills = findByIds(skills, skill.previous);
+	console.log(previousSkills);
 
 	return (
 		<Card sx={sx}>
@@ -28,6 +29,7 @@ export default function SkillCard({ id, sx }: SkillCardProps) {
 			/>
 			<CardContent>
 				<Stack>
+					<Typography>Description Under Construction 🚧</Typography>
 					<AttributeSummary item={skill} />
 					{previousSkills.length > 0 ? (
 						<>
@@ -38,7 +40,7 @@ export default function SkillCard({ id, sx }: SkillCardProps) {
 										<PopoverButton
 											key={index}
 											id={toIdString(x)}
-											trigger={<RarityButton item={x} variant="outlined" />}
+											trigger={<TieredButton item={x} variant="outlined" />}
 											popover={() => <SkillCard id={x} sx={{ maxWidth: 500 }} />}
 										/>
 									);

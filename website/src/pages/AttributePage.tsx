@@ -8,6 +8,7 @@ import {
 	getPastMilestones,
 	getPastEvolutions,
 	useCalculatedStatus,
+	getChapterGains,
 } from "@/features/attributes";
 import { Stack, Typography } from "@mui/material";
 
@@ -62,6 +63,9 @@ function CalculatedPanel() {
 	const status = useCalculatedStatus(chapter);
 	if (!status) return <></>;
 
+	const gains = getChapterGains(chapter);
+	if (!gains.length) gains.push("No skill or title gains recorded for this chapter.");
+
 	const previousStatus = useCalculatedStatus(chapter - 1);
 
 	return (
@@ -71,6 +75,14 @@ function CalculatedPanel() {
 				check out the other tab.
 			</Typography>
 			<AttributeStatus status={status} previousStatus={previousStatus} />
+			<Typography variant="h4">Gains This Chapter</Typography>
+			<Stack>
+				{gains.map((gain, index) => (
+					<Typography key={index} variant="body2">
+						{gain}
+					</Typography>
+				))}
+			</Stack>
 			<Typography>Under construction 🚧</Typography>
 		</Stack>
 	);

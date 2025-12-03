@@ -18,7 +18,7 @@ export function IndexPage() {
 		<Stack spacing={2}>
 			<Typography variant="h4">Welcome to Priam's Character Status</Typography>
 			<Typography>
-				This is a hub for all things related to A Novel Concept, a web serial by Priam. You can find it on{" "}
+				This is a hub for all things related to A Novel Concept, a web novel by Priam. You can find it on{" "}
 				<Link href="https://www.royalroad.com/fiction/66455">Royal Road</Link>, and read more chapters on{" "}
 				<Link href="https://www.patreon.com/ANovelConcept">Patreon</Link>.
 			</Typography>
@@ -57,6 +57,11 @@ export function IndexPage() {
 				</li>
 				<li>...and more that I can't mention without spoilers</li>
 			</ol>
+			<Typography>
+				Source code for this website is available on{" "}
+				<Link href="https://github.com/anovelstatus/anovelstatus.github.io">GitHub</Link>. This is a fan project and is
+				not affiliated with or endorsed by Priam.
+			</Typography>
 		</Stack>
 	);
 }

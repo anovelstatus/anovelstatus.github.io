@@ -2,7 +2,7 @@ import { Card, CardHeader, CardContent, Box, Stack, Typography, Grid, CardAction
 import { ChaptersChip, RarityChip } from "@/components/chips";
 import { findByIds, sameId, toIdString } from "@/data/helpers";
 import { useTalents } from "@/data/api";
-import RarityButton from "@/components/TieredButton";
+import TieredButton from "@/components/TieredButton";
 import { PopoverButton } from "@/components/PopoverButton";
 import LoadingCard from "@/components/LoadingCard";
 
@@ -42,7 +42,7 @@ export default function TalentCard({ id, sx }: TalentCardProps) {
 							<PopoverButton
 								key={index}
 								id={toIdString(x)}
-								trigger={<RarityButton item={x} variant="outlined" />}
+								trigger={<TieredButton item={x} variant="outlined" />}
 								popover={() => <TalentCard id={x} sx={{ maxWidth: 500 }} />}
 							/>
 						);

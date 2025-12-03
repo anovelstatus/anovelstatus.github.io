@@ -7,15 +7,16 @@ type AttributeSummaryProps = {
 
 /** Write out list of attributes provided by something */
 export function AttributeSummary({ item }: AttributeSummaryProps) {
-	const { data: attributes, isFetching } = useAttributes();
-	const summary = attributes.filter((x) => item[x.name]).map((x) => `${x.abbreviation}: ${item[x.name]}`);
-	return isFetching ? (
-		<CircularProgress size="16px" color="inherit" />
-	) : (
+	const { data: allAttributes, isFetching } = useAttributes();
+
+	if (isFetching) return <CircularProgress size="16px" color="inherit" />;
+
+	const attributes = allAttributes.filter((x) => item[x.name]);
+	return (
 		<>
-			{summary.map((x, index) => (
+			{attributes.map((x, index) => (
 				<Typography variant="body2" key={index}>
-					{x}
+					{`${x.abbreviation}: ${item[x.name]}`}
 				</Typography>
 			))}
 		</>

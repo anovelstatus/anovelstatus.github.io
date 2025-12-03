@@ -13,7 +13,7 @@ export function PopoverButton({ id, trigger, popover }: PopoverButtonProps) {
 		<PopupState variant="popover" popupId={id}>
 			{(popupState) => (
 				<>
-					{<div {...bindTrigger(popupState)}>{trigger}</div>}
+					{<span {...bindTrigger(popupState)}>{trigger}</span>}
 					{popupState.isOpen ? <Popover {...bindPopover(popupState)}>{popover()}</Popover> : null}
 				</>
 			)}

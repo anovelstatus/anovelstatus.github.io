@@ -2,7 +2,7 @@ import { toIdString } from "@/data/helpers";
 import { Card, CardHeader, CardContent, Box, Stack, Typography } from "@mui/material";
 import { ChaptersChip, TierChip } from "@/components/chips";
 import { TalentCard } from "@/features/talents";
-import RarityButton from "@/components/TieredButton";
+import TieredButton from "@/components/TieredButton";
 import { PopoverButton } from "@/components/PopoverButton";
 import LoadingCard from "@/components/LoadingCard";
 
@@ -42,7 +42,7 @@ export default function RaceCard({ race }: RaceCardProps) {
 							<PopoverButton
 								key={index}
 								id={toIdString(id)}
-								trigger={<RarityButton item={id} variant="outlined" />}
+								trigger={<TieredButton item={id} variant="outlined" />}
 								popover={() => <TalentCard key={index} id={id} sx={{ maxWidth: 500 }} />}
 							/>
 						))}
