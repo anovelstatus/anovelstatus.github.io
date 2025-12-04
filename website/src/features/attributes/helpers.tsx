@@ -1,10 +1,8 @@
 import { useAttributes, useSkills } from "@/data/api";
-import { getCurrentLevel, sum, toIdString } from "@/data/helpers";
+import { getCurrentLevel, sum } from "@/data/helpers";
 import { Typography } from "@mui/material";
 import { useMemo } from "react";
-import { PopoverButton } from "@/components/PopoverButton";
-import TieredButton from "@/components/TieredButton";
-import { SkillCard } from "../skills";
+import { SkillButton } from "../skills";
 
 export function getEvolvedName(attribute: Attribute.Details, status: Status): string {
 	const evolution = getCurrentEvolution(status, attribute);
@@ -110,11 +108,7 @@ export function getChapterGains(chapter: number): React.ReactNode[] {
 			notes.push(
 				<Typography component="div" key={`${skill.name}-levels`}>
 					{`${skillAttributes.join(", ")} from ${skillLevels.count} levels in `}
-					<PopoverButton
-						id={toIdString(skill)}
-						trigger={<TieredButton item={skill} variant="outlined" sx={{ display: "inline-block" }} />}
-						popover={() => <SkillCard id={skill} sx={{ maxWidth: 500 }} />}
-					/>
+					<SkillButton skill={skill} />
 				</Typography>,
 			);
 		}

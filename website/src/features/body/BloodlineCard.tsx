@@ -1,10 +1,7 @@
 import { Card, CardHeader, CardContent, CardActions, Stack } from "@mui/material";
 import { ChaptersChip } from "@/components/chips";
 import { useChapter } from "@/data/api";
-import TieredButton from "@/components/TieredButton";
-import { TitleCard } from "../titles";
-import { PopoverButton } from "@/components/PopoverButton";
-import { toIdString } from "@/data/helpers";
+import { TitleButton } from "../titles";
 
 type BloodlineProps = { bloodline: Bloodline };
 type BloodlinesProps = { bloodlines: Bloodline[] };
@@ -27,11 +24,7 @@ function BloodlineCard({ bloodline }: BloodlineProps) {
 				{purity}, {currentStatus.status}
 			</CardContent>
 			<CardActions>
-				<PopoverButton
-					id={toIdString(bloodline.title)}
-					trigger={<TieredButton item={bloodline.title} variant="outlined" />}
-					popover={() => <TitleCard id={bloodline.title} sx={{ maxWidth: 500 }} />}
-				/>
+				<TitleButton title={bloodline.title} />
 			</CardActions>
 		</Card>
 	);
