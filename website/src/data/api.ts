@@ -1,6 +1,6 @@
 import { ChapterContext } from "@/providers";
 import { useQuery, type UseQueryResult } from "@tanstack/react-query";
-import { useContext } from "react";
+import { useContext, useMemo } from "react";
 
 /** Make data not optional because we can guarantee a placeholder */
 type GuaranteedQueryResult<T> = UseQueryResult<T> & {
@@ -70,8 +70,15 @@ export function useSkills() {
 	return useSpreadsheet<Skill[]>("skills", []);
 }
 
-export function useStatuses() {
+function useStatuses() {
 	return useSpreadsheet<Status[]>("statuses", []);
+}
+
+export function useStatusDictionary() {
+	const { data: statuses } = useStatuses();
+	return useMemo(() => {
+		return Object.fromEntries(statuses.map((x) => [x.chapter, x]));
+	}, [statuses]);
 }
 
 // Copying type constraint from Tanstack's NonFunctionGuard type

@@ -1,6 +1,6 @@
 import { useAttributes, useSkills } from "@/data/api";
 import { getCurrentLevel, sum } from "@/data/helpers";
-import { Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import { useMemo } from "react";
 import { SkillButton } from "../skills";
 import { TitleButton } from "../titles";
@@ -9,10 +9,6 @@ export function getEvolvedName(attribute: Attribute.Details, status: Status): st
 	const evolution = getCurrentEvolution(status, attribute);
 	const suffix = evolution?.name ? ` (${evolution.name[0]})` : "";
 	return attribute.name + suffix;
-}
-
-export function getStatus(statuses: Status[], chapter: number): Status | undefined {
-	return statuses.findLast((x) => x.chapter <= chapter);
 }
 
 export function getImprovementsFromPreviousStatus(
@@ -67,19 +63,23 @@ export function calculateStatus(chapter: number, skills: Skill[], attributes: At
 	const status: Status = { chapter: chapter };
 
 	for (const attribute of attributes) {
-		const attributeSkills = skills.filter((skill) => skill[attribute.name] && skill[attribute.name]! > 0);
-		let baseValue = sum(
-			attribute.gains.filter((x) => x.chapter <= chapter),
-			(x) => x.gain,
-		);
-		for (const skill of attributeSkills) {
-			baseValue += getCurrentLevel(skill, chapter) * skill[attribute.name]!;
-		}
-
+		const baseValue = calculateBaseAttributeValue(skills, attribute, chapter);
 		const boost = getCurrentBoost(chapter, attribute);
 		status[attribute.name] = Math.round(baseValue * (1 + boost));
 	}
 	return status;
+}
+
+export function calculateBaseAttributeValue(skills: Skill[], attribute: Attribute.Details, chapter: number) {
+	const attributeSkills = skills.filter((skill) => skill[attribute.name] && skill[attribute.name]! > 0);
+	let baseValue = sum(
+		attribute.gains.filter((x) => x.chapter <= chapter),
+		(x) => x.gain,
+	);
+	for (const skill of attributeSkills) {
+		baseValue += getCurrentLevel(skill, chapter) * skill[attribute.name]!;
+	}
+	return baseValue;
 }
 
 export function getChapterGains(chapter: number): React.ReactNode[] {
@@ -93,12 +93,12 @@ export function getChapterGains(chapter: number): React.ReactNode[] {
 			.forEach((boost) => {
 				const suffix = boost.note ? ` (${boost.note})` : "";
 				notes.push(
-					<Typography component="div" key={`${attribute.name}-boost-${boost.title}`}>
+					<Box key={`${attribute.name}-boost-${boost.title}`}>
 						{boost.boost > 0 ? "+" : ""}
 						{`${Math.round(boost.boost * 100)}% ${attribute.name} from `}
 						<TitleButton title={boost.titleId} />
 						{suffix}
-					</Typography>,
+					</Box>,
 				);
 			});
 	}
@@ -110,10 +110,10 @@ export function getChapterGains(chapter: number): React.ReactNode[] {
 				.map((x) => `${skill[x.name]! * skillLevels.count} ${x.abbreviation}`);
 			if (skillAttributes.length === 0) continue;
 			notes.push(
-				<Typography component="div" key={`${skill.name}-levels`}>
+				<Box key={`${skill.name}-levels`}>
 					{`${skillAttributes.join(", ")} from ${skillLevels.count} levels in `}
 					<SkillButton skill={skill} />
-				</Typography>,
+				</Box>,
 			);
 		}
 	}
