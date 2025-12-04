@@ -15,6 +15,8 @@ export function BoostList({ attribute }: AttributeDetailsProps) {
 
 	if (!status) return <></>;
 
+	// I thought about using TitleButton here, but it looks messy in a list like this.
+	// We already list the chapter number, so you can find the title easily enough.
 	const items = pastBoosts.map((x, index) => (
 		<li key={index}>
 			<Box>

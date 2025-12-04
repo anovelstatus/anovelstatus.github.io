@@ -3,6 +3,7 @@ import { getCurrentLevel, sum } from "@/data/helpers";
 import { Typography } from "@mui/material";
 import { useMemo } from "react";
 import { SkillButton } from "../skills";
+import { TitleButton } from "../titles";
 
 export function getEvolvedName(attribute: Attribute.Details, status: Status): string {
 	const evolution = getCurrentEvolution(status, attribute);
@@ -90,11 +91,14 @@ export function getChapterGains(chapter: number): React.ReactNode[] {
 		attribute.boosts
 			.filter((x) => x.chapter === chapter)
 			.forEach((boost) => {
+				const suffix = boost.note ? ` (${boost.note})` : "";
 				notes.push(
-					<Typography
-						component="div"
-						key={`${attribute.name}-boost-${boost.title}`}
-					>{`+${Math.round(boost.boost * 100)}% ${attribute.name} from "${boost.title}" (${boost.note})`}</Typography>,
+					<Typography component="div" key={`${attribute.name}-boost-${boost.title}`}>
+						{boost.boost > 0 ? "+" : ""}
+						{`${Math.round(boost.boost * 100)}% ${attribute.name} from `}
+						<TitleButton title={boost.titleId} />
+						{suffix}
+					</Typography>,
 				);
 			});
 	}
