@@ -15,6 +15,7 @@ declare namespace Attribute {
 		boost: number;
 		note: string;
 		title: string;
+		titleId: TieredId;
 	};
 
 	type Gain = {

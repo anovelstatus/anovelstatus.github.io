@@ -1,5 +1,7 @@
+import { parseId } from "../shared";
+
 type InternalBoost = Attribute.Boost & { attribute: string };
-type Columns = Record<keyof InternalBoost, number>;
+type Columns = Omit<Record<keyof InternalBoost, number>, "titleId">;
 
 export const getBoosts: CacheableFunc<InternalBoost[]> = (ss, ranges, _attributes, chapterLimit) => {
 	const data = ss.getRange(ranges["Attribute Boosts"]).getValues();
@@ -27,6 +29,7 @@ function mapRow(row: SpreadsheetValue[], headers: Columns): InternalBoost {
 		attribute: row[headers.attribute] as string,
 		boost: row[headers.boost] as number,
 		title: row[headers.title] as string,
+		titleId: parseId(row[headers.title] as string),
 		note: row[headers.note] as string,
 	};
 }

@@ -27,6 +27,7 @@ export const getAttributes: CacheableFunc<Attribute.Details[]> = (ss, ranges, at
 				note: x.note,
 				chapter: x.chapter,
 				title: x.title,
+				titleId: x.titleId,
 				boost: x.boost,
 			})),
 		};
