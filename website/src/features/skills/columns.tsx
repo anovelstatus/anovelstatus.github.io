@@ -1,13 +1,11 @@
 import { Box, Grid, Stack, type SxProps, type Theme, Typography } from "@mui/material";
 import { AttributeSummary } from "@/features/attributes";
-import { findByIds, getCurrentLevel, toIdString } from "@/data/helpers";
+import { findByIds, getCurrentLevel } from "@/data/helpers";
 import { ChaptersChip, RarityChip } from "@/components/chips";
-import SkillCard from "./SkillCard";
 import type { ColumnDef } from "@tanstack/react-table";
-import TieredButton from "@/components/TieredButton";
 import { useChapter, useSkills, useSkillTiers } from "@/data/api";
-import { PopoverButton } from "@/components/PopoverButton";
 import { createCollapsedTierColumn } from "@/components/AppTable/columns";
+import SkillButton from "./SkillButton";
 
 export const columnstyles: SxProps<Theme> = {
 	".maxed-skill": {
@@ -83,12 +81,7 @@ export const useColumns = () => {
 				return (
 					<Stack>
 						{previousSkills.map((x, index) => (
-							<PopoverButton
-								key={index}
-								id={toIdString(x)}
-								trigger={<TieredButton item={x} variant="outlined" />}
-								popover={() => <SkillCard id={x} sx={{ maxWidth: 500 }} />}
-							/>
+							<SkillButton key={index} skill={x} />
 						))}
 					</Stack>
 				);

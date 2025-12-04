@@ -1,7 +1,7 @@
 import { Typography, Box } from "@mui/material";
 import { ChaptersChip } from "../../components/chips";
-import { useChapter, useStatuses } from "@/data/api";
-import { getPastBoosts, getStatus } from "./helpers";
+import { useChapter } from "@/data/api";
+import { getPastBoosts } from "./helpers";
 
 export type AttributeDetailsProps = {
 	attribute: Attribute.Details;
@@ -9,12 +9,10 @@ export type AttributeDetailsProps = {
 
 export function BoostList({ attribute }: AttributeDetailsProps) {
 	const chapter = useChapter();
-	const { data: statuses } = useStatuses();
-	const status = getStatus(statuses, chapter);
 	const pastBoosts = getPastBoosts(chapter, attribute);
 
-	if (!status) return <></>;
-
+	// I thought about using TitleButton here, but it looks messy in a list like this.
+	// We already list the chapter number, so you can find the title easily enough.
 	const items = pastBoosts.map((x, index) => (
 		<li key={index}>
 			<Box>

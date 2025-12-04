@@ -1,11 +1,10 @@
 import { Card, CardHeader, CardContent, Stack, Grid, Typography } from "@mui/material";
 import { RarityChip } from "@/components/chips";
-import { sameId, toIdString } from "@/data/helpers";
+import { sameId } from "@/data/helpers";
 import { useTitles } from "@/data/api";
-import TieredButton from "@/components/TieredButton";
 import { getPreviousTitle } from "./helpers";
-import { PopoverButton } from "@/components/PopoverButton";
 import LoadingCard from "@/components/LoadingCard";
+import TitleButton from "./TitleButton";
 
 type TitleCardProps = { id: TieredId } & PropsWithStyle;
 
@@ -31,13 +30,7 @@ export default function TitleCard({ id, sx }: TitleCardProps) {
 					<Typography variant="body2" sx={{ whiteSpace: "pre-line" }}>
 						{title.note}
 					</Typography>
-					{previousTitle ? (
-						<PopoverButton
-							id={toIdString(previousTitle)}
-							trigger={<TieredButton item={previousTitle} variant="outlined" />}
-							popover={() => <TitleCard id={previousTitle} sx={{ maxWidth: 500 }} />}
-						/>
-					) : null}
+					{previousTitle ? <TitleButton title={previousTitle} /> : null}
 				</Stack>
 			</CardContent>
 		</Card>
