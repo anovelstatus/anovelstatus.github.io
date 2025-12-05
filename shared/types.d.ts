@@ -153,3 +153,13 @@ declare type Title = TieredId & {
 	previous?: TieredId;
 	note: string;
 };
+
+declare type Achievement = {
+	chapter: number;
+	tier: string;
+	description: string;
+	message: string;
+	messageRecipients: string[];
+	rewards: string;
+	note: string;
+};

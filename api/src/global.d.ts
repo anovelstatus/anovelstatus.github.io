@@ -24,7 +24,16 @@ declare type RangeKey =
 declare type RangeLookup = Record<RangeKey, string>;
 
 /** Pages of data that can be fetched */
-declare type Page = "chapters" | "attributes" | "shortcuts" | "talents" | "titles" | "body" | "skills" | "statuses";
+declare type Page =
+	| "chapters"
+	| "attributes"
+	| "shortcuts"
+	| "talents"
+	| "titles"
+	| "body"
+	| "skills"
+	| "statuses"
+	| "achievements";
 
 /** Keys for data cache - all the pages + one that stores where to find those pages */
 declare type CacheKey = Page | "table-ranges";

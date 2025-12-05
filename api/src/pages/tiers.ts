@@ -1,7 +1,7 @@
 type Columns = Record<keyof TierInfo, number>;
 
-export const getTiers: CacheableFunc<TierInfo[]> = (ss, ranges, _attributes, chapterLimit) => {
-	const data = ss.getRange(ranges["Tiers"]).getValues();
+export const getTiers: CacheableFunc<TierInfo[]> = (ss, _ranges, _attributes, chapterLimit) => {
+	const data = ss.getSheetByName("Tiers")!.getDataRange().getValues();
 	const headers = mapColumns(data[0]!);
 
 	const tiers = data

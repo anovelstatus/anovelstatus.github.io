@@ -14,11 +14,13 @@ export default function App() {
 	const latest = useLatestChapter();
 	const client = useQueryClient();
 
+	// Switch from default chapter 1 to latest when data is loaded
 	useEffect(() => {
 		setChapter(latest);
 	}, [latest]);
 
 	useEffect(() => {
+		// If user successfully unlocks Patreon content, wipe cache and go to latest chapter
 		client.cancelQueries();
 		if (unlocked) setChapter(latest);
 		client.refetchQueries({ queryKey: ["page"] });
