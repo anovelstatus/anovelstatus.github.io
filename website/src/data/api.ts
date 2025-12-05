@@ -70,6 +70,10 @@ export function useSkills() {
 	return useSpreadsheet<Skill[]>("skills", []);
 }
 
+export function useAchievements() {
+	return useSpreadsheet<Achievement[]>("achievements", []);
+}
+
 function useStatuses() {
 	return useSpreadsheet<Status[]>("statuses", []);
 }

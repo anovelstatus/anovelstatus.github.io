@@ -13,6 +13,7 @@ const routes = [
 	createRoute({ getParentRoute: () => rootRoute, path: "/skills", component: Pages.SkillPage }),
 	createRoute({ getParentRoute: () => rootRoute, path: "/talents", component: Pages.TalentPage }),
 	createRoute({ getParentRoute: () => rootRoute, path: "/titles", component: Pages.TitlePage }),
+	createRoute({ getParentRoute: () => rootRoute, path: "/achievements", component: Pages.AchievementPage }),
 ];
 
 const routeTree = rootRoute.addChildren(routes);

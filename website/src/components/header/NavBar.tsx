@@ -25,6 +25,7 @@ export default function NavBar() {
 		<RouterButton key="skills" to="/skills" title="Skills" />,
 		<RouterButton key="talents" to="/talents" title="Talents" />,
 		<RouterButton key="titles" to="/titles" title="Titles" />,
+		<RouterButton key="achievements" to="/achievements" title="Achievements" />,
 	];
 
 	const compactMenu = (
