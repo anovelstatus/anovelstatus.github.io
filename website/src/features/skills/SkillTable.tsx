@@ -31,7 +31,7 @@ export default function SkillTable() {
 		setFilters((filters) => ({ ...filters, chapter: chapter }));
 	}, [chapter]);
 
-	const [columnVisibility, setColumnVisibility] = useState({ gains: false });
+	const [columnVisibility, setColumnVisibility] = useState({ gains: false, description: false });
 
 	const totals = useMemo(() => getTotals(skills, chapter), [chapter, skills]);
 
@@ -50,7 +50,11 @@ export default function SkillTable() {
 	};
 
 	const toggleNotesColumn = () => {
-		setColumnVisibility((visibility) => ({ ...visibility, gains: !visibility.gains }));
+		setColumnVisibility((visibility) => ({
+			...visibility,
+			gains: !visibility.gains,
+			description: !visibility.description,
+		}));
 	};
 
 	const table = useAppTable<Skill>({

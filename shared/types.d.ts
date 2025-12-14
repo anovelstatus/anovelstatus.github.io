@@ -134,12 +134,17 @@ declare type Talent = TieredId &
 	};
 
 /** Skill metadata */
-declare type Skill = TieredId &
-	HasSomeAttributes &
-	HasPrevious & {
-		replaced: boolean;
-		gains: SkillGain[];
-	};
+declare type SkillDetails = {
+	replaced: boolean;
+	gains: SkillGain[];
+	description: string;
+	prerequisites: string;
+	quality: string;
+	bonuses: string;
+	notes: string;
+	tags: string;
+};
+declare type Skill = TieredId & SkillDetails & HasSomeAttributes & HasPrevious;
 
 declare type SkillGain = {
 	chapter: number;

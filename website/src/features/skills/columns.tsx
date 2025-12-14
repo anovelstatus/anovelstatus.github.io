@@ -1,11 +1,12 @@
 import { Box, Grid, Stack, type SxProps, type Theme, Typography } from "@mui/material";
 import { AttributeSummary } from "@/features/attributes";
 import { findByIds, getCurrentLevel } from "@/data/helpers";
-import { ChaptersChip, RarityChip } from "@/components/chips";
+import { ChaptersChip, IdealChip, RarityChip } from "@/components/chips";
 import type { ColumnDef } from "@tanstack/react-table";
 import { useChapter, useSkills, useSkillTiers } from "@/data/api";
 import { createCollapsedTierColumn } from "@/components/AppTable/columns";
 import SkillButton from "./SkillButton";
+import { getPrerequisiteList } from "./helpers";
 
 export const columnstyles: SxProps<Theme> = {
 	".maxed-skill": {
@@ -29,6 +30,7 @@ export const useColumns = () => {
 				<Grid container spacing={1} alignItems="baseline">
 					<Typography variant="subtitle1">{row.original.name}</Typography>
 					<RarityChip name={row.original.tier} />
+					<IdealChip skill={row.original} />
 				</Grid>
 			),
 			meta: {
@@ -88,8 +90,25 @@ export const useColumns = () => {
 			},
 		},
 		{
+			accessorKey: "description",
+			header: "Description",
+			enableSorting: false,
+			cell: ({ row }) => {
+				return <Typography variant="body2">{row.original.description}</Typography>;
+			},
+		},
+		{
+			accessorKey: "prerequisites",
+			header: "Ideal Prerequisites",
+			enableSorting: false,
+			cell: ({ row }) => {
+				const list = getPrerequisiteList(row.original);
+				return <Stack> {list} </Stack>;
+			},
+		},
+		{
 			accessorKey: "gains",
-			header: "Notes",
+			header: "Levels Gained",
 			enableSorting: false,
 			cell: ({ row }) => {
 				const chapter = useChapter();
