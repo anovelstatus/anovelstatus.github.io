@@ -4,9 +4,9 @@ import type { TableFeature, RowData, Cell, Column, Row, Table, Header } from "@t
 
 // define types for our new feature's table options
 interface ClassNameOptions<T> {
-	/** ColSpan to use for header cell of column */
+	/** Styles to add to the table body cell */
 	bodySx?: SxProps | ((cell: Cell<T, unknown>) => SxProps);
-	/** ColSpan to use for body cell of column */
+	/** Styles to add to the table header cell */
 	headerSx?: SxProps | ((header: Header<T, unknown>) => SxProps);
 }
 
