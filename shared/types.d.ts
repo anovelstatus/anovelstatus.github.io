@@ -110,10 +110,15 @@ declare type Shortcut = {
 	menu?: string;
 };
 
-declare type TieredId = {
-	name: string;
+/** Something that has a tier */
+declare type HasTier = {
 	tier: string;
 };
+
+/** A skill, title, or other thing that is named and tiered */
+declare type TieredId = {
+	name: string;
+} & HasTier;
 
 /** Something that was the result of an upgrade or merge */
 declare type HasPrevious = {
