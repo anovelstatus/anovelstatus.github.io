@@ -1,6 +1,6 @@
 import { createColumnHelper, type ColumnDef } from "@tanstack/react-table";
 
-export function createCollapsedTierColumn<T extends TieredId>(tiers: string[]): ColumnDef<T, string> {
+export function createCollapsedTierColumn<T extends HasTier>(tiers: string[]): ColumnDef<T, string> {
 	return createColumnHelper<T>().accessor((row) => row.tier, {
 		header: "Tier",
 		id: "tier",

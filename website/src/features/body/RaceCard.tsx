@@ -5,6 +5,7 @@ import { TalentCard } from "@/features/talents";
 import TieredButton from "@/components/TieredButton";
 import { PopoverButton } from "@/components/PopoverButton";
 import LoadingCard from "@/components/LoadingCard";
+import { popupCardStyles } from "@/styles";
 
 type RaceCardProps = {
 	race?: Race;
@@ -43,7 +44,7 @@ export default function RaceCard({ race }: RaceCardProps) {
 								key={index}
 								id={toIdString(id)}
 								trigger={<TieredButton item={id} variant="outlined" />}
-								popover={() => <TalentCard key={index} id={id} sx={{ maxWidth: 500 }} />}
+								popover={() => <TalentCard key={index} id={id} sx={popupCardStyles} />}
 							/>
 						))}
 					</Stack>

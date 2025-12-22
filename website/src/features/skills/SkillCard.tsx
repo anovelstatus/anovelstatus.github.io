@@ -1,24 +1,32 @@
-import { Card, CardHeader, CardContent, Box, Stack, Grid, Typography } from "@mui/material";
+import { Card, CardHeader, CardContent, Box, Stack, Grid, Typography, Chip } from "@mui/material";
 import { IdealChip, RarityChip } from "@/components/chips";
-import { findByIds, sameId } from "@/data/helpers";
+import { findByIds, getCurrentLevel, getTierRank, sameId } from "@/data/helpers";
 import { AttributeSummary } from "@/features/attributes";
-import { useSkills } from "@/data/api";
+import { useChapter, useSkills, useSkillTiers } from "@/data/api";
 import SkillButton from "./SkillButton";
 import { getPrerequisiteList } from "./helpers";
+import LoadingCard from "@/components/LoadingCard";
 
 type SkillCardProps = { id: TieredId } & PropsWithStyle;
 
 export default function SkillCard({ id, sx }: SkillCardProps) {
+	const skillTiers = useSkillTiers();
+	const chapter = useChapter();
+
 	if (!id) return <Box>Skill not found</Box>;
 
 	const { data: skills } = useSkills();
 	const skill = skills.find((x) => sameId(x, id));
-	if (!skill) return <Box>Skill not found</Box>;
+	if (!skill) return <LoadingCard headerOnly sx={sx} />;
 
 	const previousSkills = findByIds(skills, skill.previous);
 	console.log(previousSkills);
 
 	const prerequisiteList = getPrerequisiteList(skill);
+
+	const max = (getTierRank(skillTiers, skill.tier) + 1) * 20;
+	const level = getCurrentLevel(skill, chapter);
+	const levelText = `Lvl ${level} / ${max}`;
 
 	return (
 		<Card sx={sx}>
@@ -27,6 +35,7 @@ export default function SkillCard({ id, sx }: SkillCardProps) {
 					<Grid container spacing={1} alignItems="center">
 						{skill.name} <RarityChip name={skill.tier} />
 						<IdealChip skill={skill} />
+						<Chip size="small" label={levelText} />
 					</Grid>
 				}
 			/>

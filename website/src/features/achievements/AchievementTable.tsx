@@ -4,7 +4,7 @@ import { RarityButtonChip } from "@/components/chips";
 import { getFilteredRowModel } from "@tanstack/react-table";
 import { Grid, Typography } from "@mui/material";
 import { useState, useEffect } from "react";
-import { columns } from "./columns";
+import { useColumns } from "./columns";
 import AchievementCard from "./AchievementCard";
 
 export default function AchievementTable() {
@@ -37,7 +37,7 @@ export default function AchievementTable() {
 
 	const table = useAppTable({
 		data,
-		columns,
+		columns: useColumns(),
 		getRowId: (row) => row.description,
 		initialState: {
 			sorting: [{ id: "chapter", desc: true }],

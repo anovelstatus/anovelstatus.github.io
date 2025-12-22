@@ -19,6 +19,10 @@ export function getCurrentLevel(skill: Skill, chapter: number) {
 	);
 }
 
+export function getTierRank(tiers: string[], tier: string): number {
+	return tiers.findIndex((x) => tier.startsWith(x));
+}
+
 export const toIdString = (item?: TieredId) => (!item ? "?" : item.name + " - " + item.tier);
 
 export const sameId = <T extends TieredId>(a: T, b: T) => a.name == b.name && a.tier == b.tier;
