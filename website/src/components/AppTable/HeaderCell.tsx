@@ -27,6 +27,7 @@ export default function HeaderCell<T>({ header }: HeaderCellProps<T>) {
 				borderStyle: "solid",
 				borderColor: theme.palette.grey[800],
 				width: header.getSize(),
+				...header.getSx(),
 			}}
 		>
 			{canSort ? (

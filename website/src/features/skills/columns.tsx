@@ -1,21 +1,12 @@
-import { Box, Grid, Stack, type SxProps, type Theme, Typography } from "@mui/material";
+import { Box, Chip, Grid, Stack, Typography } from "@mui/material";
 import { AttributeSummary } from "@/features/attributes";
-import { findByIds, getCurrentLevel } from "@/data/helpers";
+import { findByIds, getCurrentLevel, getTierRank } from "@/data/helpers";
 import { ChaptersChip, IdealChip, RarityChip } from "@/components/chips";
-import type { ColumnDef } from "@tanstack/react-table";
+import type { Cell, ColumnDef } from "@tanstack/react-table";
 import { useChapter, useSkills, useSkillTiers } from "@/data/api";
 import { createCollapsedTierColumn } from "@/components/AppTable/columns";
 import SkillButton from "./SkillButton";
 import { getPrerequisiteList } from "./helpers";
-
-export const columnstyles: SxProps<Theme> = {
-	".maxed-skill": {
-		backgroundColor: "text.disabled",
-	},
-	".too-many-levels": {
-		backgroundColor: "error.main",
-	},
-};
 
 export const useColumns = () => {
 	const skillTiers = useSkillTiers();
@@ -24,20 +15,55 @@ export const useColumns = () => {
 		{
 			accessorKey: "name",
 			header: "Skill",
-			size: 200,
+			size: 100,
 			enableSorting: true,
-			cell: ({ row }) => (
-				<Grid container spacing={1} alignItems="baseline">
-					<Typography variant="subtitle1">{row.original.name}</Typography>
-					<RarityChip name={row.original.tier} />
-					<IdealChip skill={row.original} />
-				</Grid>
-			),
+			cell: ({ row }) => {
+				const chapter = useChapter();
+				const max = (getTierRank(skillTiers, row.original.tier) + 1) * 20;
+				const level = getCurrentLevel(row.original, chapter);
+				const levelText = `Lvl ${level} / ${max}`;
+
+				return (
+					<Grid container spacing={1} alignItems="baseline">
+						<Typography variant="subtitle1">{row.original.name}</Typography>
+						<RarityChip name={row.original.tier} />
+						<IdealChip skill={row.original} />
+						<Chip size="small" label={levelText} />
+					</Grid>
+				);
+			},
 			meta: {
-				bodyColSpan: 2,
+				bodyColSpan: 3,
+				bodySx: (cell: Cell<Skill, unknown>) => {
+					const chapter = useChapter();
+					const row = cell.row.original;
+					const value = getCurrentLevel(row, chapter);
+					const max = (getTierRank(skillTiers, row.tier) + 1) * 20;
+
+					if (value > max) return { backgroundColor: "error.main" };
+					if (value === max) return { backgroundColor: "#666" };
+
+					const color = "#333";
+					const transparent = "#33333300";
+					if (value === max) return { backgroundColor: color };
+					const percent = ((1.0 * value) / max) * 100;
+					// Gradient from color to transparent based on percent
+					return {
+						background: `linear-gradient(90deg, ${color} 0%, ${color} ${percent}%, ${transparent} ${percent}%, ${transparent} 100%)`,
+					};
+				},
 			},
 		},
 		createCollapsedTierColumn<Skill>(skillTiers),
+		{
+			accessorKey: "level",
+			header: "Level",
+			size: 20,
+			enableSorting: true,
+			meta: {
+				bodyColSpan: 0,
+			},
+		},
 		{
 			accessorKey: "Attributes",
 			header: "Attributes",
@@ -48,29 +74,6 @@ export const useColumns = () => {
 					<AttributeSummary item={row.original} />
 				</Box>
 			),
-		},
-		{
-			accessorKey: "level",
-			header: "Level",
-			minSize: 100,
-			enableSorting: true,
-			cell: ({ row }) => {
-				const chapter = useChapter();
-				const max = (getSkillRank(skillTiers, row.original.tier) + 1) * 20;
-				const level = getCurrentLevel(row.original, chapter);
-				return `${level} / ${max}`;
-			},
-			meta: {
-				bodyClassName: (cell) => {
-					const chapter = useChapter();
-					const row = cell.row.original;
-					const value = getCurrentLevel(row, chapter);
-					const max = (getSkillRank(skillTiers, row.tier) + 1) * 20;
-					if (value === max) return "maxed-skill";
-					if (value > max) return "too-many-levels";
-					return "";
-				},
-			},
 		},
 		{
 			accessorKey: "previous",
@@ -128,7 +131,3 @@ export const useColumns = () => {
 		},
 	] as ColumnDef<Skill>[];
 };
-
-function getSkillRank(skillTiers: string[], tier: string): number {
-	return skillTiers.findIndex((x) => tier.startsWith(x));
-}

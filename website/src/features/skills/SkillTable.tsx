@@ -13,7 +13,7 @@ import { useState, useEffect, useMemo } from "react";
 import SkillCard from "./SkillCard";
 import AppTable, { useAppTable } from "@/components/AppTable";
 import { useAttributes, useChapter, useSkills, useSkillTiers } from "@/data/api";
-import { columnstyles, useColumns } from "./columns";
+import { useColumns } from "./columns";
 import { getFilteredRowModel } from "@tanstack/react-table";
 import { RarityButtonChip } from "@/components/chips";
 
@@ -115,7 +115,7 @@ export default function SkillTable() {
 					</FormControl>
 				</FormGroup>
 			</Grid>
-			<AppTable sx={columnstyles} isLoading={isFetching} table={table} />
+			<AppTable isLoading={isFetching} table={table} />
 		</>
 	);
 }

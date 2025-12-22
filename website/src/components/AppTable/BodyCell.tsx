@@ -24,6 +24,7 @@ export default function BodyCell<T>({ cell }: BodyCellProps<T>) {
 				borderStyle: "solid",
 				borderColor: theme.palette.grey[800],
 				width: cell.column.getSize(),
+				...cell.getSx(),
 			}}
 		>
 			{flexRender(column.columnDef.cell, getContext())}

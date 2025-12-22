@@ -16,7 +16,7 @@ export function AttributeSummary({ item }: AttributeSummaryProps) {
 		<>
 			{attributes.map((x, index) => (
 				<Typography variant="body2" key={index}>
-					{`${x.abbreviation}: ${item[x.name]}`}
+					{`+${item[x.name]} ${x.name}`}
 				</Typography>
 			))}
 		</>
