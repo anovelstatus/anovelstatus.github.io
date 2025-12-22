@@ -1,8 +1,12 @@
 import { Card, CardHeader, CardContent, Skeleton, CircularProgress, Stack } from "@mui/material";
 
-export default function LoadingCard({ headerOnly = false }: { headerOnly?: boolean }) {
+type LoadingCardProps = {
+	headerOnly?: boolean;
+} & PropsWithStyle;
+
+export default function LoadingCard({ headerOnly = false, sx }: LoadingCardProps) {
 	return (
-		<Card>
+		<Card sx={sx}>
 			<CardHeader
 				title={
 					<Stack direction="row" alignItems="center">

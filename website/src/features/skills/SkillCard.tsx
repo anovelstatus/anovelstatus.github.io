@@ -5,6 +5,7 @@ import { AttributeSummary } from "@/features/attributes";
 import { useSkills } from "@/data/api";
 import SkillButton from "./SkillButton";
 import { getPrerequisiteList } from "./helpers";
+import LoadingCard from "@/components/LoadingCard";
 
 type SkillCardProps = { id: TieredId } & PropsWithStyle;
 
@@ -13,7 +14,7 @@ export default function SkillCard({ id, sx }: SkillCardProps) {
 
 	const { data: skills } = useSkills();
 	const skill = skills.find((x) => sameId(x, id));
-	if (!skill) return <Box>Skill not found</Box>;
+	if (!skill) return <LoadingCard headerOnly sx={sx} />;
 
 	const previousSkills = findByIds(skills, skill.previous);
 	console.log(previousSkills);

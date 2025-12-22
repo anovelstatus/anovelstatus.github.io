@@ -5,6 +5,7 @@ import { useTalents } from "@/data/api";
 import TieredButton from "@/components/TieredButton";
 import { PopoverButton } from "@/components/PopoverButton";
 import LoadingCard from "@/components/LoadingCard";
+import { popupCardStyles } from "@/styles";
 
 export type TalentCardProps = { id: TieredId } & PropsWithStyle;
 
@@ -15,7 +16,7 @@ export default function TalentCard({ id, sx }: TalentCardProps) {
 	const previousTalents = findByIds(talents, talent?.previous);
 	const previousCount = previousTalents.length;
 
-	if (!talent) return <LoadingCard headerOnly />;
+	if (!talent) return <LoadingCard headerOnly sx={sx} />;
 
 	return (
 		<Card sx={sx}>
@@ -43,7 +44,7 @@ export default function TalentCard({ id, sx }: TalentCardProps) {
 								key={index}
 								id={toIdString(x)}
 								trigger={<TieredButton item={x} variant="outlined" />}
-								popover={() => <TalentCard id={x} sx={{ maxWidth: 500 }} />}
+								popover={() => <TalentCard id={x} sx={popupCardStyles} />}
 							/>
 						);
 					})}

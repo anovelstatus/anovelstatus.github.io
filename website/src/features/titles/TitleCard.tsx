@@ -12,7 +12,7 @@ export default function TitleCard({ id, sx }: TitleCardProps) {
 	const { data: titles } = useTitles();
 	const title = titles.find((x) => sameId(x, id));
 
-	if (!title) return <LoadingCard headerOnly />;
+	if (!title) return <LoadingCard headerOnly sx={sx} />;
 
 	const previousTitle = getPreviousTitle(titles, title);
 
