@@ -29,7 +29,6 @@
 		"@tanstack/react-router": "^1.162.9",
 		"@tanstack/react-router-devtools": "^1.162.9",
 		"@tanstack/react-table": "^8.21.3",
-		"@tanstack/router-devtools": "^1.162.9",
 		"@tanstack/router-plugin": "^1.162.9",
 		"@types/google-apps-script": "2.0.8",
 		"@types/node": "^24.10.13",
