@@ -19,10 +19,7 @@
 		"test-spreadsheet": "cd spreadsheet && vitest"
 	},
 	"devDependencies": {
-		"@emotion/react": "^11.14.0",
-		"@emotion/styled": "^11.14.1",
-		"@eslint/eslintrc": "^3.3.3",
-		"@eslint/js": "^9.39.2",
+		"@eslint/js": "^9.39.3",
 		"@google/clasp": "^3.2.0",
 		"@mui/icons-material": "^7.3.8",
 		"@mui/material": "^7.3.6",
@@ -32,7 +29,6 @@
 		"@tanstack/react-router": "^1.162.9",
 		"@tanstack/react-router-devtools": "^1.162.9",
 		"@tanstack/react-table": "^8.21.3",
-		"@tanstack/router-devtools": "^1.162.9",
 		"@tanstack/router-plugin": "^1.162.9",
 		"@types/google-apps-script": "2.0.8",
 		"@types/node": "^24.10.13",
@@ -42,17 +38,16 @@
 		"dotenv": "^17.3.1",
 		"es-toolkit": "^1.44.0",
 		"esbuild": "0.27.3",
-		"eslint": "^9.39.2",
+		"eslint": "^9.39.3",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-react": "^7.37.5",
-		"globals": "^17.3.0",
 		"material-ui-popup-state": "^5.3.6",
 		"react": "^19.2.4",
 		"react-dom": "^19.2.4",
 		"typescript": "^5.9.3",
-		"typescript-eslint": "^8.52.0",
+		"typescript-eslint": "^8.56.1",
 		"vite": "^7.3.1",
 		"vite-tsconfig-paths": "^6.1.1",
-		"vitest": "^4.0.16"
+		"vitest": "^4.0.18"
 	}
 }
