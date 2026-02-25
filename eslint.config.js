@@ -1,4 +1,3 @@
-import globals from "globals";
 import js from "@eslint/js";
 import ts from "typescript-eslint";
 import react from "eslint-plugin-react";
@@ -18,9 +17,6 @@ export default [
 			react: {
 				version: "19",
 			},
-		},
-		languageOptions: {
-			globals: globals.browser,
 		},
 		linterOptions: {
 			noInlineConfig: false,
