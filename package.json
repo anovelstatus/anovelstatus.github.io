@@ -45,7 +45,7 @@
 		"eslint": "^9.39.2",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-react": "^7.37.5",
-		"globals": "^17.0.0",
+		"globals": "^17.3.0",
 		"material-ui-popup-state": "^5.3.6",
 		"react": "^19.2.4",
 		"react-dom": "^19.2.4",
