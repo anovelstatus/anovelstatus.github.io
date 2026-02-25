@@ -11,6 +11,10 @@ updates:
       mui:
         patterns:
           - "@mui/*"
+      eslint:
+        patterns:
+          - "@eslint/*"
+          - "eslint*"
       react:
         patterns:
           - "react"
