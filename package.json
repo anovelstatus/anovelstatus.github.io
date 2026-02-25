@@ -38,7 +38,7 @@
 		"@types/node": "^24.10.4",
 		"@types/react": "^19.2.14",
 		"@types/react-dom": "^19.2.3",
-		"@vitejs/plugin-react": "^5.1.2",
+		"@vitejs/plugin-react": "^5.1.4",
 		"dotenv": "^17.3.1",
 		"es-toolkit": "^1.43.0",
 		"esbuild": "0.27.3",
