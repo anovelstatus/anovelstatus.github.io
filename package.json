@@ -35,7 +35,7 @@
 		"@tanstack/router-devtools": "^1.162.9",
 		"@tanstack/router-plugin": "^1.162.9",
 		"@types/google-apps-script": "2.0.8",
-		"@types/node": "^24.10.4",
+		"@types/node": "^24.10.13",
 		"@types/react": "^19.2.14",
 		"@types/react-dom": "^19.2.3",
 		"@vitejs/plugin-react": "^5.1.4",
