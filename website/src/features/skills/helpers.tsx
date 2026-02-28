@@ -1,4 +1,4 @@
-import { toIdString } from "@/data/helpers";
+import { getTierRank, toIdString } from "@/data/helpers";
 import { Typography } from "@mui/material";
 
 export function getPrerequisiteList(skill: Skill) {
@@ -39,4 +39,13 @@ export function getPrerequisiteList(skill: Skill) {
 			</Typography>
 		)),
 	];
+}
+
+export function getMaxLevel(skill: Skill, skillTiers: string[]): number {
+	return (getTierRank(skillTiers, skill.tier) + 1) * 20;
+}
+
+export function getProgressGradient(percent: number, hexColor: string): string {
+	const transparent = hexColor + "00";
+	return `linear-gradient(90deg, ${hexColor} 0%, ${hexColor} ${percent}%, ${transparent} ${percent}%, ${transparent} 100%)`;
 }

@@ -1,12 +1,12 @@
 import { Box, Chip, Grid, Stack, Typography } from "@mui/material";
 import { AttributeSummary } from "@/features/attributes";
-import { findByIds, getCurrentLevel, getTierRank } from "@/data/helpers";
+import { findByIds, getCurrentLevel } from "@/data/helpers";
 import { ChaptersChip, IdealChip, RarityChip } from "@/components/chips";
 import type { Cell, ColumnDef } from "@tanstack/react-table";
 import { useChapter, useSkills, useSkillTiers } from "@/data/api";
 import { createCollapsedTierColumn } from "@/components/AppTable/columns";
 import SkillButton from "./SkillButton";
-import { getPrerequisiteList } from "./helpers";
+import { getMaxLevel, getPrerequisiteList, getProgressGradient } from "./helpers";
 
 export const useColumns = () => {
 	const skillTiers = useSkillTiers();
@@ -15,11 +15,11 @@ export const useColumns = () => {
 		{
 			accessorKey: "name",
 			header: "Skill",
-			size: 100,
+			size: 30,
 			enableSorting: true,
 			cell: ({ row }) => {
 				const chapter = useChapter();
-				const max = (getTierRank(skillTiers, row.original.tier) + 1) * 20;
+				const max = getMaxLevel(row.original, skillTiers);
 				const level = getCurrentLevel(row.original, chapter);
 				const levelText = `Lvl ${level} / ${max}`;
 
@@ -38,18 +38,14 @@ export const useColumns = () => {
 					const chapter = useChapter();
 					const row = cell.row.original;
 					const value = getCurrentLevel(row, chapter);
-					const max = (getTierRank(skillTiers, row.tier) + 1) * 20;
+					const max = getMaxLevel(row, skillTiers);
 
 					if (value > max) return { backgroundColor: "error.main" };
 					if (value === max) return { backgroundColor: "#666" };
 
-					const color = "#333";
-					const transparent = "#33333300";
-					if (value === max) return { backgroundColor: color };
 					const percent = ((1.0 * value) / max) * 100;
-					// Gradient from color to transparent based on percent
 					return {
-						background: `linear-gradient(90deg, ${color} 0%, ${color} ${percent}%, ${transparent} ${percent}%, ${transparent} 100%)`,
+						background: getProgressGradient(percent, "#333333"),
 					};
 				},
 			},
@@ -58,7 +54,7 @@ export const useColumns = () => {
 		{
 			accessorKey: "level",
 			header: "Level",
-			size: 20,
+			size: 30,
 			enableSorting: true,
 			meta: {
 				bodyColSpan: 0,
@@ -67,7 +63,7 @@ export const useColumns = () => {
 		{
 			accessorKey: "Attributes",
 			header: "Attributes",
-			minSize: 100,
+			size: 40,
 			enableSorting: false,
 			cell: ({ row }) => (
 				<Box fontSize={"0.9em"}>
@@ -76,37 +72,25 @@ export const useColumns = () => {
 			),
 		},
 		{
-			accessorKey: "previous",
-			header: "Previously",
+			accessorKey: "description",
+			header: "Description",
 			enableSorting: false,
+			size: 300,
 			cell: ({ row }) => {
+				const list = getPrerequisiteList(row.original);
 				const { data: skills } = useSkills();
 				const previousSkills = findByIds(skills, row.original.previous);
-				if (!previousSkills) return <></>;
 				return (
 					<Stack>
+						<Typography variant="body2">{row.original.description}</Typography>
+						{list.length > 0 && <Typography variant="h6">Ideal Prerequisites:</Typography>}
+						{list}
+						{previousSkills.length > 0 && <Typography variant="h6">Previous/Merged Skill(s):</Typography>}
 						{previousSkills.map((x, index) => (
 							<SkillButton key={index} skill={x} />
 						))}
 					</Stack>
 				);
-			},
-		},
-		{
-			accessorKey: "description",
-			header: "Description",
-			enableSorting: false,
-			cell: ({ row }) => {
-				return <Typography variant="body2">{row.original.description}</Typography>;
-			},
-		},
-		{
-			accessorKey: "prerequisites",
-			header: "Ideal Prerequisites",
-			enableSorting: false,
-			cell: ({ row }) => {
-				const list = getPrerequisiteList(row.original);
-				return <Stack> {list} </Stack>;
 			},
 		},
 		{

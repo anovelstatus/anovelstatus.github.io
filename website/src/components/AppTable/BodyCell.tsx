@@ -13,6 +13,8 @@ export default function BodyCell<T>({ cell }: BodyCellProps<T>) {
 
 	if (colSpan === 0) return <></>;
 
+	const size = cell.column.getSize();
+
 	return (
 		<TableCell
 			valign="top"
@@ -23,7 +25,7 @@ export default function BodyCell<T>({ cell }: BodyCellProps<T>) {
 				borderWidth: 1,
 				borderStyle: "solid",
 				borderColor: theme.palette.grey[800],
-				width: cell.column.getSize(),
+				width: size > 0 ? (size * colSpan) + "px" : undefined,
 				...cell.getSx(),
 			}}
 		>

@@ -31,7 +31,7 @@ export default function SkillTable() {
 		setFilters((filters) => ({ ...filters, chapter: chapter }));
 	}, [chapter]);
 
-	const [columnVisibility, setColumnVisibility] = useState({ gains: false, description: false });
+	const [columnVisibility, setColumnVisibility] = useState({ gains: false });
 
 	const totals = useMemo(() => getTotals(skills, chapter), [chapter, skills]);
 
@@ -53,7 +53,6 @@ export default function SkillTable() {
 		setColumnVisibility((visibility) => ({
 			...visibility,
 			gains: !visibility.gains,
-			description: !visibility.description,
 		}));
 	};
 
