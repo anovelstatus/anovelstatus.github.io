@@ -25,7 +25,7 @@ export default function BodyCell<T>({ cell }: BodyCellProps<T>) {
 				borderWidth: 1,
 				borderStyle: "solid",
 				borderColor: theme.palette.grey[800],
-				width: size > 0 ? (size * colSpan) + "px" : undefined,
+				width: size > 0 ? size * colSpan + "px" : undefined,
 				...cell.getSx(),
 			}}
 		>

@@ -1,5 +1,33 @@
-import { getTierRank, toIdString } from "@/data/helpers";
+import { getCurrentLevel, getTierRank, toIdString } from "@/data/helpers";
 import { Typography } from "@mui/material";
+
+export const IDEAL_QUALITY = "Ideal";
+
+export type SkillFiltersOptions = {
+	chapter: number;
+	showFormerSkills?: boolean;
+	providesAttributes: Attribute.Details[];
+	tier?: string;
+	idealOnly: boolean;
+};
+
+export function showSkill(x: Skill, filters: SkillFiltersOptions) {
+	if (filters.tier && x.tier !== filters.tier) return false;
+
+	if (getCurrentLevel(x, filters.chapter) <= 0) return false;
+
+	if (!filters.showFormerSkills && x.replaced) return false;
+
+	if (filters.providesAttributes.length) {
+		for (const attr of filters.providesAttributes) {
+			if (!x[attr.name]) return false;
+		}
+	}
+
+	if (filters.idealOnly && x.quality !== IDEAL_QUALITY) return false;
+
+	return true;
+}
 
 export function getPrerequisiteList(skill: Skill) {
 	const keyPrefix = toIdString(skill) + "-prerequisite";
