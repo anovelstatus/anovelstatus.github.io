@@ -16,6 +16,8 @@ export default function HeaderCell<T>({ header }: HeaderCellProps<T>) {
 
 	const contents = flexRender(column.columnDef.header, getContext());
 
+	const size = column.getSize();
+
 	return (
 		<TableCell
 			variant="head"
@@ -26,7 +28,7 @@ export default function HeaderCell<T>({ header }: HeaderCellProps<T>) {
 				borderBottomWidth: 4,
 				borderStyle: "solid",
 				borderColor: theme.palette.grey[800],
-				width: header.getSize(),
+				width: size > 0 ? size + "px" : undefined,
 				...header.getSx(),
 			}}
 		>
