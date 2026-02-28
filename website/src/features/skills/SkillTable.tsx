@@ -60,7 +60,7 @@ export default function SkillTable() {
 			<Grid container spacing={2}>
 				<FormGroup>
 					<FormControlLabel
-						label="Show Notes"
+						label="Show levels gained by chapter"
 						control={<Checkbox onChange={toggleNotesColumn} value={columnVisibility.gains} />}
 					/>
 				</FormGroup>

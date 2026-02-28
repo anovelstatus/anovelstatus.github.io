@@ -71,8 +71,8 @@ export default function SkillFilters({ onChange }: SkillFiltersProps) {
 						label={totals[IDEAL_QUALITY] + " ⭐ Ideal Only"}
 						control={<Checkbox onChange={toggleIdealFilter} />}
 					/>
-					<FormControlLabel label="Show Former Skills" control={<Checkbox onChange={toggleFormerSkills} />} />
-					<FormControl sx={{ m: 1, width: 300 }}>
+					<FormControlLabel label="Show former skills" control={<Checkbox onChange={toggleFormerSkills} />} />
+					<FormControl sx={{ margin: 1, width: 500 }}>
 						<Autocomplete
 							multiple={true}
 							aria-description="Filter by skills which provide selected attributes"

@@ -1,5 +1,5 @@
 import { Card, CardHeader, CardContent, Box, Stack, Grid, Typography, Chip } from "@mui/material";
-import { IdealChip, RarityChip } from "@/components/chips";
+import { ChaptersChip, IdealChip, RarityChip } from "@/components/chips";
 import { findByIds, getCurrentLevel, sameId } from "@/data/helpers";
 import { AttributeSummary } from "@/features/attributes";
 import { useChapter, useSkills, useSkillTiers } from "@/data/api";
@@ -65,6 +65,17 @@ export default function SkillCard({ id, sx }: SkillCardProps) {
 							</Stack>
 						</>
 					) : null}
+					<Typography variant="h6" sx={{ marginTop: "20px" }}>
+						Levels Gained:
+					</Typography>
+					{skill.gains
+						.filter((x) => x.chapter <= chapter)
+						.map((x, index) => (
+							<Stack direction="row" key={index}>
+								<Typography variant="body2">{x.note}</Typography>
+								<ChaptersChip chapters={[x.chapter]} />
+							</Stack>
+						))}
 				</Stack>
 			</CardContent>
 		</Card>
