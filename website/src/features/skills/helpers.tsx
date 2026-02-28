@@ -14,7 +14,7 @@ export type SkillFiltersOptions = {
 export function showSkill(x: Skill, filters: SkillFiltersOptions) {
 	if (filters.tier && x.tier !== filters.tier) return false;
 
-	if (getCurrentLevel(x, filters.chapter) <= 0) return false;
+	if (getCurrentLevel(x, filters.chapter) <= 0 && !filters.showFormerSkills) return false;
 
 	if (!filters.showFormerSkills && x.replaced) return false;
 
