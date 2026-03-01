@@ -61,6 +61,7 @@ declare type Bloodline = {
 	updates: BloodlineStatus[];
 	title: TieredId;
 	lore: string;
+	quality: string;
 };
 
 declare namespace Body {

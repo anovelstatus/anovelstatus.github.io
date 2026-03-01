@@ -1,6 +1,6 @@
 import { ChapterContext } from "@/providers";
 import { useQuery, type UseQueryResult } from "@tanstack/react-query";
-import { orderBy } from "es-toolkit";
+import { maxBy, orderBy } from "es-toolkit";
 import { useContext, useMemo } from "react";
 
 /** Make data not optional because we can guarantee a placeholder */
@@ -98,6 +98,24 @@ export function useStatusDictionary() {
 	return useMemo(() => {
 		return Object.fromEntries(statuses.map((x) => [x.chapter, x]));
 	}, [statuses]);
+}
+
+function useLore() {
+	return useSpreadsheet<Lore>("lore", { descriptions: [], updates: [] });
+}
+
+export function useLoreTopic(key: string, chapter: number) {
+	const { data: lore } = useLore();
+	const latestDescription = maxBy(
+		lore.descriptions.filter((x) => x.key === key && x.chapter <= chapter),
+		(x) => x.chapter,
+	)?.note || "";
+	const updates = orderBy(
+		lore.updates.filter((x) => x.key === key && x.chapter <= chapter),
+		[(x) => x.chapter],
+		["desc"],
+	);
+	return { description: latestDescription, updates };
 }
 
 // Copying type constraint from Tanstack's NonFunctionGuard type

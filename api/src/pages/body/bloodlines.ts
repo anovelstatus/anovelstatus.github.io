@@ -20,6 +20,7 @@ function mapBloodlineColumns(headerRow: string[]): BloodlineColumns {
 		name: headerRow.indexOf("Bloodline"),
 		title: headerRow.indexOf("Title"),
 		lore: headerRow.indexOf("Lore Key"),
+		quality: headerRow.indexOf("Quality"),
 	};
 }
 
@@ -29,6 +30,7 @@ function mapBloodlineRow(row: SpreadsheetValue[], headers: BloodlineColumns, upd
 		name: name as string,
 		title: parseId(row[headers.title] as string),
 		lore: row[headers.lore] as string,
+		quality: row[headers.quality] as string,
 		updates: updates.filter((x) => name == x.name),
 	};
 }

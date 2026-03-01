@@ -10,6 +10,7 @@ const routes = [
 	createRoute({ getParentRoute: () => rootRoute, path: "/", component: Pages.IndexPage }),
 	createRoute({ getParentRoute: () => rootRoute, path: "/attributes", component: Pages.AttributePage }),
 	createRoute({ getParentRoute: () => rootRoute, path: "/cultivation", component: Pages.CultivationPage }),
+	createRoute({ getParentRoute: () => rootRoute, path: "/body", component: Pages.BodyPage }),
 	createRoute({ getParentRoute: () => rootRoute, path: "/skills", component: Pages.SkillPage }),
 	createRoute({ getParentRoute: () => rootRoute, path: "/talents", component: Pages.TalentPage }),
 	createRoute({ getParentRoute: () => rootRoute, path: "/titles", component: Pages.TitlePage }),
