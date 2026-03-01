@@ -5,3 +5,4 @@ export * from "./AchievementPage";
 export * from "./SkillPage";
 export * from "./TalentPage";
 export * from "./TitlePage";
+export * from "./BodyPage";

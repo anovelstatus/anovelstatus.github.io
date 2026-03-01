@@ -1,21 +1,24 @@
-import { Card, CardHeader, CardContent, CardActions, Stack, Typography } from "@mui/material";
+import { Card, CardHeader, CardContent, CardActions, Stack, Typography, Chip } from "@mui/material";
 import { ChaptersChip } from "@/components/chips";
-import { useBloodlines, useChapter } from "@/data/api";
 import { TitleButton } from "../titles";
 import { orderBy } from "es-toolkit";
+import { useChapter, useLoreTopic } from "@/data/api";
 
-type BloodlineProps = { bloodline: Bloodline };
+export type BloodlineProps = { bloodline: Bloodline };
 
-function BloodlineCard({ bloodline }: BloodlineProps) {
-	if (!bloodline.updates || bloodline.updates.length === 0) {
-		return null;
-	}
+export default function BloodlineCard({ bloodline }: BloodlineProps) {
+	const chapter = useChapter();
+	const lore = useLoreTopic(bloodline.lore, chapter);
+
 	// In case there are multiple gains in the same chapter, display the one with the highest purity first
 	const updates = orderBy(
-		bloodline.updates,
+		bloodline.updates.filter((x) => x.chapter <= chapter),
 		["chapter", (x) => (typeof x.purity === "number" ? x.purity : 0)],
 		["desc", "desc"],
 	);
+	if (!updates || updates.length === 0) {
+		return null;
+	}
 	const latest = updates[0]!;
 
 	return (
@@ -25,6 +28,7 @@ function BloodlineCard({ bloodline }: BloodlineProps) {
 					<Stack direction="row" alignItems="center">
 						{bloodline.name}, {formatPurity(latest.purity)}
 						<ChaptersChip chapters={[latest.chapter]} />
+						<Chip label={bloodline.quality} size="small" variant="filled" color="default" />
 					</Stack>
 				}
 			/>
@@ -44,29 +48,21 @@ function BloodlineCard({ bloodline }: BloodlineProps) {
 					))}
 				</Stack>
 			</CardContent>
-		</Card>
-	);
-}
-
-export default function BloodlinesCard() {
-	const chapter = useChapter();
-	const bloodlines = useBloodlines();
-
-	const filteredBloodlines: Bloodline[] = bloodlines
-		.map((x) => {
-			return {
-				...x,
-				updates: x.updates.filter((y) => y.chapter <= chapter),
-			};
-		})
-		.filter((x) => x.updates.length > 0);
-	const cards = filteredBloodlines.map((bloodline, index) => <BloodlineCard bloodline={bloodline} key={index} />);
-
-	return (
-		<Card>
-			<CardHeader title="Bloodlines" />
 			<CardContent>
-				<Stack>{cards}</Stack>
+				<Stack>
+					<Typography variant="h6">Lore</Typography>
+					<Typography variant="body2" whiteSpace="pre-line">
+						{lore.description}
+					</Typography>
+					{lore.updates.map((update, index) => (
+						<Stack direction="column" key={index}>
+							<ChaptersChip chapters={[update.chapter]} />
+							<Typography key={index} variant="body2" whiteSpace="pre-line">
+								{update.note}
+							</Typography>
+						</Stack>
+					))}
+				</Stack>
 			</CardContent>
 		</Card>
 	);

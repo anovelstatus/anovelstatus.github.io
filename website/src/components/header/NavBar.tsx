@@ -22,6 +22,7 @@ export default function NavBar() {
 		<RouterButton key="home" to="/" title="Home" />,
 		<RouterButton key="attributes" to="/attributes" title="Attributes" />,
 		<RouterButton key="overview" to="/cultivation" title="Cultivation" />,
+		<RouterButton key="body" to="/body" title="Body" />,
 		<RouterButton key="skills" to="/skills" title="Skills" />,
 		<RouterButton key="talents" to="/talents" title="Talents" />,
 		<RouterButton key="titles" to="/titles" title="Titles" />,

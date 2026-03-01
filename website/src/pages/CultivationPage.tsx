@@ -1,21 +1,16 @@
-import { BloodlinesCard, BodyModificationsCard, RaceCard } from "@/features/body";
-import { getRaceForChapter } from "@/data/helpers";
-import { useBodyMutations, useChapter, useRaces } from "@/data/api";
 import { Stack, Typography, Grid, Card, CardHeader, CardContent } from "@mui/material";
 import { TierChip } from "@/components/chips";
 
 export function CultivationPage() {
-	const chapter = useChapter();
-	const races = useRaces();
-	const mutations = useBodyMutations();
-	const race = getRaceForChapter(races, chapter);
-
 	const cardSize = { xs: 12, md: 6 };
 
 	return (
 		<Stack>
 			<Typography variant="h3" gutterBottom>
 				Priam's Cultivation
+			</Typography>
+			<Typography variant="body2">
+				See Body tab for Race, Tempering, and Bloodline details. This tab is being split up.
 			</Typography>
 			<Typography variant="h4" gutterBottom>
 				Soul
@@ -57,31 +52,6 @@ export function CultivationPage() {
 						<CardHeader title="Mind Ennoblement" />
 						<CardContent>🚧 Under Construction</CardContent>
 					</Card>
-				</Grid>
-			</Grid>
-			<Typography variant="h4" gutterBottom>
-				Body
-			</Typography>
-			<Grid container spacing={1}>
-				<Grid size={cardSize}>
-					<Card>
-						<CardHeader title="Tempering" />
-						<CardContent>🚧 Under Construction</CardContent>
-					</Card>
-				</Grid>
-				<Grid size={cardSize}>
-					<Card>
-						<CardHeader title="Race" />
-						<CardContent>
-							<RaceCard race={race} />
-						</CardContent>
-					</Card>
-				</Grid>
-				<Grid size={cardSize}>
-					<BloodlinesCard />
-				</Grid>
-				<Grid size={cardSize}>
-					<BodyModificationsCard mutations={mutations} />
 				</Grid>
 			</Grid>
 		</Stack>
