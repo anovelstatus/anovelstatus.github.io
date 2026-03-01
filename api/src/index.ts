@@ -42,6 +42,7 @@ function clearCache() {
 		"statuses",
 		"talents",
 		"titles",
+		"lore",
 	];
 	cache.removeAll(keys);
 }
