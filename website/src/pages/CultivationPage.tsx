@@ -1,12 +1,13 @@
 import { BloodlinesCard, BodyModificationsCard, RaceCard } from "@/features/body";
 import { getRaceForChapter } from "@/data/helpers";
-import { useBody, useChapter } from "@/data/api";
+import { useBodyMutations, useChapter, useRaces } from "@/data/api";
 import { Stack, Typography, Grid, Card, CardHeader, CardContent } from "@mui/material";
 import { TierChip } from "@/components/chips";
 
 export function CultivationPage() {
 	const chapter = useChapter();
-	const { races, mutations } = useBody();
+	const races = useRaces();
+	const mutations = useBodyMutations();
 	const race = getRaceForChapter(races, chapter);
 
 	const cardSize = { xs: 12, md: 6 };
@@ -69,7 +70,12 @@ export function CultivationPage() {
 					</Card>
 				</Grid>
 				<Grid size={cardSize}>
-					<RaceCard race={race} />
+					<Card>
+						<CardHeader title="Race" />
+						<CardContent>
+							<RaceCard race={race} />
+						</CardContent>
+					</Card>
 				</Grid>
 				<Grid size={cardSize}>
 					<BloodlinesCard />

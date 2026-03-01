@@ -1,15 +1,10 @@
-import { maxBy } from "es-toolkit";
-
 export function formatNumber(num: number | undefined) {
 	return num?.toLocaleString() ?? "";
 }
 
 export function getRaceForChapter(races: Race[], chapter: number): Race {
 	chapter = chapter || 0;
-	return maxBy(
-		races.filter((x) => x.chapter <= chapter),
-		(x) => x.chapter,
-	)!;
+	return races.filter((x) => x.chapter <= chapter)[0]!;
 }
 
 export function getCurrentLevel(skill: Skill, chapter: number) {

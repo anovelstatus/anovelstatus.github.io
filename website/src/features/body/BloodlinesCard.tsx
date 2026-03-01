@@ -1,6 +1,6 @@
 import { Card, CardHeader, CardContent, CardActions, Stack, Typography } from "@mui/material";
 import { ChaptersChip } from "@/components/chips";
-import { useBody, useChapter } from "@/data/api";
+import { useBloodlines, useChapter } from "@/data/api";
 import { TitleButton } from "../titles";
 import { orderBy } from "es-toolkit";
 
@@ -50,7 +50,7 @@ function BloodlineCard({ bloodline }: BloodlineProps) {
 
 export default function BloodlinesCard() {
 	const chapter = useChapter();
-	const { bloodlines } = useBody();
+	const bloodlines = useBloodlines();
 
 	const filteredBloodlines: Bloodline[] = bloodlines
 		.map((x) => {
