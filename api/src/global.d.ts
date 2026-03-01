@@ -33,7 +33,8 @@ declare type Page =
 	| "body"
 	| "skills"
 	| "statuses"
-	| "achievements";
+	| "achievements"
+	| "lore";
 
 /** Keys for data cache - all the pages + one that stores where to find those pages */
 declare type CacheKey = Page | "table-ranges";

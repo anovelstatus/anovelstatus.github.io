@@ -19,7 +19,7 @@ function mapBloodlineColumns(headerRow: string[]): BloodlineColumns {
 	return {
 		name: headerRow.indexOf("Bloodline"),
 		title: headerRow.indexOf("Title"),
-		lore: headerRow.indexOf("Lore"),
+		lore: headerRow.indexOf("Lore Key"),
 	};
 }
 

@@ -110,6 +110,17 @@ declare type Shortcut = {
 	menu?: string;
 };
 
+declare type Lore = {
+	descriptions: LoreEntry[];
+	updates: LoreEntry[];
+};
+
+declare type LoreEntry = {
+	chapter: number;
+	key: string;
+	note?: string;
+};
+
 /** Something that has a tier */
 declare type HasTier = {
 	tier: string;

@@ -2,6 +2,7 @@ import { getAchievements } from "./achievements";
 import { getAttributes } from "./attributes/index";
 import { getBody } from "./body/index";
 import { getPatreonChapter, getRoyalRoadChapter, getPatreonSheetLink } from "./chapters";
+import { getLore } from "./lore";
 import { getTimelineShortcuts } from "./shortcuts";
 import { getSkills } from "./skills/index";
 import { getOfficialStatuses } from "./statuses";
@@ -56,6 +57,8 @@ export function getPage(spreadsheet: Spreadsheet, page: Page, includePatreon: bo
 			return getCachedData("titles", getTitles, spreadsheet, ranges, attributeNames, chapterLimit, skipCache);
 		case "body":
 			return getCachedData("body", getBody, spreadsheet, ranges, attributeNames, chapterLimit, skipCache);
+		case "lore":
+			return getCachedData("lore", getLore, spreadsheet, ranges, attributeNames, chapterLimit, skipCache);
 		case "skills":
 			return getCachedData("skills", getSkills, spreadsheet, ranges, attributeNames, chapterLimit, skipCache);
 		case "achievements":
