@@ -1,5 +1,6 @@
 import { ChapterContext } from "@/providers";
 import { useQuery, type UseQueryResult } from "@tanstack/react-query";
+import { orderBy } from "es-toolkit";
 import { useContext, useMemo } from "react";
 
 /** Make data not optional because we can guarantee a placeholder */
@@ -40,12 +41,26 @@ export function useShortcuts() {
 	return useSpreadsheet<Shortcut[]>("shortcuts", []);
 }
 
-export function useBody() {
+function useBody() {
 	return useSpreadsheet<Body.Details>("body", {
 		bloodlines: [],
 		mutations: [],
 		races: [],
 	}).data;
+}
+
+export function useBloodlines() {
+	return useBody().bloodlines;
+}
+
+export function useBodyMutations() {
+	return useBody().mutations;
+}
+
+/** Race history in descending chapter and tier order */
+export function useRaces() {
+	const races = useBody().races;
+	return orderBy(races, [(x) => x.chapter, (x) => x.tier], ["desc", "desc"]);
 }
 
 export function useTalents() {

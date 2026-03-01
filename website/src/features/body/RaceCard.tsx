@@ -1,11 +1,12 @@
 import { toIdString } from "@/data/helpers";
-import { Card, CardHeader, CardContent, Box, Stack, Typography } from "@mui/material";
+import { Card, CardHeader, CardContent, Box, Stack, Typography, Button } from "@mui/material";
 import { ChaptersChip, TierChip } from "@/components/chips";
 import { TalentCard } from "@/features/talents";
 import TieredButton from "@/components/TieredButton";
 import { PopoverButton } from "@/components/PopoverButton";
 import LoadingCard from "@/components/LoadingCard";
 import { popupCardStyles } from "@/styles";
+import { useRaces } from "@/data/api";
 
 type RaceCardProps = {
 	race?: Race;
@@ -14,42 +15,51 @@ type RaceCardProps = {
 export default function RaceCard({ race }: RaceCardProps) {
 	const isLoading = !race;
 	const talents = race?.talents ?? [];
+	const races = useRaces();
 
 	if (isLoading) return <LoadingCard />;
 
+	const previousRace = races.find((x) => x.chapter < race.chapter || x.tier < race.tier);
+
 	return (
-		<Card>
+		<Card variant="outlined">
 			<CardHeader
 				title={
 					<Stack direction="row" alignItems="center">
-						<Box>Current Race: {race.name}</Box>
+						<Box>{race.name}</Box>
 						<TierChip tier={race.tier} />
 						<ChaptersChip chapters={[race.chapter]} />
 					</Stack>
 				}
 			/>
 			<CardContent>
-				{
-					<Typography variant="body2" fontStyle="italic">
-						{race.note}
-					</Typography>
-				}
+				<Typography variant="body2" fontStyle="italic" whiteSpace="pre-line">
+					{race.note}
+				</Typography>
 			</CardContent>
-			{
+			<CardContent>
+				<Typography variant="h6">Talent{talents.length > 1 ? "s" : ""}:</Typography>
+				<Stack direction="row">
+					{talents.map((id, index) => (
+						<PopoverButton
+							key={index}
+							id={toIdString(id)}
+							trigger={<TieredButton item={id} variant="outlined" />}
+							popover={() => <TalentCard key={index} id={id} sx={popupCardStyles} />}
+						/>
+					))}
+				</Stack>
+			</CardContent>
+			{previousRace && (
 				<CardContent>
-					<Typography variant="h6">Talent{talents.length > 1 ? "s" : ""}:</Typography>
-					<Stack direction="row">
-						{talents.map((id, index) => (
-							<PopoverButton
-								key={index}
-								id={toIdString(id)}
-								trigger={<TieredButton item={id} variant="outlined" />}
-								popover={() => <TalentCard key={index} id={id} sx={popupCardStyles} />}
-							/>
-						))}
-					</Stack>
+					<Typography variant="h6">Previous Race:</Typography>
+					<PopoverButton
+						id={previousRace.name + previousRace.tier}
+						trigger={<Button variant="outlined">{previousRace.name}</Button>}
+						popover={() => <RaceCard race={previousRace} />}
+					/>
 				</CardContent>
-			}
+			)}
 		</Card>
 	);
 }

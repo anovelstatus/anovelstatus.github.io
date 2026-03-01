@@ -1,13 +1,13 @@
 import { TalentTable } from "@/features/talents";
 import { getRaceForChapter, sameId } from "@/data/helpers";
-import { useTalents, useBody, useChapter } from "@/data/api";
+import { useTalents, useChapter, useRaces } from "@/data/api";
 import { Stack, Typography, Chip } from "@mui/material";
 import { useMemo } from "react";
 
 export function TalentPage() {
 	const chapter = useChapter();
 	const { data: talents } = useTalents();
-	const { races } = useBody();
+	const races = useRaces();
 
 	let filtered = talents.filter((x) => !x.temporary && x.chapterGained <= chapter);
 	filtered = filtered.filter((x) => !x.chapterUndone || x.chapterUndone <= chapter);
