@@ -2,27 +2,24 @@
 
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import viteReact from "@vitejs/plugin-react";
-import tsConfigPaths from "vite-tsconfig-paths";
 import { defineConfig } from "vite";
 
 // https://vite.dev/config/
 export default defineConfig({
-	plugins: [tanstackRouter({ autoCodeSplitting: false, enableRouteGeneration: false }), viteReact(), tsConfigPaths()],
+	plugins: [tanstackRouter({ autoCodeSplitting: false, enableRouteGeneration: false }), viteReact()],
+	resolve: {
+		tsconfigPaths: true,
+	},
 	build: {
-		// https://rollupjs.org/configuration-options/
-		rollupOptions: {
+		// https://rolldown.rs/reference/
+		rolldownOptions: {
 			output: {
-				manualChunks: function manualChunks(id) {
-					if (id.includes("@mui")) {
-						return "mui";
-					}
-					if (id.includes("@tanstack")) {
-						return "tanstack";
-					}
-					if (id.includes("node_modules")) {
-						return "vendor";
-					}
-					return;
+				codeSplitting: {
+					groups: [
+						{ name: "mui", test: /@mui/ },
+						{ name: "tanstack", test: /@tanstack/ },
+						{ name: "vendor", test: /node_modules/ },
+					],
 				},
 			},
 		},
