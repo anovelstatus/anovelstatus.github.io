@@ -2,8 +2,7 @@
 import { build } from "rolldown";
 import { replacePlugin } from "rolldown/plugins";
 import "dotenv/config";
-import { copyFile } from "fs";
-import { promisify } from "util";
+import { copyFile } from "node:fs/promises";
 
 await build({
 	input: ["src/index.ts"],
@@ -28,6 +27,4 @@ await build({
 	],
 });
 
-const asyncCopyFile = promisify(copyFile);
-
-await asyncCopyFile("src/appsscript.json", "dist/appsscript.json");
+await copyFile("src/appsscript.json", "dist/appsscript.json");
