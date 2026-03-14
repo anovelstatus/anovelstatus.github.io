@@ -38,7 +38,9 @@ export default function RaceCard({ race }: RaceCardProps) {
 				</Typography>
 			</CardContent>
 			<CardContent>
-				<Typography variant="h6" gutterBottom>Talent{talents.length > 1 ? "s" : ""}:</Typography>
+				<Typography variant="h6" gutterBottom>
+					Talent{talents.length > 1 ? "s" : ""}:
+				</Typography>
 				<Stack direction="row">
 					{talents.map((id, index) => (
 						<PopoverButton
@@ -52,7 +54,9 @@ export default function RaceCard({ race }: RaceCardProps) {
 			</CardContent>
 			{previousRace && (
 				<CardContent>
-					<Typography variant="h6" gutterBottom>Previous Race:</Typography>
+					<Typography variant="h6" gutterBottom>
+						Previous Race:
+					</Typography>
 					<PopoverButton
 						id={previousRace.name + previousRace.tier}
 						trigger={<Button variant="outlined">{previousRace.name}</Button>}

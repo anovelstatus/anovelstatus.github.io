@@ -69,8 +69,9 @@ declare type TemperingStage = {
 	tier: string;
 	chapter: number;
 	description: string;
+	expectedSteps: number;
 	updates: TemperingStep[];
-}
+};
 
 declare type TemperingStep = {
 	stage: string;
@@ -80,7 +81,7 @@ declare type TemperingStep = {
 	note: string;
 	linkType?: string;
 	link?: TieredId;
-}
+};
 
 declare namespace Body {
 	type Modification = {
