@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardContent, Stack, Typography, Chip } from "@mui/material";
+import { Card, CardHeader, CardContent, Stack, Typography, Chip, Grid } from "@mui/material";
 import { ChaptersChip, RarityChip } from "@/components/chips";
 import { useBodyTempering, useChapter } from "@/data/api";
 import { orderBy } from "es-toolkit";
@@ -45,9 +45,28 @@ function TemperingStageCard({ stage }: { stage: TemperingStage }) {
 			<CardContent>
 				<Stack>
 					<Typography variant="caption">{stage.description}</Typography>
+					<Grid container spacing={2}>
+						{stage.updates.map((x, index) => {
+							const isCompleted = x.completed && x.completed <= chapter;
+							const chapters = isCompleted ? [x.started, x.completed!] : [x.started];
+							return (
+								<Grid key={index} direction="row" alignItems="center" size={{ xs: 12, sm: 6, md: 4 }}>
+									<Stack direction="row" alignItems="flex-start" justifyItems="baseline" spacing={1}>
+										<ChaptersChip chapters={chapters} />
+										<Typography
+											variant="body2"
+											color={isCompleted ? "text.primary" : "text.secondary"}
+											whiteSpace="pre-line"
+										>
+											{x.note}
+										</Typography>
+									</Stack>
+								</Grid>
+							);
+						})}
+					</Grid>
 				</Stack>
 			</CardContent>
-			<CardContent>🚧 Under Construction</CardContent>
 		</Card>
 	);
 }
