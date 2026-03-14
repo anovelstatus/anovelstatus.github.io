@@ -81,6 +81,7 @@ function TemperingStageCard({ stage }: { stage: TemperingStage }) {
 												<RichTextSpan data={x.note2} />
 											</Typography>
 											{x.link && x.linkType == "Skill" && <SkillButton skill={x.link} />}
+											{x.link && x.linkType == "Title" && <TitleButton title={x.link} />}
 										</Stack>
 									</Stack>
 								</Grid>
