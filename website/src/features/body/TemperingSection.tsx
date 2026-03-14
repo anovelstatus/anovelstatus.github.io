@@ -4,6 +4,7 @@ import { useBodyTempering, useChapter, useLoreTopic } from "@/data/api";
 import { orderBy } from "es-toolkit";
 import { RichTextSpan } from "@/components/RichTextSpan";
 import { SkillButton } from "../skills";
+import { TitleButton } from "../titles";
 
 export default function TemperingSection() {
 	const chapter = useChapter();
@@ -34,6 +35,7 @@ function TemperingStageCard({ stage }: { stage: TemperingStage }) {
 	const lore = useLoreTopic("Tempering - " + stage.name, chapter);
 
 	const completedSteps = stage.updates.filter((x) => x.completed && x.completed <= chapter);
+	const startedSteps = stage.updates.filter((x) => x.started <= chapter);
 	const stepsTotal = `${completedSteps.length} / ${stage.expectedSteps} steps completed`;
 	return (
 		<Card variant="outlined">
@@ -63,7 +65,7 @@ function TemperingStageCard({ stage }: { stage: TemperingStage }) {
 					))}
 					<Typography variant="h6">Steps</Typography>
 					<Grid container spacing={2}>
-						{stage.updates.map((x, index) => {
+						{startedSteps.map((x, index) => {
 							const isCompleted = x.completed && x.completed <= chapter;
 							const chapters = isCompleted ? [x.started, x.completed!] : [x.started];
 							return (
