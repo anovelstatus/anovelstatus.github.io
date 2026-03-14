@@ -3,7 +3,7 @@ import { build } from "rolldown";
 import { copyFile } from "node:fs/promises";
 
 // The first comment limits the script's authorization to only the current document
-// The second comment disables ESLint errors when I looked at the compiled code locally.
+// The second comment disables lint errors when I look at the compiled code locally.
 const banner = `
 /** @OnlyCurrentDoc */
 /* eslint-disable no-undef */

@@ -10,7 +10,7 @@ export default [
 		files: ["**/*.{ts,tsx}"],
 	},
 	{
-		ignores: ["./website/dist/**/*", "node_modules/**/*"],
+		ignores: ["./**/dist/**/*", "node_modules/**/*"],
 	},
 	{
 		settings: {
