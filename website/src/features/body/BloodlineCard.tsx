@@ -9,7 +9,6 @@ export type BloodlineProps = { bloodline: Bloodline };
 export default function BloodlineCard({ bloodline }: BloodlineProps) {
 	const chapter = useChapter();
 	const lore = useLoreTopic(bloodline.lore, chapter);
-
 	// In case there are multiple gains in the same chapter, display the one with the highest purity first
 	const updates = orderBy(
 		bloodline.updates.filter((x) => x.chapter <= chapter),
@@ -32,9 +31,11 @@ export default function BloodlineCard({ bloodline }: BloodlineProps) {
 					</Stack>
 				}
 			/>
-			<CardActions>
-				<TitleButton title={bloodline.title} />
-			</CardActions>
+			{latest.title && (
+				<CardActions>
+					<TitleButton title={latest.title} />
+				</CardActions>
+			)}
 			<CardContent>
 				<Stack>
 					<Typography variant="h6">Progress</Typography>
