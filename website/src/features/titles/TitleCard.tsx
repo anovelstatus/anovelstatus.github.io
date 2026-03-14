@@ -1,5 +1,5 @@
 import { Card, CardHeader, CardContent, Stack, Grid, Typography } from "@mui/material";
-import { RarityChip } from "@/components/chips";
+import { ChaptersChip, RarityChip } from "@/components/chips";
 import { sameId } from "@/data/helpers";
 import { useTitles } from "@/data/api";
 import { getPreviousTitle } from "./helpers";
@@ -22,6 +22,7 @@ export default function TitleCard({ id, sx }: TitleCardProps) {
 				title={
 					<Grid container spacing={1} alignItems="center">
 						{title.name} <RarityChip name={title.tier} />
+						<ChaptersChip chapters={title.chapter} />
 					</Grid>
 				}
 			/>

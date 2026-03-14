@@ -18,7 +18,6 @@ export const getBloodlines: CacheableFunc<Bloodline[]> = (ss, ranges, attributes
 function mapBloodlineColumns(headerRow: string[]): BloodlineColumns {
 	return {
 		name: headerRow.indexOf("Bloodline"),
-		title: headerRow.indexOf("Title"),
 		lore: headerRow.indexOf("Lore Key"),
 		quality: headerRow.indexOf("Quality"),
 	};
@@ -28,7 +27,6 @@ function mapBloodlineRow(row: SpreadsheetValue[], headers: BloodlineColumns, upd
 	const name = row[headers.name];
 	return {
 		name: name as string,
-		title: parseId(row[headers.title] as string),
 		lore: row[headers.lore] as string,
 		quality: row[headers.quality] as string,
 		updates: updates.filter((x) => name == x.name),
@@ -52,6 +50,7 @@ function mapStatusColumns(headerRow: string[]): StatusColumns {
 		purity: headerRow.indexOf("Purity"),
 		status: headerRow.indexOf("Status"),
 		note: headerRow.indexOf("Cause"),
+		title: headerRow.indexOf("Title"),
 	};
 }
 
@@ -62,5 +61,6 @@ function mapUpdateRow(row: SpreadsheetValue[], headers: StatusColumns): Bloodlin
 		purity: row[headers.purity] as string | number,
 		status: row[headers.status] as string,
 		note: row[headers.note] as string,
+		title: row[headers.title] ? parseId(row[headers.title] as string) : undefined,
 	};
 }

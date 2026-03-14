@@ -54,12 +54,12 @@ type BloodlineStatus = {
 	purity: string | number;
 	status: string;
 	note?: string;
+	title?: TieredId;
 };
 
 declare type Bloodline = {
 	name: string;
 	updates: BloodlineStatus[];
-	title: TieredId;
 	lore: string;
 	quality: string;
 };

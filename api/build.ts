@@ -1,6 +1,5 @@
 // https://manikumar.in/blog/integrating-npm-packages-in-google-apps-script-guide/
 import { build } from "rolldown";
-import { replacePlugin } from "rolldown/plugins";
 import "dotenv/config";
 import { copyFile } from "node:fs/promises";
 
@@ -16,15 +15,12 @@ await build({
 		minify: false,
 	},
 	treeshake: false,
-	plugins: [
-		replacePlugin(
-			{
-				PATREON_KEY: `"${process.env["PATREON_KEY"] || "testing"}"`,
-				SS_LINK: `"${process.env["SS_LINK"] || "testing"}"`,
-			},
-			{ preventAssignment: true },
-		),
-	],
+	transform: {
+		define: {
+			PATREON_KEY: `"${process.env["PATREON_KEY"] || "testing"}"`,
+			SS_LINK: `"${process.env["SS_LINK"] || "testing"}"`,
+		},
+	},
 });
 
 await copyFile("src/appsscript.json", "dist/appsscript.json");
