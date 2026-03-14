@@ -46,6 +46,7 @@ function useBody() {
 		bloodlines: [],
 		mutations: [],
 		races: [],
+		tempering: [],
 	}).data;
 }
 

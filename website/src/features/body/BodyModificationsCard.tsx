@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardContent, List, ListItem, Stack, Typography } from "@mui/material";
+import { Card, CardHeader, CardContent, Stack, Typography, Grid } from "@mui/material";
 import { ChaptersChip } from "@/components/chips";
 import { useChapter } from "@/data/api";
 import { orderBy } from "es-toolkit";
@@ -18,22 +18,15 @@ export default function BodyModificationsCard({ mutations }: BodyModificationsCa
 		<Card>
 			<CardHeader title="Modifications & Mutations" />
 			<CardContent>
-				<List>
+				<Grid container spacing={2}>
 					{sorted.map((x, index) => {
 						return (
-							<ListItem key={index}>
-								<Stack>
-									<Stack direction="row">
-										<Typography variant="subtitle1">{x.name}</Typography>
-										<ChaptersChip chapters={x.chapters.filter((x) => x <= chapter)} />
-									</Stack>
-									<Typography variant="caption">{parseNote(x, chapter)}</Typography>
-									<Typography variant="caption">Source: {x.source}</Typography>
-								</Stack>
-							</ListItem>
+							<Grid key={index} size={{ xs: 12, sm: 6, md: 4 }}>
+								<BodyModificationCard modification={x} />
+							</Grid>
 						);
 					})}
-				</List>
+				</Grid>
 			</CardContent>
 		</Card>
 	);
@@ -47,4 +40,26 @@ function parseNote(mutation: Body.Modification, currentChapter: number): string 
 	const lines = mutation.note.split("\n");
 	const prefix = `${latestChapter} - `;
 	return lines.find((x) => x.startsWith(prefix))?.replace(prefix, "") ?? mutation.note;
+}
+
+function BodyModificationCard({ modification }: { modification: Body.Modification }) {
+	const chapter = useChapter();
+	return (
+		<Card variant="outlined">
+			<CardHeader
+				title={
+					<Stack direction="row" alignItems="center">
+						{modification.name}
+						<ChaptersChip chapters={modification.chapters} />
+					</Stack>
+				}
+			/>
+			<CardContent>
+				<Stack>
+					<Typography variant="caption">{parseNote(modification, chapter)}</Typography>
+					<Typography variant="caption">Source: {modification.source}</Typography>
+				</Stack>
+			</CardContent>
+		</Card>
+	);
 }

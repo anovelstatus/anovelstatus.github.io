@@ -6,6 +6,8 @@ declare type SpreadsheetValue = string | number | boolean | undefined;
 declare type RangeKey =
 	| "Bloodline Updates"
 	| "Bloodlines"
+	| "Body Tempering Stages"
+	| "Body Tempering Progress"
 	| "Races"
 	| "Mutations"
 	| "Talents"
