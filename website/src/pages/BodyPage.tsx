@@ -2,6 +2,7 @@ import { BloodlineCard, BodyModificationsCard, RaceCard } from "@/features/body"
 import { getRaceForChapter } from "@/data/helpers";
 import { useBloodlines, useBodyMutations, useChapter, useLoreTopic, useRaces } from "@/data/api";
 import { Stack, Typography, Grid, Card, CardHeader, CardContent } from "@mui/material";
+import TemperingSection from "@/features/body/TemperingSection";
 
 export function BodyPage() {
 	const chapter = useChapter();
@@ -50,10 +51,7 @@ export function BodyPage() {
 				</Card>
 			)}
 			<BodyModificationsCard mutations={mutations} />
-			<Card>
-				<CardHeader title="Tempering" />
-				<CardContent>🚧 Under Construction</CardContent>
-			</Card>
+			<TemperingSection />
 		</Stack>
 	);
 }

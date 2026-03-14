@@ -1,0 +1,87 @@
+import { Card, CardHeader, CardContent, Stack, Typography, Chip, Grid } from "@mui/material";
+import { ChaptersChip, RarityChip } from "@/components/chips";
+import { useBodyTempering, useChapter, useLoreTopic } from "@/data/api";
+import { orderBy } from "es-toolkit";
+
+export default function TemperingSection() {
+	const chapter = useChapter();
+	const stages = useBodyTempering();
+
+	const filteredStages = stages?.filter((x) => x.chapter <= chapter);
+	if (!filteredStages?.length) return <></>;
+
+	const sorted = orderBy(filteredStages, [(x) => x.chapter], ["asc"]);
+
+	return (
+		<Card>
+			<CardHeader title="Tempering" />
+			<CardContent>
+				<Stack direction="column" spacing={2}>
+					{sorted.map((x, index) => {
+						return <TemperingStageCard key={index} stage={x} />;
+					})}
+				</Stack>
+			</CardContent>
+		</Card>
+	);
+}
+
+function TemperingStageCard({ stage }: { stage: TemperingStage }) {
+	const chapter = useChapter();
+
+	const lore = useLoreTopic("Tempering - " + stage.name, chapter);
+
+	const completedSteps = stage.updates.filter((x) => x.completed && x.completed <= chapter);
+	const stepsTotal = `${completedSteps.length} / ${stage.expectedSteps} steps completed`;
+	return (
+		<Card variant="outlined">
+			<CardHeader
+				title={
+					<Stack direction="row" alignItems="center">
+						{stage.name} <RarityChip name={stage.tier} />
+						<ChaptersChip chapters={stage.chapter} />
+						<Chip size="small" label={stepsTotal} />
+					</Stack>
+				}
+			/>
+			<CardContent>
+				<Stack>
+					<Typography variant="caption">{stage.description}</Typography>
+					{lore.description && (
+						<Typography variant="body2" whiteSpace="pre-line">
+							{lore.description}
+						</Typography>
+					)}
+					{lore.updates.map((update, index) => (
+						<Stack direction="row" key={index}>
+							<Typography variant="body2" whiteSpace="pre-line">
+								{update.note}
+							</Typography>
+						</Stack>
+					))}
+					<Typography variant="h6">Steps</Typography>
+					<Grid container spacing={2}>
+						{stage.updates.map((x, index) => {
+							const isCompleted = x.completed && x.completed <= chapter;
+							const chapters = isCompleted ? [x.started, x.completed!] : [x.started];
+							return (
+								<Grid key={index} direction="row" alignItems="center" size={{ xs: 12, sm: 6, md: 4 }}>
+									<Stack direction="row" alignItems="flex-start" justifyItems="baseline" spacing={1}>
+										<ChaptersChip chapters={chapters} />
+										<Typography
+											variant="body2"
+											color={isCompleted ? "text.primary" : "text.secondary"}
+											whiteSpace="pre-line"
+										>
+											{x.note}
+										</Typography>
+									</Stack>
+								</Grid>
+							);
+						})}
+					</Grid>
+				</Stack>
+			</CardContent>
+		</Card>
+	);
+}

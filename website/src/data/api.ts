@@ -58,6 +58,10 @@ export function useBodyMutations() {
 	return useBody().mutations;
 }
 
+export function useBodyTempering() {
+	return useBody().tempering;
+}
+
 /** Race history in descending chapter and tier order */
 export function useRaces() {
 	const races = useBody().races;
