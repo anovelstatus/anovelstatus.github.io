@@ -2,6 +2,7 @@ import { Card, CardHeader, CardContent, Stack, Typography, Chip, Grid } from "@m
 import { ChaptersChip, RarityChip } from "@/components/chips";
 import { useBodyTempering, useChapter, useLoreTopic } from "@/data/api";
 import { orderBy } from "es-toolkit";
+import { RichTextSpan } from "@/components/RichTextSpan";
 
 export default function TemperingSection() {
 	const chapter = useChapter();
@@ -73,7 +74,7 @@ function TemperingStageCard({ stage }: { stage: TemperingStage }) {
 											color={isCompleted ? "text.primary" : "text.secondary"}
 											whiteSpace="pre-line"
 										>
-											{x.note}
+											<RichTextSpan data={x.note2} />
 										</Typography>
 									</Stack>
 								</Grid>
