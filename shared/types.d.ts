@@ -64,6 +64,24 @@ declare type Bloodline = {
 	quality: string;
 };
 
+declare type TemperingStage = {
+	name: string;
+	tier: string;
+	chapter: number;
+	description: string;
+	updates: TemperingStep[];
+}
+
+declare type TemperingStep = {
+	stage: string;
+	category: string;
+	started: number;
+	completed?: number;
+	note: string;
+	linkType?: string;
+	link?: TieredId;
+}
+
 declare namespace Body {
 	type Modification = {
 		name: string;
@@ -78,6 +96,7 @@ declare namespace Body {
 		mutations: Modification[];
 		races: Race[];
 		bloodlines: Bloodline[];
+		tempering: TemperingStage[];
 	};
 }
 
