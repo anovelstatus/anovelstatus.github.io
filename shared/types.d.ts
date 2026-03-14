@@ -1,3 +1,12 @@
+declare type RichText = {
+	text: string;
+	fgColor: string;
+	bold: boolean;
+	italic: boolean;
+	strikethrough: boolean;
+	underline: boolean;
+};
+
 declare namespace Attribute {
 	type Evolution = {
 		chapter: number;
@@ -79,6 +88,7 @@ declare type TemperingStep = {
 	started: number;
 	completed?: number;
 	note: string;
+	note2: RichText[];
 	linkType?: string;
 	link?: TieredId;
 };
