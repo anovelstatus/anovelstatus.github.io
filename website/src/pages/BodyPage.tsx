@@ -30,7 +30,6 @@ export function BodyPage() {
 			<Typography variant="body2" gutterBottom whiteSpace="pre-line">
 				{bodyLore.description}
 			</Typography>
-			<TemperingSection />
 			<Card>
 				<CardHeader title="Race" />
 				<CardContent>
@@ -52,6 +51,7 @@ export function BodyPage() {
 				</Card>
 			)}
 			<BodyModificationsCard mutations={mutations} />
+			<TemperingSection />
 		</Stack>
 	);
 }
