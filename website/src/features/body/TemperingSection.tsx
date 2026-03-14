@@ -1,6 +1,6 @@
 import { Card, CardHeader, CardContent, Stack, Typography, Chip, Grid } from "@mui/material";
 import { ChaptersChip, RarityChip } from "@/components/chips";
-import { useBodyTempering, useChapter } from "@/data/api";
+import { useBodyTempering, useChapter, useLoreTopic } from "@/data/api";
 import { orderBy } from "es-toolkit";
 
 export default function TemperingSection() {
@@ -29,6 +29,8 @@ export default function TemperingSection() {
 function TemperingStageCard({ stage }: { stage: TemperingStage }) {
 	const chapter = useChapter();
 
+	const lore = useLoreTopic("Tempering - " + stage.name, chapter);
+
 	const completedSteps = stage.updates.filter((x) => x.completed && x.completed <= chapter);
 	const stepsTotal = `${completedSteps.length} / ${stage.expectedSteps} steps completed`;
 	return (
@@ -45,6 +47,19 @@ function TemperingStageCard({ stage }: { stage: TemperingStage }) {
 			<CardContent>
 				<Stack>
 					<Typography variant="caption">{stage.description}</Typography>
+					{lore.description && (
+						<Typography variant="body2" whiteSpace="pre-line">
+							{lore.description}
+						</Typography>
+					)}
+					{lore.updates.map((update, index) => (
+						<Stack direction="row" key={index}>
+							<Typography variant="body2" whiteSpace="pre-line">
+								{update.note}
+							</Typography>
+						</Stack>
+					))}
+					<Typography variant="h6">Steps</Typography>
 					<Grid container spacing={2}>
 						{stage.updates.map((x, index) => {
 							const isCompleted = x.completed && x.completed <= chapter;
