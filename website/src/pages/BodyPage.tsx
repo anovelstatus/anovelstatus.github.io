@@ -21,8 +21,6 @@ export function BodyPage() {
 
 	const bodyLore = useLoreTopic("Body", chapter);
 
-	const cardSize = { xs: 12, md: 6 };
-
 	return (
 		<Stack>
 			<Typography variant="h3" gutterBottom>
@@ -43,7 +41,7 @@ export function BodyPage() {
 					<CardContent>
 						<Grid container spacing={2}>
 							{filteredBloodlines.map((bloodline, index) => (
-								<Grid key={index} size={cardSize}>
+								<Grid key={index} size={{ xs: 12, md: 6 }}>
 									<BloodlineCard bloodline={bloodline} />
 								</Grid>
 							))}

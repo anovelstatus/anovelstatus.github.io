@@ -26,8 +26,8 @@ export default function BloodlineCard({ bloodline }: BloodlineProps) {
 				title={
 					<Stack direction="row" alignItems="center">
 						{bloodline.name}, {formatPurity(latest.purity)}
-						<ChaptersChip chapters={[latest.chapter]} />
 						<Chip label={bloodline.quality} size="small" variant="filled" color="default" />
+						<ChaptersChip chapters={[latest.chapter]} />
 					</Stack>
 				}
 			/>
@@ -41,10 +41,10 @@ export default function BloodlineCard({ bloodline }: BloodlineProps) {
 					<Typography variant="h6">Progress</Typography>
 					{updates.map((update, index) => (
 						<Stack key={index} direction="row" alignItems="center" spacing={1}>
+							<ChaptersChip chapters={[update.chapter]} />
 							<Typography variant="body2">
 								{formatPurity(update.purity)} from {update.note}
 							</Typography>{" "}
-							<ChaptersChip chapters={[update.chapter]} />
 						</Stack>
 					))}
 				</Stack>
@@ -56,7 +56,7 @@ export default function BloodlineCard({ bloodline }: BloodlineProps) {
 						{lore.description}
 					</Typography>
 					{lore.updates.map((update, index) => (
-						<Stack direction="column" key={index}>
+						<Stack direction="row" key={index}>
 							<ChaptersChip chapters={[update.chapter]} />
 							<Typography key={index} variant="body2" whiteSpace="pre-line">
 								{update.note}
