@@ -21,7 +21,8 @@ export default function TitleCard({ id, sx }: TitleCardProps) {
 			<CardHeader
 				title={
 					<Grid container spacing={1} alignItems="center">
-						{title.name} <RarityChip name={title.tier} /><ChaptersChip chapters={title.chapter} />
+						{title.name} <RarityChip name={title.tier} />
+						<ChaptersChip chapters={title.chapter} />
 					</Grid>
 				}
 			/>
