@@ -3,6 +3,7 @@ import { ChaptersChip, RarityChip } from "@/components/chips";
 import { useBodyTempering, useChapter, useLoreTopic } from "@/data/api";
 import { orderBy } from "es-toolkit";
 import { RichTextSpan } from "@/components/RichTextSpan";
+import { SkillButton } from "../skills";
 
 export default function TemperingSection() {
 	const chapter = useChapter();
@@ -66,16 +67,19 @@ function TemperingStageCard({ stage }: { stage: TemperingStage }) {
 							const isCompleted = x.completed && x.completed <= chapter;
 							const chapters = isCompleted ? [x.started, x.completed!] : [x.started];
 							return (
-								<Grid key={index} direction="row" alignItems="center" size={{ xs: 12, sm: 6, md: 4 }}>
+								<Grid key={index} direction="column" alignItems="center" size={{ xs: 12, sm: 6, md: 4 }} spacing={2}>
 									<Stack direction="row" alignItems="flex-start" justifyItems="baseline" spacing={1}>
 										<ChaptersChip chapters={chapters} />
-										<Typography
-											variant="body2"
-											color={isCompleted ? "text.primary" : "text.secondary"}
-											whiteSpace="pre-line"
-										>
-											<RichTextSpan data={x.note2} />
-										</Typography>
+										<Stack direction="column" spacing={1}>
+											<Typography
+												variant="body2"
+												color={isCompleted ? "text.primary" : "text.secondary"}
+												whiteSpace="pre-line"
+											>
+												<RichTextSpan data={x.note2} />
+											</Typography>
+											{x.link && x.linkType == "Skill" && <SkillButton skill={x.link} />}
+										</Stack>
 									</Stack>
 								</Grid>
 							);
