@@ -31,37 +31,31 @@ export function BodyPage() {
 			<Typography variant="body2" gutterBottom whiteSpace="pre-line">
 				{bodyLore.description}
 			</Typography>
-			<Grid container spacing={1}>
-				<Grid size={cardSize}>
-					<Card>
-						<CardHeader title="Tempering" />
-						<CardContent>🚧 Under Construction</CardContent>
-					</Card>
-				</Grid>
-				<Grid size={cardSize}>
-					<Card>
-						<CardHeader title="Race" />
-						<CardContent>
-							<RaceCard race={race} />
-						</CardContent>
-					</Card>
-				</Grid>
-				<Grid size={cardSize}>
-					<Card>
-						<CardHeader title="Bloodlines" />
-						<CardContent>
-							<Stack>
-								{filteredBloodlines.map((bloodline, index) => (
-									<BloodlineCard bloodline={bloodline} key={index} />
-								))}
-							</Stack>
-						</CardContent>
-					</Card>
-				</Grid>
-				<Grid size={cardSize}>
-					<BodyModificationsCard mutations={mutations} />
-				</Grid>
-			</Grid>
+			<Card>
+				<CardHeader title="Race" />
+				<CardContent>
+					<RaceCard race={race} />
+				</CardContent>
+			</Card>
+			{filteredBloodlines.length > 0 && (
+				<Card>
+					<CardHeader title="Bloodlines" />
+					<CardContent>
+						<Grid container spacing={2}>
+							{filteredBloodlines.map((bloodline, index) => (
+								<Grid key={index} size={cardSize}>
+									<BloodlineCard bloodline={bloodline} />
+								</Grid>
+							))}
+						</Grid>
+					</CardContent>
+				</Card>
+			)}
+			<BodyModificationsCard mutations={mutations} />
+			<Card>
+				<CardHeader title="Tempering" />
+				<CardContent>🚧 Under Construction</CardContent>
+			</Card>
 		</Stack>
 	);
 }
