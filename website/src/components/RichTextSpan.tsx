@@ -3,9 +3,13 @@ export type RichTextSpanProps = {
 };
 
 export function RichTextSpan({ data }: RichTextSpanProps) {
+	// Add fallback option in case the API has cached a string version of the note instead of the rich text array
+	if (typeof data === "string") {
+		return <>{data}</>;
+	}
 	return (
 		<>
-			{data.map((x, index) => {
+			{(data || []).map((x, index) => {
 				return (
 					<span
 						key={index}
