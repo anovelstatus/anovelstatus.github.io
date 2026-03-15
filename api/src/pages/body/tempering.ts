@@ -1,4 +1,4 @@
-import { parseId } from "../shared";
+import { parseId, parseRichText } from "../shared";
 
 type StageColumns = Omit<Record<keyof TemperingStage, number>, "updates">;
 type StepColumns = Omit<Record<keyof TemperingStep, number>, "note2">;
@@ -72,18 +72,7 @@ function mapStepColumns(headerRow: string[]): StepColumns {
 }
 
 function mapStep(row: SpreadsheetValue[], richRow: RichValue[], headers: StepColumns): TemperingStep {
-	const note2: RichText[] =
-		richRow[headers.note]?.getRuns().map((run) => {
-			const style = run.getTextStyle();
-			return {
-				text: run.getText(),
-				fgColor: style.getForegroundColor() ?? "#000000",
-				bold: style.isBold() ?? false,
-				italic: style.isItalic() ?? false,
-				strikethrough: style.isStrikethrough() ?? false,
-				underline: style.isUnderline() ?? false,
-			};
-		}) ?? [];
+	const note: RichText[] = parseRichText(richRow[headers.note]);
 	return {
 		stage: row[headers.stage] as string,
 		category: row[headers.category] as string,
@@ -91,7 +80,7 @@ function mapStep(row: SpreadsheetValue[], richRow: RichValue[], headers: StepCol
 		completed: row[headers.completed] as number,
 		linkType: row[headers.linkType] as string,
 		link: row[headers.link] ? parseId(row[headers.link] as string) : undefined,
-		note: row[headers.note] as string,
-		note2: note2,
+		note: note,
+		note2: note,
 	};
 }

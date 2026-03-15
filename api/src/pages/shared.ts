@@ -41,3 +41,18 @@ export function parseId(fullName: string): TieredId {
 	const name = parts.join(" - ");
 	return { name, tier };
 }
+
+export function parseRichText(value: RichValue | undefined): RichText[] {
+	if (!value) return [];
+	return value.getRuns().map((run) => {
+		const style = run.getTextStyle();
+		return {
+			text: run.getText(),
+			fgColor: style.getForegroundColor() ?? "#000000",
+			bold: style.isBold() ?? false,
+			italic: style.isItalic() ?? false,
+			strikethrough: style.isStrikethrough() ?? false,
+			underline: style.isUnderline() ?? false,
+		};
+	});
+}

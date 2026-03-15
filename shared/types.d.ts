@@ -87,7 +87,7 @@ declare type TemperingStep = {
 	category: string;
 	started: number;
 	completed?: number;
-	note: string;
+	note: RichText[];
 	note2: RichText[];
 	linkType?: string;
 	link?: TieredId;
