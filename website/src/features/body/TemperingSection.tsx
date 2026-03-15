@@ -59,7 +59,7 @@ function TemperingStageCard({ stage }: { stage: TemperingStage }) {
 					{lore.updates.map((update, index) => (
 						<Stack direction="row" key={index}>
 							<Typography variant="body2" whiteSpace="pre-line">
-								<RichTextSpan data={update.note2} />
+								<RichTextSpan data={update.note} />
 							</Typography>
 						</Stack>
 					))}

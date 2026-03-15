@@ -54,8 +54,7 @@ declare type Race = {
 	chapter: number;
 	talents: TieredId[];
 	freeSlots: number;
-	note: string;
-	note2: RichText[];
+	note: RichText[];
 };
 
 type BloodlineStatus = {
@@ -149,8 +148,7 @@ declare type Lore = {
 declare type LoreEntry = {
 	chapter: number;
 	key: string;
-	note?: string;
-	note2: RichText[];
+	note: RichText[];
 };
 
 /** Something that has a tier */

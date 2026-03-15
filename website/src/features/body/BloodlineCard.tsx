@@ -61,7 +61,7 @@ export default function BloodlineCard({ bloodline }: BloodlineProps) {
 							<Stack direction="row" key={index}>
 								<ChaptersChip chapters={[update.chapter]} />
 								<Typography key={index} variant="body2" whiteSpace="pre-line">
-									<RichTextSpan data={update.note2} />
+									<RichTextSpan data={update.note} />
 								</Typography>
 							</Stack>
 						))}
