@@ -1,21 +1,19 @@
-import { parseId } from "../shared";
+import { getChapterFilter, parseId, parseTable } from "../shared";
 
 type StatusColumns = Record<keyof BloodlineStatus, number>;
 type BloodlineColumns = Omit<Record<keyof Bloodline, number>, "updates">;
 
 export const getBloodlines: CacheableFunc<Bloodline[]> = (ss, ranges, attributes, chapterLimit) => {
 	const updates = getBloodlineUpdates(ss, ranges, attributes, chapterLimit);
-
-	const range = ranges.Bloodlines;
-	const data = ss.getRange(range).getValues();
-	const headers = mapBloodlineColumns(data[0]!);
-	return data
-		.slice(1)
-		.map((row) => mapBloodlineRow(row, headers, updates))
-		.filter((x) => x.updates.length > 0);
+	return parseTable(
+		ss.getRange(ranges.Bloodlines),
+		mapBloodlineColumns,
+		(row, headers) => mapBloodlineRow(row, headers, updates),
+		(row) => row.updates.length > 0,
+	);
 };
 
-function mapBloodlineColumns(headerRow: string[]): BloodlineColumns {
+function mapBloodlineColumns(headerRow: SpreadsheetValue[]): BloodlineColumns {
 	return {
 		name: headerRow.indexOf("Bloodline"),
 		lore: headerRow.indexOf("Lore Key"),
@@ -33,17 +31,16 @@ function mapBloodlineRow(row: SpreadsheetValue[], headers: BloodlineColumns, upd
 	};
 }
 
-export const getBloodlineUpdates: CacheableFunc<BloodlineStatus[]> = (ss, ranges, _attributes, chapterLimit) => {
-	const range = ranges["Bloodline Updates"];
-	const data = ss.getRange(range).getValues();
-	const headers = mapStatusColumns(data[0]!);
-	return data
-		.slice(1)
-		.map((row) => mapUpdateRow(row, headers))
-		.filter((x) => x.chapter <= chapterLimit);
+const getBloodlineUpdates: CacheableFunc<BloodlineStatus[]> = (ss, ranges, _attributes, chapterLimit) => {
+	return parseTable(
+		ss.getRange(ranges["Bloodline Updates"]),
+		mapStatusColumns,
+		mapStatusRow,
+		getChapterFilter(chapterLimit, "chapter"),
+	);
 };
 
-function mapStatusColumns(headerRow: string[]): StatusColumns {
+function mapStatusColumns(headerRow: SpreadsheetValue[]): StatusColumns {
 	return {
 		name: headerRow.indexOf("Race"),
 		chapter: headerRow.indexOf("Chapter"),
@@ -54,7 +51,7 @@ function mapStatusColumns(headerRow: string[]): StatusColumns {
 	};
 }
 
-function mapUpdateRow(row: SpreadsheetValue[], headers: StatusColumns): BloodlineStatus {
+function mapStatusRow(row: SpreadsheetValue[], headers: StatusColumns): BloodlineStatus {
 	return {
 		name: row[headers.name] as string,
 		chapter: row[headers.chapter] as number,

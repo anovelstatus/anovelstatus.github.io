@@ -1,28 +1,24 @@
-type Columns = Record<keyof LoreEntry, number>;
+import { getChapterFilter, parseFormattedTable, parseRichText } from "./shared";
+
+type Columns = Omit<Record<keyof LoreEntry, number>, "note2">;
 
 export const getLore: CacheableFunc<Lore> = (ss, _ranges, _attributes, chapterLimit) => {
-	const descriptionData = ss.getSheetByName("Lore")!.getDataRange().getValues();
-	const descriptionHeaders = mapColumns(descriptionData[0]!);
-
-	const descriptions = descriptionData
-		.slice(1)
-		.filter((x) => x[0])
-		.map((row) => mapRow(row, descriptionHeaders))
-		.filter((x) => x.chapter <= chapterLimit);
-
-	const updateData = ss.getSheetByName("Updates")!.getDataRange().getValues();
-	const updateHeaders = mapColumns(updateData[0]!);
-
-	const updates = updateData
-		.slice(1)
-		.filter((x) => x[0])
-		.map((row) => mapRow(row, updateHeaders))
-		.filter((x) => x.chapter <= chapterLimit);
-
+	const descriptions = parseFormattedTable(
+		ss.getSheetByName("Lore")!.getDataRange(),
+		mapColumns,
+		mapRow,
+		getChapterFilter(chapterLimit, "chapter"),
+	);
+	const updates = parseFormattedTable(
+		ss.getSheetByName("Updates")!.getDataRange(),
+		mapColumns,
+		mapRow,
+		getChapterFilter(chapterLimit, "chapter"),
+	);
 	return { descriptions, updates };
 };
 
-function mapColumns(headerRow: string[]): Columns {
+function mapColumns(headerRow: SpreadsheetValue[]): Columns {
 	return {
 		chapter: headerRow.indexOf("Chapter"),
 		key: headerRow.indexOf("Key"),
@@ -30,10 +26,11 @@ function mapColumns(headerRow: string[]): Columns {
 	};
 }
 
-function mapRow(row: SpreadsheetValue[], headers: Columns): LoreEntry {
+function mapRow(row: SpreadsheetValue[], richRow: RichValue[], headers: Columns): LoreEntry {
 	return {
 		chapter: row[headers.chapter] as number,
 		key: row[headers.key] as string,
 		note: row[headers.note] as string | undefined,
+		note2: parseRichText(richRow[headers.note]),
 	};
 }

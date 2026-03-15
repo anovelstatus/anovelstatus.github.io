@@ -1,4 +1,4 @@
-import { parseId, parseRichText } from "../shared";
+import { getChapterFilter, parseFormattedTable, parseId, parseRichText, parseTable } from "../shared";
 
 type StageColumns = Omit<Record<keyof TemperingStage, number>, "updates">;
 type StepColumns = Omit<Record<keyof TemperingStep, number>, "note2">;
@@ -6,16 +6,16 @@ type StepColumns = Omit<Record<keyof TemperingStep, number>, "note2">;
 export const getTempering: CacheableFunc<TemperingStage[]> = (ss, ranges, attributes, chapterLimit) => {
 	const updates = getSteps(ss, ranges, attributes, chapterLimit);
 
-	const range = ranges["Body Tempering Stages"];
-	const data = ss.getRange(range).getValues();
-	const headers = mapStageColumns(data[0]!);
-	return data
-		.slice(1)
-		.map((row) => mapStage(row, headers, updates))
-		.filter((x) => x.updates.length > 0);
+	const range = ss.getRange(ranges["Body Tempering Stages"]);
+	return parseTable(
+		range,
+		mapStageColumns,
+		(row, headers) => mapStage(row, headers, updates),
+		(row) => row.updates.length > 0,
+	);
 };
 
-function mapStageColumns(headerRow: string[]): StageColumns {
+function mapStageColumns(headerRow: SpreadsheetValue[]): StageColumns {
 	return {
 		name: headerRow.indexOf("Stage"),
 		tier: headerRow.indexOf("Quality"),
@@ -38,28 +38,16 @@ function mapStage(row: SpreadsheetValue[], headers: StageColumns, updates: Tempe
 }
 
 const getSteps: CacheableFunc<TemperingStep[]> = (ss, ranges, _attributes, chapterLimit) => {
-	const range = ranges["Body Tempering Progress"];
-	const data = ss.getRange(range).getValues();
-	const richData = ss.getRange(range).getRichTextValues();
-
-	const headers = mapStepColumns(data[0]!);
-	const updates = [];
-	for (let i = 1; i < data.length; i++) {
-		const row = data[i]!;
-		const richRow = richData[i]!;
-		const step = mapStep(row, richRow, headers);
-		// Remove the finished chapter if it's in the future
-		if (step.completed && step.completed > chapterLimit) {
-			step.completed = undefined;
-		}
-		if (step.started <= chapterLimit) {
-			updates.push(step);
-		}
-	}
-	return updates;
+	const range = ss.getRange(ranges["Body Tempering Progress"]);
+	return parseFormattedTable(
+		range,
+		mapStepColumns,
+		(row, richRow, headers) => mapStep(row, richRow, headers, chapterLimit),
+		getChapterFilter(chapterLimit, "started"),
+	);
 };
 
-function mapStepColumns(headerRow: string[]): StepColumns {
+function mapStepColumns(headerRow: SpreadsheetValue[]): StepColumns {
 	return {
 		stage: headerRow.indexOf("Stage"),
 		category: headerRow.indexOf("Step"),
@@ -71,13 +59,23 @@ function mapStepColumns(headerRow: string[]): StepColumns {
 	};
 }
 
-function mapStep(row: SpreadsheetValue[], richRow: RichValue[], headers: StepColumns): TemperingStep {
+function mapStep(
+	row: SpreadsheetValue[],
+	richRow: RichValue[],
+	headers: StepColumns,
+	chapterLimit: number,
+): TemperingStep {
 	const note: RichText[] = parseRichText(richRow[headers.note]);
+
+	// If the step is completed in the future, treat it as not completed
+	let completed = row[headers.completed] as number | undefined;
+	if (completed && completed > chapterLimit) completed = undefined;
+
 	return {
 		stage: row[headers.stage] as string,
 		category: row[headers.category] as string,
 		started: row[headers.started] as number,
-		completed: row[headers.completed] as number,
+		completed: completed,
 		linkType: row[headers.linkType] as string,
 		link: row[headers.link] ? parseId(row[headers.link] as string) : undefined,
 		note: note,
