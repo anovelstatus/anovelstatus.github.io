@@ -1,7 +1,7 @@
 import { getChapterFilter, parseFormattedTable, parseId, parseRichText, parseTable } from "../shared";
 
 type StageColumns = Omit<Record<keyof TemperingStage, number>, "updates">;
-type StepColumns = Omit<Record<keyof TemperingStep, number>, "note2">;
+type StepColumns = Record<keyof TemperingStep, number>;
 
 export const getTempering: CacheableFunc<TemperingStage[]> = (ss, ranges, attributes, chapterLimit) => {
 	const updates = getSteps(ss, ranges, attributes, chapterLimit);
@@ -79,6 +79,5 @@ function mapStep(
 		linkType: row[headers.linkType] as string,
 		link: row[headers.link] ? parseId(row[headers.link] as string) : undefined,
 		note: note,
-		note2: note,
 	};
 }

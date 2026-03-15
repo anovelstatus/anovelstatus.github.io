@@ -3,6 +3,7 @@ import { ChaptersChip } from "@/components/chips";
 import { TitleButton } from "../titles";
 import { orderBy } from "es-toolkit";
 import { useChapter, useLoreTopic } from "@/data/api";
+import { RichTextSpan } from "@/components/RichTextSpan";
 
 export type BloodlineProps = { bloodline: Bloodline };
 
@@ -49,22 +50,24 @@ export default function BloodlineCard({ bloodline }: BloodlineProps) {
 					))}
 				</Stack>
 			</CardContent>
-			<CardContent>
-				<Stack>
-					<Typography variant="h6">Lore</Typography>
-					<Typography variant="body2" whiteSpace="pre-line">
-						{lore.description}
-					</Typography>
-					{lore.updates.map((update, index) => (
-						<Stack direction="row" key={index}>
-							<ChaptersChip chapters={[update.chapter]} />
-							<Typography key={index} variant="body2" whiteSpace="pre-line">
-								{update.note}
-							</Typography>
-						</Stack>
-					))}
-				</Stack>
-			</CardContent>
+			{lore.updates.length > 0 && (
+				<CardContent>
+					<Stack>
+						<Typography variant="h6">Lore</Typography>
+						<Typography variant="body2" whiteSpace="pre-line">
+							<RichTextSpan data={lore.description} />
+						</Typography>
+						{lore.updates.map((update, index) => (
+							<Stack direction="row" key={index}>
+								<ChaptersChip chapters={[update.chapter]} />
+								<Typography key={index} variant="body2" whiteSpace="pre-line">
+									<RichTextSpan data={update.note2} />
+								</Typography>
+							</Stack>
+						))}
+					</Stack>
+				</CardContent>
+			)}
 		</Card>
 	);
 }

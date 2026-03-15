@@ -7,6 +7,7 @@ import { PopoverButton } from "@/components/PopoverButton";
 import LoadingCard from "@/components/LoadingCard";
 import { popupCardStyles } from "@/styles";
 import { useRaces } from "@/data/api";
+import { RichTextSpan } from "@/components/RichTextSpan";
 
 type RaceCardProps = {
 	race?: Race;
@@ -34,7 +35,7 @@ export default function RaceCard({ race }: RaceCardProps) {
 			/>
 			<CardContent>
 				<Typography variant="body2" fontStyle="italic" whiteSpace="pre-line">
-					{race.note}
+					<RichTextSpan data={race.note2} />
 				</Typography>
 			</CardContent>
 			<CardContent>
