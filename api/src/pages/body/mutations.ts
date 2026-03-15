@@ -1,19 +1,17 @@
-import { getNumbersLessThanLimit } from "../shared";
+import { getNumbersLessThanLimit, parseTable } from "../shared";
 
 type Columns = Record<keyof Body.Modification, number>;
 
 export const getMutations: CacheableFunc<Body.Modification[]> = (ss, ranges, _attributes, chapterLimit) => {
-	const range = ranges.Mutations;
-	const data = ss.getRange(range).getValues();
-	const headers = mapColumns(data[0]!);
-
-	return data
-		.slice(1)
-		.map((row) => mapRow(row, headers, chapterLimit))
-		.filter((x) => x.chapters.length > 0);
+	return parseTable(
+		ss.getRange(ranges.Mutations),
+		mapColumns,
+		(row, headers) => mapRow(row, headers, chapterLimit),
+		(row) => row.chapters.length > 0,
+	);
 };
 
-function mapColumns(headerRow: string[]): Columns {
+function mapColumns(headerRow: SpreadsheetValue[]): Columns {
 	return {
 		name: headerRow.indexOf("Mutation"),
 		chapters: headerRow.indexOf("Chapters"),

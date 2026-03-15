@@ -1,19 +1,12 @@
-import { parseId } from "../shared";
+import { parseId, parseRichText, parseFormattedTable, getChapterFilter } from "../shared";
 
-type Columns = Record<keyof Race, number>;
+type Columns = Omit<Record<keyof Race, number>, "note2">;
 
 export const getRaces: CacheableFunc<Race[]> = (ss, ranges, _attributes, chapterLimit) => {
-	const range = ranges.Races;
-	const data = ss.getRange(range).getValues();
-	const headers = mapColumns(data[0]!);
-
-	return data
-		.slice(1)
-		.map((row) => mapRow(row, headers))
-		.filter((x) => x.chapter <= chapterLimit);
+	return parseFormattedTable(ss.getRange(ranges.Races), mapColumns, mapRow, getChapterFilter(chapterLimit, "chapter"));
 };
 
-function mapColumns(headerRow: string[]): Columns {
+function mapColumns(headerRow: SpreadsheetValue[]): Columns {
 	return {
 		name: headerRow.indexOf("Race"),
 		chapter: headerRow.indexOf("Chapter"),
@@ -24,7 +17,7 @@ function mapColumns(headerRow: string[]): Columns {
 	};
 }
 
-function mapRow(row: SpreadsheetValue[], headers: Columns): Race {
+function mapRow(row: SpreadsheetValue[], richRow: RichValue[], headers: Columns): Race {
 	return {
 		name: row[headers.name] as string,
 		chapter: row[headers.chapter] as number,
@@ -32,5 +25,6 @@ function mapRow(row: SpreadsheetValue[], headers: Columns): Race {
 		talents: row[headers.talents] ? (row[headers.talents] as string).split(", ").map(parseId) : [],
 		freeSlots: row[headers.freeSlots] as number,
 		note: row[headers.note] as string,
+		note2: parseRichText(richRow[headers.note]),
 	};
 }
