@@ -1,6 +1,6 @@
 import { getChapterFilter, parseFormattedTable, parseRichText } from "./shared";
 
-type Columns = Omit<Record<keyof LoreEntry, number>, "note2">;
+type Columns = Record<keyof LoreEntry, number>;
 
 export const getLore: CacheableFunc<Lore> = (ss, _ranges, _attributes, chapterLimit) => {
 	const descriptions = parseFormattedTable(
@@ -30,7 +30,6 @@ function mapRow(row: SpreadsheetValue[], richRow: RichValue[], headers: Columns)
 	return {
 		chapter: row[headers.chapter] as number,
 		key: row[headers.key] as string,
-		note: row[headers.note] as string | undefined,
-		note2: parseRichText(richRow[headers.note]),
+		note: parseRichText(richRow[headers.note]),
 	};
 }

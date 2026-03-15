@@ -115,7 +115,7 @@ export function useLoreTopic(key: string, chapter: number) {
 		maxBy(
 			lore.descriptions.filter((x) => x.key === key && x.chapter <= chapter),
 			(x) => x.chapter,
-		)?.note || "";
+		)?.note || [];
 	const updates = orderBy(
 		lore.updates.filter((x) => x.key === key && x.chapter <= chapter),
 		[(x) => x.chapter],

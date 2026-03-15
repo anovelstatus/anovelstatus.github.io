@@ -53,13 +53,13 @@ function TemperingStageCard({ stage }: { stage: TemperingStage }) {
 					<Typography variant="caption">{stage.description}</Typography>
 					{lore.description && (
 						<Typography variant="body2" whiteSpace="pre-line">
-							{lore.description}
+							<RichTextSpan data={lore.description} />
 						</Typography>
 					)}
 					{lore.updates.map((update, index) => (
 						<Stack direction="row" key={index}>
 							<Typography variant="body2" whiteSpace="pre-line">
-								{update.note}
+								<RichTextSpan data={update.note} />
 							</Typography>
 						</Stack>
 					))}
@@ -78,7 +78,7 @@ function TemperingStageCard({ stage }: { stage: TemperingStage }) {
 												color={isCompleted ? "text.primary" : "text.secondary"}
 												whiteSpace="pre-line"
 											>
-												<RichTextSpan data={x.note2} />
+												<RichTextSpan data={x.note} />
 											</Typography>
 											{x.link && x.linkType == "Skill" && <SkillButton skill={x.link} />}
 											{x.link && x.linkType == "Title" && <TitleButton title={x.link} />}

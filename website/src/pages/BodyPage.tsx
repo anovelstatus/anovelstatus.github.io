@@ -3,6 +3,7 @@ import { getRaceForChapter } from "@/data/helpers";
 import { useBloodlines, useBodyMutations, useChapter, useLoreTopic, useRaces } from "@/data/api";
 import { Stack, Typography, Grid, Card, CardHeader, CardContent } from "@mui/material";
 import TemperingSection from "@/features/body/TemperingSection";
+import { RichTextSpan } from "@/components/RichTextSpan";
 
 export function BodyPage() {
 	const chapter = useChapter();
@@ -28,7 +29,7 @@ export function BodyPage() {
 				Priam's Body
 			</Typography>
 			<Typography variant="body2" gutterBottom whiteSpace="pre-line">
-				{bodyLore.description}
+				<RichTextSpan data={bodyLore.description} />
 			</Typography>
 			<Card>
 				<CardHeader title="Race" />
