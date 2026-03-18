@@ -7,6 +7,7 @@ import { useChapter, useSkills, useSkillTiers } from "@/data/api";
 import { createCollapsedTierColumn } from "@/components/AppTable/columns";
 import SkillButton from "./SkillButton";
 import { getMaxLevel, getPrerequisiteList, getProgressGradient } from "./helpers";
+import { RichTextSpan } from "@/components/RichTextSpan";
 
 export const useColumns = () => {
 	const skillTiers = useSkillTiers();
@@ -82,7 +83,9 @@ export const useColumns = () => {
 				const previousSkills = findByIds(skills, row.original.previous);
 				return (
 					<Stack>
-						<Typography variant="body2">{row.original.description}</Typography>
+						<Typography variant="body2" whiteSpace="pre-line">
+							<RichTextSpan data={row.original.description} />
+						</Typography>
 						{list.length > 0 && <Typography variant="h6">Ideal Prerequisites:</Typography>}
 						{list}
 						{previousSkills.length > 0 && <Typography variant="h6">Previous/Merged Skill(s):</Typography>}

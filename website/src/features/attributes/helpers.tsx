@@ -4,6 +4,8 @@ import { Box } from "@mui/material";
 import { useMemo } from "react";
 import { SkillButton } from "../skills";
 import { TitleButton } from "../titles";
+import { RichTextSpan } from "@/components/RichTextSpan";
+import { sumBy } from "es-toolkit";
 
 export function getEvolvedName(attribute: Attribute.Details, status: Status): string {
 	const evolution = getCurrentEvolution(status, attribute);
@@ -91,7 +93,15 @@ export function getChapterGains(chapter: number): React.ReactNode[] {
 		attribute.boosts
 			.filter((x) => x.chapter === chapter)
 			.forEach((boost) => {
-				const suffix = boost.note ? ` (${boost.note})` : "";
+				const suffix = boost.note ? (
+					<>
+						{" ("}
+						<RichTextSpan data={boost.note} />
+						{")"}
+					</>
+				) : (
+					""
+				);
 				notes.push(
 					<Box key={`${attribute.name}-boost-${boost.title}`}>
 						{boost.boost > 0 ? "+" : ""}
@@ -103,16 +113,28 @@ export function getChapterGains(chapter: number): React.ReactNode[] {
 			});
 	}
 	for (const skill of skills || []) {
-		const skillLevels = skill.gains.find((x) => x.chapter === chapter);
-		if (skillLevels) {
+		const skillLevels = skill.gains.filter((x) => x.chapter === chapter);
+		if (skillLevels.length > 0) {
 			const skillAttributes = attributes
 				.filter((x) => skill[x.name])
-				.map((x) => `${skill[x.name]! * skillLevels.count} ${x.abbreviation}`);
+				.map((x) => `${skill[x.name]! * sumBy(skillLevels, (x) => x.count)} ${x.abbreviation}`);
 			if (skillAttributes.length === 0) continue;
 			notes.push(
 				<Box key={`${skill.name}-levels`}>
-					{`${skillAttributes.join(", ")} from ${skillLevels.count} levels in `}
+					{`${skillAttributes.join(", ")} from ${sumBy(skillLevels, (x) => x.count)} levels in `}
 					<SkillButton skill={skill} />
+				</Box>,
+			);
+		}
+	}
+
+	for (const attribute of attributes || []) {
+		const gains = attribute.gains.filter((x) => x.chapter === chapter && x.gain !== 0);
+		for (const gain of gains) {
+			notes.push(
+				<Box key={`${attribute.name}-gain`}>
+					{`${gain.gain} ${attribute.abbreviation} from `}
+					<RichTextSpan data={gain.note} />
 				</Box>,
 			);
 		}

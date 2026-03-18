@@ -1,5 +1,6 @@
 import { Card, CardHeader, CardContent, Stack, Grid, Typography } from "@mui/material";
 import { ChaptersChip, RarityChip } from "@/components/chips";
+import { RichTextSpan } from "@/components/RichTextSpan";
 
 type AchievementCardProps = { achievement: Achievement } & PropsWithStyle;
 
@@ -17,24 +18,24 @@ export default function AchievementCard({ achievement, sx }: AchievementCardProp
 			<CardContent>
 				<Stack>
 					<Typography variant="body2" whiteSpace="pre-line">
-						{achievement.description}
+						<RichTextSpan data={achievement.description} />
 					</Typography>
 					<Typography variant="h6">Message</Typography>
 					<Typography variant="body2" whiteSpace="pre-line">
-						{achievement.message}
+						<RichTextSpan data={achievement.message} />
 					</Typography>
 					<Typography variant="body2" fontStyle="italic">
 						Sent to {achievement.messageRecipients.join(", ")}
 					</Typography>
 					<Typography variant="h6">Rewards</Typography>
 					<Typography variant="body2" whiteSpace="pre-line">
-						{achievement.rewards}
+						<RichTextSpan data={achievement.rewards} />
 					</Typography>
 					{achievement.note && (
 						<>
 							<Typography variant="h6">Other notes:</Typography>
 							<Typography variant="body2" whiteSpace="pre-line">
-								{achievement.note}
+								<RichTextSpan data={achievement.note} />
 							</Typography>
 						</>
 					)}

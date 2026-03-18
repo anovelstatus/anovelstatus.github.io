@@ -1,5 +1,5 @@
 export type RichTextSpanProps = {
-	data: RichText[];
+	data: string | RichText[];
 };
 
 export function RichTextSpan({ data }: RichTextSpanProps) {

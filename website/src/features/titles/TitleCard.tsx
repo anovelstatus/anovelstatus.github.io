@@ -5,6 +5,7 @@ import { useTitles } from "@/data/api";
 import { getPreviousTitle } from "./helpers";
 import LoadingCard from "@/components/LoadingCard";
 import TitleButton from "./TitleButton";
+import { RichTextSpan } from "@/components/RichTextSpan";
 
 type TitleCardProps = { id: TieredId } & PropsWithStyle;
 
@@ -28,8 +29,8 @@ export default function TitleCard({ id, sx }: TitleCardProps) {
 			/>
 			<CardContent>
 				<Stack>
-					<Typography variant="body2" sx={{ whiteSpace: "pre-line" }}>
-						{title.note}
+					<Typography variant="body2" whiteSpace="pre-line">
+						<RichTextSpan data={title.note} />
 					</Typography>
 					{previousTitle ? <TitleButton title={previousTitle} /> : null}
 				</Stack>

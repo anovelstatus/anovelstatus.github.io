@@ -1,5 +1,6 @@
 import { createCollapsedChapterColumn, createCollapsedTierColumn } from "@/components/AppTable/columns";
 import { ChaptersChip, RarityChip } from "@/components/chips";
+import { RichTextSpan } from "@/components/RichTextSpan";
 import { useMetalTiers } from "@/data/api";
 import { Typography, Stack } from "@mui/material";
 import { createColumnHelper, type ColumnDef } from "@tanstack/react-table";
@@ -13,7 +14,7 @@ export const useColumns = () => {
 			cell: ({ row }) => (
 				<Stack>
 					<Typography variant="body2" whiteSpace="pre-line">
-						{row.original.description}
+						<RichTextSpan data={row.original.description} />
 					</Typography>
 					<Stack direction="row" spacing={1} alignItems="center">
 						<RarityChip name={row.original.tier} />
@@ -33,7 +34,7 @@ export const useColumns = () => {
 			cell: ({ row }) => (
 				<Stack>
 					<Typography variant="body2" whiteSpace="pre-line">
-						{row.original.message}
+						<RichTextSpan data={row.original.message} />
 					</Typography>
 					<Typography variant="body2" fontStyle="italic">
 						Sent to {row.original.messageRecipients.join(", ")}
@@ -46,7 +47,7 @@ export const useColumns = () => {
 			size: 300,
 			cell: ({ row }) => (
 				<Typography variant="body2" whiteSpace="pre-line">
-					{row.original.rewards}
+					<RichTextSpan data={row.original.rewards} />
 				</Typography>
 			),
 		}),
@@ -55,7 +56,7 @@ export const useColumns = () => {
 			size: 300,
 			cell: ({ row }) => (
 				<Typography variant="body2" whiteSpace="pre-line">
-					{row.original.note}
+					<RichTextSpan data={row.original.note} />
 				</Typography>
 			),
 		}),

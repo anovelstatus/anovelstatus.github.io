@@ -38,7 +38,8 @@ export default function AchievementTable() {
 	const table = useAppTable({
 		data,
 		columns: useColumns(),
-		getRowId: (row) => row.description,
+		getRowId: (row) =>
+			typeof row.description === "string" ? row.description : row.description.map((x) => x.text).join(""),
 		initialState: {
 			sorting: [{ id: "chapter", desc: true }],
 		},

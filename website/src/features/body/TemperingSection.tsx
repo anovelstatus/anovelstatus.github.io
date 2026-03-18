@@ -50,7 +50,9 @@ function TemperingStageCard({ stage }: { stage: TemperingStage }) {
 			/>
 			<CardContent>
 				<Stack>
-					<Typography variant="caption">{stage.description}</Typography>
+					<Typography variant="body2" whiteSpace="pre-line">
+						<RichTextSpan data={stage.description} />
+					</Typography>
 					{lore.description && (
 						<Typography variant="body2" whiteSpace="pre-line">
 							<RichTextSpan data={lore.description} />

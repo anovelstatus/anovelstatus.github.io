@@ -6,6 +6,7 @@ import { useChapter, useSkills, useSkillTiers } from "@/data/api";
 import SkillButton from "./SkillButton";
 import { getMaxLevel, getPrerequisiteList, getProgressGradient } from "./helpers";
 import LoadingCard from "@/components/LoadingCard";
+import { RichTextSpan } from "@/components/RichTextSpan";
 
 type SkillCardProps = { id: TieredId } & PropsWithStyle;
 
@@ -20,7 +21,6 @@ export default function SkillCard({ id, sx }: SkillCardProps) {
 	if (!skill) return <LoadingCard headerOnly sx={sx} />;
 
 	const previousSkills = findByIds(skills, skill.previous);
-	console.log(previousSkills);
 
 	const prerequisiteList = getPrerequisiteList(skill);
 
@@ -43,7 +43,9 @@ export default function SkillCard({ id, sx }: SkillCardProps) {
 			/>
 			<CardContent>
 				<Stack>
-					<Typography>{skill.description}</Typography>
+					<Typography variant="body2" whiteSpace="pre-line">
+						<RichTextSpan data={skill.description} />
+					</Typography>
 					<AttributeSummary item={skill} />
 					{prerequisiteList.length > 0 && (
 						<>

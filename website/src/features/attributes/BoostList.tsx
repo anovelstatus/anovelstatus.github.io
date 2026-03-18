@@ -2,6 +2,9 @@ import { Typography, Box } from "@mui/material";
 import { ChaptersChip } from "../../components/chips";
 import { useChapter } from "@/data/api";
 import { getPastBoosts } from "./helpers";
+import { parseId } from "@/data/helpers";
+import { TitleButton } from "../titles";
+import { RichTextSpan } from "@/components/RichTextSpan";
 
 export type AttributeDetailsProps = {
 	attribute: Attribute.Details;
@@ -14,14 +17,18 @@ export function BoostList({ attribute }: AttributeDetailsProps) {
 	// I thought about using TitleButton here, but it looks messy in a list like this.
 	// We already list the chapter number, so you can find the title easily enough.
 	const items = pastBoosts.map((x, index) => (
-		<li key={index}>
-			<Box>
-				<Typography component="span" variant="body2">
-					<span style={{ fontWeight: "bold" }}>{x.boost * 100}%</span> from {x.title}
-					{x.note ? " (" + x.note + ")" : undefined}{" "}
-				</Typography>
-				<ChaptersChip chapters={[x.chapter]} />
-			</Box>
+		<li key={index} style={{ marginBottom: "8px" }}>
+			<Typography component="span" variant="body2">
+				<span style={{ fontWeight: "bold" }}>{x.boost * 100}%</span> from <TitleButton title={parseId(x.title)} />
+				{x.note ? (
+					<>
+						{" ("}
+						<RichTextSpan data={x.note} />
+						{")"}
+					</>
+				) : undefined}{" "}
+			</Typography>
+			<ChaptersChip chapters={[x.chapter]} />
 		</li>
 	));
 
