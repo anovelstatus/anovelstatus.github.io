@@ -4,6 +4,7 @@ import { Stack, Typography } from "@mui/material";
 import { AttributeDescriptions } from "../AttributeDescriptions";
 import { AttributeStatus } from "../AttributeStatus";
 import { getPastMilestones, getPastEvolutions } from "../helpers";
+import { RichTextSpan } from "@/components/RichTextSpan";
 
 export function OfficialStatusPanel() {
 	const chapter = useChapter();
@@ -21,14 +22,24 @@ export function OfficialStatusPanel() {
 			<AttributeDescriptions name="Descriptions" getNotes={(attribute) => [attribute.note]} />
 			<AttributeDescriptions
 				name="Milestones"
-				getNotes={(attribute) => getPastMilestones(status, attribute).map((x) => `${x.milestone}: ${x.note}`)}
+				getNotes={(attribute) =>
+					getPastMilestones(status, attribute).map((x) => (
+						<span key={x.milestone}>
+							{x.milestone}: <RichTextSpan data={x.note} />
+						</span>
+					))
+				}
 			/>
 			<AttributeDescriptions
 				name="Evolutions"
 				getNotes={(attribute) =>
 					getPastEvolutions(status, attribute)
 						.slice(-1)
-						.map((evolution) => `${evolution.name || "None"}: ${evolution.note}`)
+						.map((evolution) => (
+							<span key={evolution.name}>
+								{evolution.name || "None"}: <RichTextSpan data={evolution.note} />
+							</span>
+						))
 				}
 			/>
 		</Stack>

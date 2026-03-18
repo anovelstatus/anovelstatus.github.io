@@ -1,10 +1,11 @@
 import { Typography, Stack, Grid, Box } from "@mui/material";
 import { useGroupedAttributes } from "@/data/api";
 import { AttributeGroupCard } from "./AttributeGroupCard";
+import type React from "react";
 
 export type AttributeDescriptionsProps = {
 	name: string;
-	getNotes: (attribute: Attribute.Details) => string[];
+	getNotes: (attribute: Attribute.Details) => React.ReactNode[];
 };
 
 export function AttributeDescriptions({ name, getNotes }: AttributeDescriptionsProps) {

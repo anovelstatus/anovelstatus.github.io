@@ -21,13 +21,7 @@ export function CalculatedStatusPanel() {
 			</Typography>
 			<AttributeStatus status={status} previousStatus={previousStatus} />
 			<Typography variant="h4">Gains This Chapter</Typography>
-			<Stack>
-				{gains.map((gain, index) => (
-					<Typography key={index} variant="body2">
-						{gain}
-					</Typography>
-				))}
-			</Stack>
+			<Stack>{gains}</Stack>
 		</Stack>
 	);
 }
