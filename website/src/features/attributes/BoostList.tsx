@@ -4,6 +4,7 @@ import { useChapter } from "@/data/api";
 import { getPastBoosts } from "./helpers";
 import { parseId } from "@/data/helpers";
 import { TitleButton } from "../titles";
+import { RichTextSpan } from "@/components/RichTextSpan";
 
 export type AttributeDetailsProps = {
 	attribute: Attribute.Details;
@@ -17,16 +18,20 @@ export function BoostList({ attribute }: AttributeDetailsProps) {
 	// We already list the chapter number, so you can find the title easily enough.
 	const items = pastBoosts.map((x, index) => (
 		<li key={index} style={{ marginBottom: "8px" }}>
-			<Box>
-				<Typography component="span" variant="body2">
-					<span style={{ fontWeight: "bold" }}>{x.boost * 100}%</span> from{" "}
-					<span style={{ fontWeight: "bold" }}>
-						<TitleButton title={parseId(x.title)} />
-					</span>
-					{x.note ? " (" + x.note + ")" : undefined}{" "}
-				</Typography>
-				<ChaptersChip chapters={[x.chapter]} />
-			</Box>
+			<Typography component="span" variant="body2">
+				<span style={{ fontWeight: "bold" }}>{x.boost * 100}%</span> from{" "}
+				<span style={{ fontWeight: "bold" }}>
+					<TitleButton title={parseId(x.title)} />
+				</span>
+				{x.note ? (
+					<>
+						{" ("}
+						<RichTextSpan data={x.note} />
+						{")"}
+					</>
+				) : undefined}{" "}
+			</Typography>
+			<ChaptersChip chapters={[x.chapter]} />
 		</li>
 	));
 
