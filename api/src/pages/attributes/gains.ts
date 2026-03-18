@@ -1,17 +1,14 @@
-type InternalGain = Attribute.Gain;
+import { getChapterFilter, parseFormattedTable, parseRichText } from "../shared";
+
+export type InternalGain = Attribute.Gain;
 type Columns = Record<keyof InternalGain, number>;
 
 export const getGains: CacheableFunc<InternalGain[]> = (ss, _ranges, _attributes, chapterLimit) => {
-	const data = ss.getSheetByName("Stat Gains")!.getDataRange().getValues();
-	const headers = mapColumns(data[0]!);
-
-	return data
-		.slice(1)
-		.map((row) => mapRow(row, headers))
-		.filter((x) => x.chapter <= chapterLimit);
+	const range = ss.getSheetByName("Stat Gains")!.getDataRange();
+	return parseFormattedTable(range, mapColumns, mapRow, getChapterFilter(chapterLimit, "chapter"));
 };
 
-function mapColumns(headerRow: string[]): Columns {
+function mapColumns(headerRow: SpreadsheetValue[]): Columns {
 	return {
 		chapter: headerRow.indexOf("Chapter"),
 		attribute: headerRow.indexOf("Attribute"),
@@ -20,11 +17,11 @@ function mapColumns(headerRow: string[]): Columns {
 	};
 }
 
-function mapRow(row: SpreadsheetValue[], headers: Columns): InternalGain {
+function mapRow(row: SpreadsheetValue[], richRow: RichValue[], headers: Columns): InternalGain {
 	return {
 		chapter: row[headers.chapter] as number,
 		attribute: row[headers.attribute] as string,
 		gain: row[headers.gain] as number,
-		note: row[headers.note] as string,
+		note: parseRichText(richRow[headers.note]),
 	};
 }

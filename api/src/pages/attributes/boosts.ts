@@ -1,19 +1,14 @@
-import { parseId } from "../shared";
+import { getChapterFilter, parseFormattedTable, parseId, parseRichText } from "../shared";
 
-type InternalBoost = Attribute.Boost & { attribute: string };
+export type InternalBoost = Attribute.Boost & { attribute: string };
 type Columns = Omit<Record<keyof InternalBoost, number>, "titleId">;
 
 export const getBoosts: CacheableFunc<InternalBoost[]> = (ss, ranges, _attributes, chapterLimit) => {
-	const data = ss.getRange(ranges["Attribute Boosts"]).getValues();
-	const headers = mapColumns(data[0]!);
-
-	return data
-		.slice(1)
-		.map((row) => mapRow(row, headers))
-		.filter((x) => x.chapter <= chapterLimit);
+	const range = ss.getRange(ranges["Attribute Boosts"]);
+	return parseFormattedTable(range, mapColumns, mapRow, getChapterFilter(chapterLimit, "chapter"));
 };
 
-function mapColumns(headerRow: string[]): Columns {
+function mapColumns(headerRow: SpreadsheetValue[]): Columns {
 	return {
 		chapter: headerRow.indexOf("Chapter"),
 		attribute: headerRow.indexOf("Attribute"),
@@ -23,13 +18,13 @@ function mapColumns(headerRow: string[]): Columns {
 	};
 }
 
-function mapRow(row: SpreadsheetValue[], headers: Columns): InternalBoost {
+function mapRow(row: SpreadsheetValue[], richRow: RichValue[], headers: Columns): InternalBoost {
 	return {
 		chapter: row[headers.chapter] as number,
 		attribute: row[headers.attribute] as string,
 		boost: row[headers.boost] as number,
 		title: row[headers.title] as string,
 		titleId: parseId(row[headers.title] as string),
-		note: row[headers.note] as string,
+		note: parseRichText(richRow[headers.note]),
 	};
 }

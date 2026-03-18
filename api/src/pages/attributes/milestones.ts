@@ -1,14 +1,14 @@
-type InternalBoost = Attribute.Milestone & { attribute: string };
-type Columns = Record<keyof InternalBoost, number>;
+import { parseFormattedTable, parseRichText } from "../shared";
 
-export const getMilestones: CacheableFunc<InternalBoost[]> = (ss, ranges) => {
-	const data = ss.getRange(ranges["Attribute Milestones"]).getValues();
-	const headers = mapColumns(data[0]!);
+export type InternalMilestone = Attribute.Milestone & { attribute: string };
+type Columns = Record<keyof InternalMilestone, number>;
 
-	return data.slice(1).map((row) => mapRow(row, headers));
+export const getMilestones: CacheableFunc<InternalMilestone[]> = (ss, ranges) => {
+	const range = ss.getRange(ranges["Attribute Milestones"]);
+	return parseFormattedTable(range, mapColumns, mapRow, (x) => !!x);
 };
 
-function mapColumns(headerRow: string[]): Columns {
+function mapColumns(headerRow: SpreadsheetValue[]): Columns {
 	return {
 		attribute: headerRow.indexOf("Attribute"),
 		milestone: headerRow.indexOf("Milestone"),
@@ -16,10 +16,10 @@ function mapColumns(headerRow: string[]): Columns {
 	};
 }
 
-function mapRow(row: SpreadsheetValue[], headers: Columns): InternalBoost {
+function mapRow(row: SpreadsheetValue[], richRow: RichValue[], headers: Columns): InternalMilestone {
 	return {
 		attribute: row[headers.attribute] as string,
-		note: row[headers.note] as string,
+		note: parseRichText(richRow[headers.note]),
 		milestone: row[headers.milestone] as number,
 	};
 }

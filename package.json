@@ -16,7 +16,8 @@
 		"build-spreadsheet": "cd spreadsheet && tsc && node build.ts",
 		"config-spreadsheet": "node config-clasp.ts spreadsheet",
 		"deploy-spreadsheet": "clasp --project spreadsheet/dist/.clasp.json push",
-		"test-spreadsheet": "cd spreadsheet && vitest"
+		"test-spreadsheet": "cd spreadsheet && vitest",
+		"build-all": "npm run build-website && npm run build-api && npm run build-spreadsheet"
 	},
 	"devDependencies": {
 		"@emotion/react": "^11.14.0",
