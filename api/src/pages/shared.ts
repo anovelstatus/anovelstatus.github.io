@@ -77,7 +77,7 @@ export function parseTable<T, TColumns>(
 	const headers = mapColumns(values[0]!);
 	return values
 		.slice(1)
-		.filter((row) => row[0]) // Skip rows with empty first cell
+		.filter((row) => row[0] || row[0] === 0) // Skip rows with empty first cell
 		.map((row) => mapRow(row, headers))
 		.filter(filter);
 }
