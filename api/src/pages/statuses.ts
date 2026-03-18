@@ -1,24 +1,22 @@
-import { setAttributeColumns, setAttributeValues } from "./shared";
+import { parseTable, setAttributeColumns, setAttributeValues } from "./shared";
 
 type Columns = Record<keyof Status, number>;
 
 export const getOfficialStatuses: CacheableFunc<Status[]> = (ss, _ranges, attributeNames, chapterLimit) => {
 	const sheet = ss.getSheetByName("Statuses")!;
 	const numberOfRows = sheet.getDataRange().getNumRows();
-	const data = sheet.getRange(2, 1, numberOfRows - 1, attributeNames.length + 1).getValues();
+	const range = sheet.getRange(2, 1, numberOfRows - 1, attributeNames.length + 1);
 
-	const headers = mapColumns(data[0]!, attributeNames);
-
-	return (
-		data
-			.slice(1)
-			.map((row) => mapRow(row, headers, attributeNames))
-			// make sure the row isn't empty
-			.filter((x) => x.chapter && x.chapter <= chapterLimit && x[attributeNames[0]!])
+	return parseTable(
+		range,
+		(headerRow) => mapColumns(headerRow, attributeNames),
+		(row, headers) => mapRow(row, headers, attributeNames),
+		// Don't just filter on chapter. Make sure there's actually data in the row.
+		(x) => x.chapter <= chapterLimit && x[attributeNames[0]!]! > 0,
 	);
 };
 
-function mapColumns(headerRow: string[], attributeNames: string[]): Columns {
+function mapColumns(headerRow: SpreadsheetValue[], attributeNames: string[]): Columns {
 	const headers: Columns = {
 		chapter: headerRow.indexOf("Chapter"),
 	};

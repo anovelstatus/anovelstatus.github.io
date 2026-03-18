@@ -1,16 +1,13 @@
+import { getChapterFilter, parseFormattedTable, parseRichText } from "./shared";
+
 type Columns = Record<keyof Achievement, number>;
 
 export const getAchievements: CacheableFunc<Achievement[]> = (ss, _ranges, _attributeNames, chapterLimit) => {
-	const data = ss.getSheetByName("Achievements")!.getDataRange().getValues();
-	const headers = mapColumns(data[0]!);
-
-	return data
-		.slice(1)
-		.map((row) => mapRow(row, headers))
-		.filter((x) => x.chapter && x.chapter <= chapterLimit);
+	const range = ss.getSheetByName("Achievements")!.getDataRange();
+	return parseFormattedTable(range, mapColumns, mapRow, getChapterFilter(chapterLimit, "chapter"));
 };
 
-function mapColumns(headerRow: string[]): Columns {
+function mapColumns(headerRow: SpreadsheetValue[]): Columns {
 	return {
 		chapter: headerRow.indexOf("Chapter"),
 		tier: headerRow.indexOf("Tier"),
@@ -22,14 +19,14 @@ function mapColumns(headerRow: string[]): Columns {
 	};
 }
 
-function mapRow(row: SpreadsheetValue[], headers: Columns): Achievement {
+function mapRow(row: SpreadsheetValue[], richRow: RichValue[], headers: Columns): Achievement {
 	return {
 		chapter: row[headers.chapter] as number,
 		tier: row[headers.tier] as string,
-		description: row[headers.description] as string,
-		message: row[headers.message] as string,
+		description: parseRichText(richRow[headers.description]),
+		message: parseRichText(richRow[headers.message]),
 		messageRecipients: (row[headers.messageRecipients] as string)?.split(",").map((s) => s.trim()) || [],
-		rewards: row[headers.rewards] as string,
-		note: row[headers.note] as string,
+		rewards: parseRichText(richRow[headers.rewards]),
+		note: parseRichText(richRow[headers.note]),
 	};
 }

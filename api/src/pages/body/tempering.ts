@@ -1,4 +1,4 @@
-import { getChapterFilter, parseFormattedTable, parseId, parseRichText, parseTable } from "../shared";
+import { getChapterFilter, parseFormattedTable, parseId, parseRichText } from "../shared";
 
 type StageColumns = Omit<Record<keyof TemperingStage, number>, "updates">;
 type StepColumns = Record<keyof TemperingStep, number>;
@@ -7,10 +7,10 @@ export const getTempering: CacheableFunc<TemperingStage[]> = (ss, ranges, attrib
 	const updates = getSteps(ss, ranges, attributes, chapterLimit);
 
 	const range = ss.getRange(ranges["Body Tempering Stages"]);
-	return parseTable(
+	return parseFormattedTable(
 		range,
 		mapStageColumns,
-		(row, headers) => mapStage(row, headers, updates),
+		(row, richRow, headers) => mapStage(row, richRow, headers, updates),
 		(row) => row.updates.length > 0,
 	);
 };
@@ -25,14 +25,19 @@ function mapStageColumns(headerRow: SpreadsheetValue[]): StageColumns {
 	};
 }
 
-function mapStage(row: SpreadsheetValue[], headers: StageColumns, updates: TemperingStep[]): TemperingStage {
+function mapStage(
+	row: SpreadsheetValue[],
+	richRow: RichValue[],
+	headers: StageColumns,
+	updates: TemperingStep[],
+): TemperingStage {
 	const name = row[headers.name];
 	return {
 		name: name as string,
 		tier: row[headers.tier] as string,
 		chapter: row[headers.chapter] as number,
 		expectedSteps: row[headers.expectedSteps] as number,
-		description: row[headers.description] as string,
+		description: parseRichText(richRow[headers.description]!),
 		updates: updates.filter((x) => x.stage == name),
 	};
 }

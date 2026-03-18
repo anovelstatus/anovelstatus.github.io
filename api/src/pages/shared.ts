@@ -15,7 +15,11 @@ export function getNumberIfLessThanLimit(value: SpreadsheetValue, chapterLimit: 
 }
 
 /** Figure out column indexes for all attributes in given row of headers */
-export function setAttributeColumns(headers: HasSomeAttributes, headerRow: string[], attributeNames: string[]) {
+export function setAttributeColumns(
+	headers: HasSomeAttributes,
+	headerRow: SpreadsheetValue[],
+	attributeNames: string[],
+) {
 	for (const attribute of attributeNames) headers[attribute] = headerRow.indexOf(attribute);
 	return headers;
 }
@@ -73,6 +77,7 @@ export function parseTable<T, TColumns>(
 	const headers = mapColumns(values[0]!);
 	return values
 		.slice(1)
+		.filter((row) => row[0]) // Skip rows with empty first cell
 		.map((row) => mapRow(row, headers))
 		.filter(filter);
 }
@@ -90,6 +95,7 @@ export function parseFormattedTable<T, TColumns>(
 
 	const data = [];
 	for (let i = 1; i < values.length; i++) {
+		// Make sure there's data in the row
 		if (!values[i]![0]) continue;
 		const entry = mapRow(values[i]!, richValues[i]!, headers);
 		if (filter(entry)) {

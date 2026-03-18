@@ -1,20 +1,19 @@
-import { parseId } from "./shared";
+import { getChapterFilter, parseFormattedTable, parseId, parseRichText } from "./shared";
 
 type Columns = Omit<Record<keyof Title | "title" | "chapterReplaced", number>, keyof TieredId>;
 
 /** Get list of Titles and their metadata. This does NOT include metadata for attribute boosts. That is loaded separately. */
 export const getTitles: CacheableFunc<Title[]> = (ss, ranges, _attributes, chapterLimit) => {
-	const range = ranges.Titles;
-	const data = ss.getRange(range).getValues();
-	const headers = mapColumns(data[0]!);
-
-	return data
-		.slice(1)
-		.map((row) => mapRow(row, headers, chapterLimit))
-		.filter((x) => x.chapter <= chapterLimit && x.chapter);
+	const range = ss.getRange(ranges.Titles);
+	return parseFormattedTable(
+		range,
+		mapColumns,
+		(row, richRow, headers) => mapRow(row, richRow, headers, chapterLimit),
+		getChapterFilter(chapterLimit, "chapter"),
+	);
 };
 
-function mapColumns(headerRow: string[]): Columns {
+function mapColumns(headerRow: SpreadsheetValue[]): Columns {
 	return {
 		title: headerRow.indexOf("Title"),
 		note: headerRow.indexOf("Description"),
@@ -25,7 +24,7 @@ function mapColumns(headerRow: string[]): Columns {
 	};
 }
 
-function mapRow(row: SpreadsheetValue[], headers: Columns, chapterLimit: number): Title {
+function mapRow(row: SpreadsheetValue[], richRow: RichValue[], headers: Columns, chapterLimit: number): Title {
 	const id = parseId(row[headers.title] as string);
 
 	const previous = row[headers.previous] ? parseId(row[headers.previous] as string) : undefined;
@@ -35,7 +34,7 @@ function mapRow(row: SpreadsheetValue[], headers: Columns, chapterLimit: number)
 
 	return {
 		...id,
-		note: row[headers.note] as string,
+		note: parseRichText(richRow[headers.note]),
 		chapter: row[headers.chapter] as number,
 		previous: previous,
 		replaced: chapterReplaced,

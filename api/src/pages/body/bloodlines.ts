@@ -1,4 +1,4 @@
-import { getChapterFilter, parseId, parseTable } from "../shared";
+import { getChapterFilter, parseFormattedTable, parseId, parseRichText, parseTable } from "../shared";
 
 type StatusColumns = Record<keyof BloodlineStatus, number>;
 type BloodlineColumns = Omit<Record<keyof Bloodline, number>, "updates">;
@@ -32,7 +32,7 @@ function mapBloodlineRow(row: SpreadsheetValue[], headers: BloodlineColumns, upd
 }
 
 const getBloodlineUpdates: CacheableFunc<BloodlineStatus[]> = (ss, ranges, _attributes, chapterLimit) => {
-	return parseTable(
+	return parseFormattedTable(
 		ss.getRange(ranges["Bloodline Updates"]),
 		mapStatusColumns,
 		mapStatusRow,
@@ -51,13 +51,13 @@ function mapStatusColumns(headerRow: SpreadsheetValue[]): StatusColumns {
 	};
 }
 
-function mapStatusRow(row: SpreadsheetValue[], headers: StatusColumns): BloodlineStatus {
+function mapStatusRow(row: SpreadsheetValue[], richRow: RichValue[], headers: StatusColumns): BloodlineStatus {
 	return {
 		name: row[headers.name] as string,
 		chapter: row[headers.chapter] as number,
 		purity: row[headers.purity] as string | number,
 		status: row[headers.status] as string,
-		note: row[headers.note] as string,
+		note: parseRichText(richRow[headers.note]!),
 		title: row[headers.title] ? parseId(row[headers.title] as string) : undefined,
 	};
 }
