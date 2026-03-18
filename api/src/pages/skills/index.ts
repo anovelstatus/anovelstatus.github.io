@@ -73,6 +73,7 @@ function mapRow(
 		bonuses: parseRichText(richRow[headers["bonuses"]!]),
 		notes: parseRichText(richRow[headers["notes"]!]),
 		tags: row[headers["tags"]!] as string,
+		// casting as unknown because the Record<string, number> for attribute gains messes with the type inference
 	} as unknown as Skill;
 	setAttributeValues(skill, row, headers, attributeNames);
 	return skill;
