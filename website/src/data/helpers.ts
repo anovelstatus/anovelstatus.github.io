@@ -55,3 +55,12 @@ export function sum<T>(arr: T[], getField?: (obj: T) => number): number {
 	if (!getField) getField = (obj) => obj as number;
 	return arr.reduce((prev, curr) => getField(curr) + prev, 0);
 }
+
+/** Parse something like `Name - Tier` into a name and tier */
+export function parseId(fullName: string): TieredId {
+	const parts = fullName.split(" - ");
+	// Get the last segment instead of assuming only 2 parts because at least one Talent has a dash in its name
+	const tier = parts.pop() as string;
+	const name = parts.join(" - ");
+	return { name, tier };
+}

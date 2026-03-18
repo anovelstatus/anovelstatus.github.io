@@ -20,7 +20,6 @@ export default function SkillCard({ id, sx }: SkillCardProps) {
 	if (!skill) return <LoadingCard headerOnly sx={sx} />;
 
 	const previousSkills = findByIds(skills, skill.previous);
-	console.log(previousSkills);
 
 	const prerequisiteList = getPrerequisiteList(skill);
 
