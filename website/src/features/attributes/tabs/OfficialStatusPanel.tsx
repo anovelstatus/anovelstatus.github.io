@@ -19,7 +19,10 @@ export function OfficialStatusPanel() {
 				totals based on skills and titles, check out the other tab.
 			</Typography>
 			<AttributeStatus status={status} previousStatus={previousStatus} />
-			<AttributeDescriptions name="Descriptions" getNotes={(attribute) => [attribute.note]} />
+			<AttributeDescriptions
+				name="Descriptions"
+				getNotes={(attribute) => [<RichTextSpan key={attribute.name} data={attribute.note} />]}
+			/>
 			<AttributeDescriptions
 				name="Milestones"
 				getNotes={(attribute) =>

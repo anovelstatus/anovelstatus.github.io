@@ -2,6 +2,7 @@ import { Card, CardHeader, CardContent, Stack, Typography, Grid } from "@mui/mat
 import { ChaptersChip } from "@/components/chips";
 import { useChapter } from "@/data/api";
 import { orderBy } from "es-toolkit";
+import { RichTextSpan } from "@/components/RichTextSpan";
 
 type BodyModificationsCardProps = {
 	mutations: Body.Modification[];
@@ -56,8 +57,12 @@ function BodyModificationCard({ modification }: { modification: Body.Modificatio
 			/>
 			<CardContent>
 				<Stack>
-					<Typography variant="caption">{parseNote(modification, chapter)}</Typography>
-					<Typography variant="caption">Source: {modification.source}</Typography>
+					<Typography variant="body2" whiteSpace="pre-line">
+						<RichTextSpan data={parseNote(modification, chapter)} />
+					</Typography>
+					<Typography variant="body2" whiteSpace="pre-line">
+						Source: <RichTextSpan data={modification.source} />
+					</Typography>
 				</Stack>
 			</CardContent>
 		</Card>

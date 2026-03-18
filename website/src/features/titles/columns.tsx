@@ -4,6 +4,7 @@ import { ChaptersChip, RarityChip } from "@/components/chips";
 import type { ColumnDef } from "@tanstack/react-table";
 import { createCollapsedChapterColumn, createCollapsedTierColumn } from "@/components/AppTable/columns";
 import { useMetalTiers } from "@/data/api";
+import { RichTextSpan } from "@/components/RichTextSpan";
 
 export const columnstyles: SxProps<Theme> = {
 	".nested": {
@@ -53,8 +54,8 @@ export const useColumns = () => {
 			size: 400,
 			enableSorting: false,
 			cell: ({ row }) => (
-				<Typography variant="body2" sx={{ whiteSpace: "pre-line" }}>
-					{row.original.note}
+				<Typography variant="body2" whiteSpace="pre-line">
+					<RichTextSpan data={row.original.note} />
 				</Typography>
 			),
 			meta: {

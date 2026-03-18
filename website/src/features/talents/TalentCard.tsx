@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardContent, Box, Stack, Typography, Grid, CardActions } from "@mui/material";
+import { Card, CardHeader, CardContent, Stack, Typography, Grid, CardActions } from "@mui/material";
 import { ChaptersChip, RarityChip } from "@/components/chips";
 import { findByIds, sameId, toIdString } from "@/data/helpers";
 import { useTalents } from "@/data/api";
@@ -6,6 +6,7 @@ import TieredButton from "@/components/TieredButton";
 import { PopoverButton } from "@/components/PopoverButton";
 import LoadingCard from "@/components/LoadingCard";
 import { popupCardStyles } from "@/styles";
+import { RichTextSpan } from "@/components/RichTextSpan";
 
 export type TalentCardProps = { id: TieredId } & PropsWithStyle;
 
@@ -29,25 +30,27 @@ export default function TalentCard({ id, sx }: TalentCardProps) {
 				}
 			/>
 			<CardContent>
-				<Stack>
-					<Typography variant="body2" fontStyle="italic">
-						{talent.note}
-					</Typography>
-					{previousCount ? <Box sx={{ marginTop: "20px" }}>Previous Talent{previousCount > 1 ? "s" : ""}:</Box> : <></>}
-				</Stack>
+				<Typography variant="body2" whiteSpace="pre-line">
+					<RichTextSpan data={talent.note} />
+				</Typography>
 			</CardContent>
 			{previousCount ? (
 				<CardActions>
-					{previousTalents.map((x, index) => {
-						return (
-							<PopoverButton
-								key={index}
-								id={toIdString(x)}
-								trigger={<TieredButton item={x} variant="outlined" />}
-								popover={() => <TalentCard id={x} sx={popupCardStyles} />}
-							/>
-						);
-					})}
+					<Stack>
+						<Typography variant="h6">Previous Talent{previousCount > 1 ? "s" : ""}:</Typography>
+						<Stack direction="row" spacing={1}>
+							{previousTalents.map((x, index) => {
+								return (
+									<PopoverButton
+										key={index}
+										id={toIdString(x)}
+										trigger={<TieredButton item={x} variant="outlined" />}
+										popover={() => <TalentCard id={x} sx={popupCardStyles} />}
+									/>
+								);
+							})}
+						</Stack>
+					</Stack>
 				</CardActions>
 			) : null}
 		</Card>
