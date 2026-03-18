@@ -1,11 +1,11 @@
-import { parseTable } from "./shared";
+import { getChapterFilter, parseTable } from "./shared";
 
 type Columns = Record<keyof Shortcut, number>;
 
 export const getTimelineShortcuts: CacheableFunc<Shortcut[]> = (ss, ranges, _attributes, chapterLimit) => {
 	const range = ss.getRange(ranges["Chapter Shortcuts"]);
 
-	return parseTable(range, mapColumns, mapRow, (x) => x.chapter <= chapterLimit);
+	return parseTable(range, mapColumns, mapRow, getChapterFilter(chapterLimit, "chapter"));
 };
 
 function mapColumns(headerRow: SpreadsheetValue[]): Columns {
