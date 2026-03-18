@@ -5,7 +5,7 @@ type Columns = Record<keyof Shortcut, number>;
 export const getTimelineShortcuts: CacheableFunc<Shortcut[]> = (ss, ranges, _attributes, chapterLimit) => {
 	const range = ss.getRange(ranges["Chapter Shortcuts"]);
 
-	return parseTable(range, mapColumns, mapRow, (x): boolean => x.chapter <= chapterLimit);
+	return parseTable(range, mapColumns, mapRow, (x) => x.chapter <= chapterLimit);
 };
 
 function mapColumns(headerRow: SpreadsheetValue[]): Columns {

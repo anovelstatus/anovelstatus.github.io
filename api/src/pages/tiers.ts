@@ -32,7 +32,7 @@ function mapRow(row: SpreadsheetValue[], headers: Columns, chapterLimit: number)
 		fgColor: row[headers.fgColor] as string,
 		bgColor: row[headers.bgColor] as string,
 	};
-	if (data.chapterRevealed < chapterLimit) {
+	if (data.chapterRevealed > chapterLimit) {
 		data.metalName = "?";
 		data.skillName = "?";
 	}
