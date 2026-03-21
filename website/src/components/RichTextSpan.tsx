@@ -12,19 +12,19 @@ export function hasNote(data: string | RichText[]): boolean {
 
 export function RichTextSpan({ data, ...props }: RichTextSpanProps) {
 	// Support plain text, but also support text formatting details from the spreasdheet
-	const contents =
-		typeof data === "string" ? (
-			data
-		) : (
-			<>
-				{(data || []).map((x, index) => (
-					<FormattedSpan key={index} {...x} />
-				))}
-			</>
+	if (typeof data === "string") {
+		return (
+			<Typography component="span" variant="body2" whiteSpace="pre-line" {...props}>
+				{data}
+			</Typography>
 		);
+	}
+	if (!data || data.length === 0) return null;
 	return (
 		<Typography component="span" variant="body2" whiteSpace="pre-line" {...props}>
-			{contents}
+			{(data || []).map((x, index) => (
+				<FormattedSpan key={index} {...x} />
+			))}
 		</Typography>
 	);
 }

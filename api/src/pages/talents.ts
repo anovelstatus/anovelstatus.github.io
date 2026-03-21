@@ -50,6 +50,6 @@ function mapRow(row: SpreadsheetValue[], richRow: RichValue[], headers: Columns,
 		chapterUndone: getNumberIfLessThanLimit(row[headers.chapterUndone], chapterLimit),
 		chapterReplaced: getNumbersLessThanLimit(row[headers.chapterReplaced], chapterLimit),
 		temporary: row[headers.temporary] as boolean,
-		type: row[headers.type] as TalentType,
+		type: row[headers.type] as string,
 	};
 }
