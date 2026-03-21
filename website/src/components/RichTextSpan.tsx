@@ -22,7 +22,7 @@ export function RichTextSpan({ data, ...props }: RichTextSpanProps) {
 	if (!data || data.length === 0) return null;
 	return (
 		<Typography component="span" variant="body2" whiteSpace="pre-line" {...props}>
-			{(data || []).map((x, index) => (
+			{data.map((x, index) => (
 				<FormattedSpan key={index} {...x} />
 			))}
 		</Typography>
