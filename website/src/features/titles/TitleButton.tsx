@@ -3,14 +3,15 @@ import TieredButton from "@/components/TieredButton";
 import { toIdString } from "@/data/helpers";
 import TitleCard from "./TitleCard";
 import { popupCardStyles } from "@/styles";
+import type { ButtonProps } from "@mui/material";
 
-type TitleButtonProps = { title: TieredId };
+type TitleButtonProps = { item: TieredId } & ButtonProps;
 
-export default function TitleButton({ title }: TitleButtonProps) {
+export default function TitleButton({ item: title, ...props }: TitleButtonProps) {
 	return (
 		<PopoverButton
 			id={toIdString(title)}
-			trigger={<TieredButton item={title} variant="outlined" size="small" />}
+			trigger={<TieredButton item={title} variant="outlined" {...props} />}
 			popover={() => <TitleCard id={title} sx={popupCardStyles} />}
 		/>
 	);

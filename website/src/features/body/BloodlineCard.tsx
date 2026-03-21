@@ -34,7 +34,7 @@ export function BloodlineCard({ bloodline }: BloodlineProps) {
 			/>
 			{latest.title && (
 				<CardActions>
-					<TitleButton title={latest.title} />
+					<TitleButton item={latest.title} />
 				</CardActions>
 			)}
 			<CardContent>

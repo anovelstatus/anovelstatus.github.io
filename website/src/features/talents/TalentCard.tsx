@@ -1,12 +1,10 @@
 import { Card, CardHeader, CardContent, Stack, Typography, Grid, CardActions } from "@mui/material";
 import { ChaptersChip, RarityChip } from "@/components/chips";
-import { findByIds, sameId, toIdString } from "@/data/helpers";
+import { findByIds, sameId } from "@/data/helpers";
 import { useTalents } from "@/data/api";
-import TieredButton from "@/components/TieredButton";
-import { PopoverButton } from "@/components/PopoverButton";
 import LoadingCard from "@/components/LoadingCard";
-import { popupCardStyles } from "@/styles";
 import { RichTextSpan } from "@/components/RichTextSpan";
+import TalentButton from "./TalentButton";
 
 export type TalentCardProps = { id: TieredId } & PropsWithStyle;
 
@@ -37,16 +35,9 @@ export default function TalentCard({ id, sx }: TalentCardProps) {
 					<Stack>
 						<Typography variant="h6">Previous Talent{previousCount > 1 ? "s" : ""}:</Typography>
 						<Stack direction="row" spacing={1}>
-							{previousTalents.map((x, index) => {
-								return (
-									<PopoverButton
-										key={index}
-										id={toIdString(x)}
-										trigger={<TieredButton item={x} variant="outlined" />}
-										popover={() => <TalentCard id={x} sx={popupCardStyles} />}
-									/>
-								);
-							})}
+							{previousTalents.map((x, index) => (
+								<TalentButton key={index} item={x} />
+							))}
 						</Stack>
 					</Stack>
 				</CardActions>

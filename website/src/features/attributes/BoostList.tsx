@@ -19,7 +19,8 @@ export function BoostList({ attribute }: AttributeDetailsProps) {
 	const items = pastBoosts.map((x, index) => (
 		<li key={index} style={{ marginBottom: "8px" }}>
 			<Typography component="span" variant="body2">
-				<span style={{ fontWeight: "bold" }}>{x.boost * 100}%</span> from <TitleButton title={parseId(x.title)} />
+				<span style={{ fontWeight: "bold" }}>{x.boost * 100}%</span> from{" "}
+				<TitleButton item={parseId(x.title)} size="small" variant="text" />
 				{hasNote(x.note) ? (
 					<>
 						{" ("}

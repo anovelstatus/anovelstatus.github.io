@@ -60,7 +60,7 @@ export default function SkillCard({ id, sx }: SkillCardProps) {
 							</Typography>
 							<Stack spacing={1}>
 								{previousSkills.map((x, index) => {
-									return <SkillButton key={index} skill={x} />;
+									return <SkillButton key={index} item={x} />;
 								})}
 							</Stack>
 						</>

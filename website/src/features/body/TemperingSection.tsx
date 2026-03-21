@@ -63,8 +63,8 @@ export function TemperingStageCard({ stage }: { stage: TemperingStage }) {
 										<ChaptersChip chapters={chapters} />
 										<Stack direction="column" spacing={1}>
 											<RichTextSpan data={x.note} color={isCompleted ? "text.primary" : "text.secondary"} />
-											{x.link && x.linkType == "Skill" && <SkillButton skill={x.link} />}
-											{x.link && x.linkType == "Title" && <TitleButton title={x.link} />}
+											{x.link && x.linkType == "Skill" && <SkillButton item={x.link} />}
+											{x.link && x.linkType == "Title" && <TitleButton item={x.link} />}
 										</Stack>
 									</Stack>
 								</Grid>

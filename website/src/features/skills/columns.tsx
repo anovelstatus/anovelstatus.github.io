@@ -89,7 +89,7 @@ export const useColumns = () => {
 						{previousSkills.length > 0 && <Typography variant="h6">Previous/Merged Skill(s):</Typography>}
 						<Grid container spacing={1}>
 							{previousSkills.map((x, index) => (
-								<SkillButton key={index} skill={x} />
+								<SkillButton key={index} item={x} />
 							))}
 						</Grid>
 					</Stack>

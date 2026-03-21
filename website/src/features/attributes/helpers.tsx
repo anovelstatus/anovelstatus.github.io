@@ -106,7 +106,7 @@ export function getChapterGains(chapter: number): React.ReactNode[] {
 					<Box key={`${attribute.name}-boost-${boost.title}`}>
 						{boost.boost > 0 ? "+" : ""}
 						{`${Math.round(boost.boost * 100)}% ${attribute.name} from `}
-						<TitleButton title={boost.titleId} />
+						<TitleButton item={boost.titleId} />
 						{suffix}
 					</Box>,
 				);
@@ -122,7 +122,7 @@ export function getChapterGains(chapter: number): React.ReactNode[] {
 			notes.push(
 				<Box key={`${skill.name}-levels`}>
 					{`${skillAttributes.join(", ")} from ${sumBy(skillLevels, (x) => x.count)} levels in `}
-					<SkillButton skill={skill} />
+					<SkillButton item={skill} />
 				</Box>,
 			);
 		}
