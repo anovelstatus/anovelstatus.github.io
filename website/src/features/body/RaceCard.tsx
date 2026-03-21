@@ -34,9 +34,7 @@ export function RaceCard({ race }: RaceCardProps) {
 				}
 			/>
 			<CardContent>
-				<Typography variant="body2" fontStyle="italic" whiteSpace="pre-line">
-					<RichTextSpan data={race.note} />
-				</Typography>
+				<RichTextSpan data={race.note} />
 			</CardContent>
 			<CardContent>
 				<Typography variant="h6" gutterBottom>

@@ -43,9 +43,7 @@ export default function SkillCard({ id, sx }: SkillCardProps) {
 			/>
 			<CardContent>
 				<Stack>
-					<Typography variant="body2" whiteSpace="pre-line">
-						<RichTextSpan data={skill.description} />
-					</Typography>
+					<RichTextSpan data={skill.description} />
 					<AttributeSummary item={skill} />
 					{prerequisiteList.length > 0 && (
 						<>

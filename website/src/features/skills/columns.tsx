@@ -83,9 +83,7 @@ export const useColumns = () => {
 				const previousSkills = findByIds(skills, row.original.previous);
 				return (
 					<Stack>
-						<Typography variant="body2" whiteSpace="pre-line">
-							<RichTextSpan data={row.original.description} />
-						</Typography>
+						<RichTextSpan data={row.original.description} />
 						{list.length > 0 && <Typography variant="h6">Ideal Prerequisites:</Typography>}
 						{list}
 						{previousSkills.length > 0 && <Typography variant="h6">Previous/Merged Skill(s):</Typography>}

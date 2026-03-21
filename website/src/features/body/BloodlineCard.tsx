@@ -54,15 +54,11 @@ export function BloodlineCard({ bloodline }: BloodlineProps) {
 				<CardContent>
 					<Stack>
 						<Typography variant="h6">Lore</Typography>
-						<Typography variant="body2" whiteSpace="pre-line">
-							<RichTextSpan data={lore.description} />
-						</Typography>
+						<RichTextSpan data={lore.description} />
 						{lore.updates.map((update, index) => (
 							<Stack direction="row" key={index}>
 								<ChaptersChip chapters={[update.chapter]} />
-								<Typography key={index} variant="body2" whiteSpace="pre-line">
-									<RichTextSpan data={update.note} />
-								</Typography>
+								<RichTextSpan data={update.note} />
 							</Stack>
 						))}
 					</Stack>

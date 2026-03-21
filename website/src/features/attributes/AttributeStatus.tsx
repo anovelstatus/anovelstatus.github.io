@@ -30,12 +30,7 @@ export function AttributeStatus({ status, previousStatus }: { status: Status; pr
 								attributes={groupAttributes}
 								formatAttributes={(attributes) =>
 									attributes.map((attribute) => (
-										<Box
-											key={attribute.name}
-											sx={{
-												backgroundColor: selectedAttribute === attribute ? "action.selected" : "none",
-											}}
-										>
+										<Box key={attribute.name}>
 											<Typography
 												variant="body2"
 												sx={{

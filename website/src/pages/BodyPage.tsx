@@ -44,9 +44,7 @@ export function BodyPage() {
 			<Typography variant="h3" gutterBottom>
 				Priam's Body
 			</Typography>
-			<Typography variant="body2" gutterBottom whiteSpace="pre-line">
-				<RichTextSpan data={bodyLore.description} />
-			</Typography>
+			<RichTextSpan data={bodyLore.description} />
 			<Section title="Race" contents={<RaceCard race={race} />} />
 			{bloodlines.length > 0 && <Section title="Bloodlines" contents={bloodlineContents} />}
 			{mutations.length > 0 && <Section title="Modifications & Mutations" contents={mutationContents} />}

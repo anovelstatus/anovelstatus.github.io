@@ -29,9 +29,7 @@ export default function TitleCard({ id, sx }: TitleCardProps) {
 			/>
 			<CardContent>
 				<Stack>
-					<Typography variant="body2" whiteSpace="pre-line">
-						<RichTextSpan data={title.note} />
-					</Typography>
+					<RichTextSpan data={title.note} />
 					{previousTitle ? <TitleButton title={previousTitle} /> : null}
 				</Stack>
 			</CardContent>

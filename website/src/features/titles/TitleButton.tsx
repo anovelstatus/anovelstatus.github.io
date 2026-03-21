@@ -10,7 +10,7 @@ export default function TitleButton({ title }: TitleButtonProps) {
 	return (
 		<PopoverButton
 			id={toIdString(title)}
-			trigger={<TieredButton item={title} variant="outlined" />}
+			trigger={<TieredButton item={title} variant="outlined" size="small" />}
 			popover={() => <TitleCard id={title} sx={popupCardStyles} />}
 		/>
 	);

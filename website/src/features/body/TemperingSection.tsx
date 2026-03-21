@@ -45,19 +45,11 @@ export function TemperingStageCard({ stage }: { stage: TemperingStage }) {
 			/>
 			<CardContent>
 				<Stack>
-					<Typography variant="body2" whiteSpace="pre-line">
-						<RichTextSpan data={stage.description} />
-					</Typography>
-					{lore.description && (
-						<Typography variant="body2" whiteSpace="pre-line">
-							<RichTextSpan data={lore.description} />
-						</Typography>
-					)}
+					<RichTextSpan data={stage.description} />
+					{lore.description && <RichTextSpan data={lore.description} />}
 					{lore.updates.map((update, index) => (
 						<Stack direction="row" key={index}>
-							<Typography variant="body2" whiteSpace="pre-line">
-								<RichTextSpan data={update.note} />
-							</Typography>
+							<RichTextSpan data={update.note} />
 						</Stack>
 					))}
 					<Typography variant="h6">Steps</Typography>
@@ -70,13 +62,7 @@ export function TemperingStageCard({ stage }: { stage: TemperingStage }) {
 									<Stack direction="row" alignItems="flex-start" justifyItems="baseline" spacing={1}>
 										<ChaptersChip chapters={chapters} />
 										<Stack direction="column" spacing={1}>
-											<Typography
-												variant="body2"
-												color={isCompleted ? "text.primary" : "text.secondary"}
-												whiteSpace="pre-line"
-											>
-												<RichTextSpan data={x.note} />
-											</Typography>
+											<RichTextSpan data={x.note} color={isCompleted ? "text.primary" : "text.secondary"} />
 											{x.link && x.linkType == "Skill" && <SkillButton skill={x.link} />}
 											{x.link && x.linkType == "Title" && <TitleButton title={x.link} />}
 										</Stack>

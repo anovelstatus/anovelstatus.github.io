@@ -4,7 +4,7 @@ import { Box } from "@mui/material";
 import { useMemo } from "react";
 import { SkillButton } from "../skills";
 import { TitleButton } from "../titles";
-import { RichTextSpan } from "@/components/RichTextSpan";
+import { hasNote, RichTextSpan } from "@/components/RichTextSpan";
 import { sumBy } from "es-toolkit";
 
 export function getEvolvedName(attribute: Attribute.Details, status: Status): string {
@@ -93,7 +93,7 @@ export function getChapterGains(chapter: number): React.ReactNode[] {
 		attribute.boosts
 			.filter((x) => x.chapter === chapter)
 			.forEach((boost) => {
-				const suffix = boost.note ? (
+				const suffix = hasNote(boost.note) ? (
 					<>
 						{" ("}
 						<RichTextSpan data={boost.note} />

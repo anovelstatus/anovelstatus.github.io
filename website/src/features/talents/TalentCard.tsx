@@ -30,9 +30,7 @@ export default function TalentCard({ id, sx }: TalentCardProps) {
 				}
 			/>
 			<CardContent>
-				<Typography variant="body2" whiteSpace="pre-line">
-					<RichTextSpan data={talent.note} />
-				</Typography>
+				<RichTextSpan data={talent.note} />
 			</CardContent>
 			{previousCount ? (
 				<CardActions>
