@@ -166,15 +166,13 @@ declare type HasPrevious = {
 	previous: TieredId[];
 };
 
-declare type TalentType = "General" | "Race" | "Racial Slot";
-
 declare type Talent = TieredId &
 	HasPrevious & {
 		note: RichText[];
 		chapterGained: number;
 		chapterUndone?: number;
 		chapterReplaced?: number[];
-		type: TalentType;
+		type: string;
 		growth?: boolean;
 		temporary: boolean;
 	};

@@ -34,7 +34,7 @@ export default function TalentCard({ id, sx }: TalentCardProps) {
 				<CardActions>
 					<Stack>
 						<Typography variant="h6">Previous Talent{previousCount > 1 ? "s" : ""}:</Typography>
-						<Stack direction="row" spacing={1}>
+						<Stack direction="row" spacing={1} flexWrap="wrap">
 							{previousTalents.map((x, index) => (
 								<TalentButton key={index} item={x} />
 							))}

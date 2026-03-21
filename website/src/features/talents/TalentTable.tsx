@@ -10,7 +10,7 @@ type TalentTableProps = {
 };
 
 export default function TalentTable({ data }: TalentTableProps) {
-	const { data: talents, isFetching } = useTalents();
+	const { data: allTalents } = useTalents();
 	const columns = useColumns();
 
 	const table = useAppTable({
@@ -24,8 +24,8 @@ export default function TalentTable({ data }: TalentTableProps) {
 		renderNarrowRow: ({ original }) => <TalentCard id={original} key={toIdString(original)} />,
 		getExpandedRowModel: getExpandedRowModel(),
 		maxLeafRowFilterDepth: 0,
-		getSubRows: (row) => findByIds(talents, row.previous),
+		getSubRows: (row) => findByIds(allTalents, row.previous),
 	});
 
-	return <AppTable table={table} isLoading={isFetching} sx={columnstyles} />;
+	return <AppTable table={table} isLoading={allTalents.length === 0} sx={columnstyles} />;
 }
