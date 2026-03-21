@@ -41,11 +41,13 @@ export default function NavBar() {
 						{...bindTrigger(popupState)}
 						color="inherit"
 						startIcon={<MenuIcon />}
+						variant="text"
 					>
 						{pages.find((x) => x.props.to === location.pathname)!.props.title as string}
 					</Button>
 
 					<Menu
+						onClick={() => popupState.close()}
 						{...bindMenu(popupState)}
 						transformOrigin={{
 							vertical: "top",
