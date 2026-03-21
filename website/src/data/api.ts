@@ -54,8 +54,27 @@ export function useBloodlines() {
 	return useBody().bloodlines;
 }
 
+export function useBloodlinesOnChapter(chapter: number) {
+	const all = useBloodlines();
+	return all
+		.map((x): Bloodline => {
+			return {
+				...x,
+				updates: x.updates.filter((y) => y.chapter <= chapter),
+			};
+		})
+		.filter((x) => x.updates.length > 0);
+}
+
 export function useBodyMutations() {
 	return useBody().mutations;
+}
+
+export function useBodyMutationsOnChapter(chapter: number) {
+	const all = useBodyMutations();
+	const filtered = all.filter((x) => x.chapters.some((ch) => ch <= chapter));
+	const sorted = orderBy(filtered, [(x) => x.chapters[0]], ["asc"]);
+	return sorted;
 }
 
 export function useBodyTempering() {
@@ -66,6 +85,12 @@ export function useBodyTempering() {
 export function useRaces() {
 	const races = useBody().races;
 	return orderBy(races, [(x) => x.chapter, (x) => x.tier], ["desc", "desc"]);
+}
+
+export function useRaceOnChapter(chapter: number) {
+	const races = useRaces();
+	chapter = chapter || 0;
+	return races.filter((x) => x.chapter <= chapter)[0]!;
 }
 
 export function useTalents() {

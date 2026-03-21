@@ -9,11 +9,11 @@ import { popupCardStyles } from "@/styles";
 import { useRaces } from "@/data/api";
 import { RichTextSpan } from "@/components/RichTextSpan";
 
-type RaceCardProps = {
+export type RaceCardProps = {
 	race?: Race;
 };
 
-export default function RaceCard({ race }: RaceCardProps) {
+export function RaceCard({ race }: RaceCardProps) {
 	const isLoading = !race;
 	const talents = race?.talents ?? [];
 	const races = useRaces();
@@ -23,7 +23,7 @@ export default function RaceCard({ race }: RaceCardProps) {
 	const previousRace = races.find((x) => x.chapter < race.chapter || x.tier < race.tier);
 
 	return (
-		<Card variant="outlined">
+		<Card>
 			<CardHeader
 				title={
 					<Stack direction="row" alignItems="center">

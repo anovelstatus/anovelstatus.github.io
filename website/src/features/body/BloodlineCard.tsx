@@ -7,7 +7,7 @@ import { RichTextSpan } from "@/components/RichTextSpan";
 
 export type BloodlineProps = { bloodline: Bloodline };
 
-export default function BloodlineCard({ bloodline }: BloodlineProps) {
+export function BloodlineCard({ bloodline }: BloodlineProps) {
 	const chapter = useChapter();
 	const lore = useLoreTopic(bloodline.lore, chapter);
 	// In case there are multiple gains in the same chapter, display the one with the highest purity first
@@ -22,7 +22,7 @@ export default function BloodlineCard({ bloodline }: BloodlineProps) {
 	const latest = updates[0]!;
 
 	return (
-		<Card variant="outlined">
+		<Card>
 			<CardHeader
 				title={
 					<Stack direction="row" alignItems="center">

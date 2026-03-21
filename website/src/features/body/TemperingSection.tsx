@@ -6,7 +6,7 @@ import { RichTextSpan } from "@/components/RichTextSpan";
 import { SkillButton } from "../skills";
 import { TitleButton } from "../titles";
 
-export default function TemperingSection() {
+export function TemperingSection() {
 	const chapter = useChapter();
 	const stages = useBodyTempering();
 
@@ -16,20 +16,15 @@ export default function TemperingSection() {
 	const sorted = orderBy(filteredStages, [(x) => x.chapter], ["asc"]);
 
 	return (
-		<Card>
-			<CardHeader title="Tempering" />
-			<CardContent>
-				<Stack direction="column" spacing={2}>
-					{sorted.map((x, index) => {
-						return <TemperingStageCard key={index} stage={x} />;
-					})}
-				</Stack>
-			</CardContent>
-		</Card>
+		<Stack direction="column" spacing={2}>
+			{sorted.map((x, index) => {
+				return <TemperingStageCard key={index} stage={x} />;
+			})}
+		</Stack>
 	);
 }
 
-function TemperingStageCard({ stage }: { stage: TemperingStage }) {
+export function TemperingStageCard({ stage }: { stage: TemperingStage }) {
 	const chapter = useChapter();
 
 	const lore = useLoreTopic("Tempering - " + stage.name, chapter);
@@ -38,7 +33,7 @@ function TemperingStageCard({ stage }: { stage: TemperingStage }) {
 	const startedSteps = stage.updates.filter((x) => x.started <= chapter);
 	const stepsTotal = `${completedSteps.length} / ${stage.expectedSteps} steps completed`;
 	return (
-		<Card variant="outlined">
+		<Card>
 			<CardHeader
 				title={
 					<Stack direction="row" alignItems="center">
