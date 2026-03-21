@@ -2,6 +2,7 @@ import { useChapter } from "@/data/api";
 import { Stack, Typography } from "@mui/material";
 import { AttributeStatus } from "../AttributeStatus";
 import { getChapterGains, useCalculatedStatus } from "../helpers";
+import ChaptersChip from "@/components/chips/ChaptersChip";
 
 export function CalculatedStatusPanel() {
 	const chapter = useChapter();
@@ -16,8 +17,8 @@ export function CalculatedStatusPanel() {
 	return (
 		<Stack spacing={2}>
 			<Typography variant="body2">
-				This displays a calculated status based on total skill levels and title boosts. For official published numbers,
-				check out the other tab.
+				This displays a calculated status for <ChaptersChip chapters={[chapter]} /> based on total skill levels and
+				title boosts. For official published numbers, check out the other tab.
 			</Typography>
 			<AttributeStatus status={status} previousStatus={previousStatus} />
 			<Typography variant="h4">Gains This Chapter</Typography>
