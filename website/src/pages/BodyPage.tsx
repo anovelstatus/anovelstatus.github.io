@@ -1,58 +1,64 @@
-import { BloodlineCard, BodyModificationsCard, RaceCard } from "@/features/body";
-import { getRaceForChapter } from "@/data/helpers";
-import { useBloodlines, useBodyMutations, useChapter, useLoreTopic, useRaces } from "@/data/api";
-import { Stack, Typography, Grid, Card, CardHeader, CardContent } from "@mui/material";
-import TemperingSection from "@/features/body/TemperingSection";
+import { BloodlineCard, BodyModificationCard, RaceCard, TemperingStageCard } from "@/features/body";
+import {
+	useBloodlinesOnChapter,
+	useBodyMutationsOnChapter,
+	useBodyTemperingForChapter,
+	useChapter,
+	useLoreTopic,
+	useRaceOnChapter,
+} from "@/data/api";
+import { Stack, Typography, Grid } from "@mui/material";
 import { RichTextSpan } from "@/components/RichTextSpan";
+import Section from "@/components/Section";
 
 export function BodyPage() {
 	const chapter = useChapter();
-	const races = useRaces();
-	const mutations = useBodyMutations();
-
-	const race = getRaceForChapter(races, chapter);
-	const bloodlines = useBloodlines();
-	const filteredBloodlines: Bloodline[] = bloodlines
-		.map((x) => {
-			return {
-				...x,
-				updates: x.updates.filter((y) => y.chapter <= chapter),
-			};
-		})
-		.filter((x) => x.updates.length > 0);
 
 	const bodyLore = useLoreTopic("Body", chapter);
+	const race = useRaceOnChapter(chapter);
+	const bloodlines = useBloodlinesOnChapter(chapter);
+	const mutations = useBodyMutationsOnChapter(chapter);
+	const stages = useBodyTemperingForChapter(chapter);
+
+	const temperingContents = (
+		<Stack direction="column" spacing={2}>
+			{stages.map((x, index) => {
+				return <TemperingStageCard key={index} stage={x} />;
+			})}
+		</Stack>
+	);
+
+	const bloodlineContents = (
+		<Grid container spacing={2}>
+			{bloodlines.map((bloodline, index) => (
+				<Grid key={index} size={{ xs: 12, md: 6 }}>
+					<BloodlineCard bloodline={bloodline} />
+				</Grid>
+			))}
+		</Grid>
+	);
+	const mutationContents = (
+		<Grid container spacing={2}>
+			{mutations.map((x, index) => {
+				return (
+					<Grid key={index} size={{ xs: 12, sm: 6, md: 4 }}>
+						<BodyModificationCard mutation={x} />
+					</Grid>
+				);
+			})}
+		</Grid>
+	);
 
 	return (
-		<Stack>
+		<Stack spacing={2}>
 			<Typography variant="h3" gutterBottom>
 				Priam's Body
 			</Typography>
-			<Typography variant="body2" gutterBottom whiteSpace="pre-line">
-				<RichTextSpan data={bodyLore.description} />
-			</Typography>
-			<Card>
-				<CardHeader title="Race" />
-				<CardContent>
-					<RaceCard race={race} />
-				</CardContent>
-			</Card>
-			{filteredBloodlines.length > 0 && (
-				<Card>
-					<CardHeader title="Bloodlines" />
-					<CardContent>
-						<Grid container spacing={2}>
-							{filteredBloodlines.map((bloodline, index) => (
-								<Grid key={index} size={{ xs: 12, md: 6 }}>
-									<BloodlineCard bloodline={bloodline} />
-								</Grid>
-							))}
-						</Grid>
-					</CardContent>
-				</Card>
-			)}
-			<BodyModificationsCard mutations={mutations} />
-			<TemperingSection />
+			<RichTextSpan data={bodyLore.description} />
+			<Section title="Race" contents={<RaceCard race={race} />} />
+			{bloodlines.length > 0 && <Section title="Bloodlines" contents={bloodlineContents} />}
+			{mutations.length > 0 && <Section title="Modifications & Mutations" contents={mutationContents} />}
+			{stages.length > 0 && <Section title="Tempering" contents={temperingContents} />}
 		</Stack>
 	);
 }

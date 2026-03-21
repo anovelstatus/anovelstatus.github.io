@@ -4,7 +4,7 @@ import { useChapter } from "@/data/api";
 import { getPastBoosts } from "./helpers";
 import { parseId } from "@/data/helpers";
 import { TitleButton } from "../titles";
-import { RichTextSpan } from "@/components/RichTextSpan";
+import { hasNote, RichTextSpan } from "@/components/RichTextSpan";
 
 export type AttributeDetailsProps = {
 	attribute: Attribute.Details;
@@ -19,8 +19,9 @@ export function BoostList({ attribute }: AttributeDetailsProps) {
 	const items = pastBoosts.map((x, index) => (
 		<li key={index} style={{ marginBottom: "8px" }}>
 			<Typography component="span" variant="body2">
-				<span style={{ fontWeight: "bold" }}>{x.boost * 100}%</span> from <TitleButton title={parseId(x.title)} />
-				{x.note ? (
+				<span style={{ fontWeight: "bold" }}>{x.boost * 100}%</span> from{" "}
+				<TitleButton item={parseId(x.title)} size="small" variant="text" />
+				{hasNote(x.note) ? (
 					<>
 						{" ("}
 						<RichTextSpan data={x.note} />

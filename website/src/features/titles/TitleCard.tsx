@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardContent, Stack, Grid, Typography } from "@mui/material";
+import { Card, CardHeader, CardContent, Stack, Grid } from "@mui/material";
 import { ChaptersChip, RarityChip } from "@/components/chips";
 import { sameId } from "@/data/helpers";
 import { useTitles } from "@/data/api";
@@ -29,10 +29,8 @@ export default function TitleCard({ id, sx }: TitleCardProps) {
 			/>
 			<CardContent>
 				<Stack>
-					<Typography variant="body2" whiteSpace="pre-line">
-						<RichTextSpan data={title.note} />
-					</Typography>
-					{previousTitle ? <TitleButton title={previousTitle} /> : null}
+					<RichTextSpan data={title.note} />
+					{previousTitle ? <TitleButton item={previousTitle} /> : null}
 				</Stack>
 			</CardContent>
 		</Card>

@@ -7,7 +7,7 @@ import { RichTextSpan } from "@/components/RichTextSpan";
 
 export type BloodlineProps = { bloodline: Bloodline };
 
-export default function BloodlineCard({ bloodline }: BloodlineProps) {
+export function BloodlineCard({ bloodline }: BloodlineProps) {
 	const chapter = useChapter();
 	const lore = useLoreTopic(bloodline.lore, chapter);
 	// In case there are multiple gains in the same chapter, display the one with the highest purity first
@@ -22,7 +22,7 @@ export default function BloodlineCard({ bloodline }: BloodlineProps) {
 	const latest = updates[0]!;
 
 	return (
-		<Card variant="outlined">
+		<Card>
 			<CardHeader
 				title={
 					<Stack direction="row" alignItems="center">
@@ -34,7 +34,7 @@ export default function BloodlineCard({ bloodline }: BloodlineProps) {
 			/>
 			{latest.title && (
 				<CardActions>
-					<TitleButton title={latest.title} />
+					<TitleButton item={latest.title} />
 				</CardActions>
 			)}
 			<CardContent>
@@ -54,15 +54,11 @@ export default function BloodlineCard({ bloodline }: BloodlineProps) {
 				<CardContent>
 					<Stack>
 						<Typography variant="h6">Lore</Typography>
-						<Typography variant="body2" whiteSpace="pre-line">
-							<RichTextSpan data={lore.description} />
-						</Typography>
+						<RichTextSpan data={lore.description} />
 						{lore.updates.map((update, index) => (
 							<Stack direction="row" key={index}>
 								<ChaptersChip chapters={[update.chapter]} />
-								<Typography key={index} variant="body2" whiteSpace="pre-line">
-									<RichTextSpan data={update.note} />
-								</Typography>
+								<RichTextSpan data={update.note} />
 							</Stack>
 						))}
 					</Stack>

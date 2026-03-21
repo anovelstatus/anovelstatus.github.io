@@ -1,18 +1,18 @@
 import { PopoverButton } from "@/components/PopoverButton";
 import TieredButton from "@/components/TieredButton";
 import { toIdString } from "@/data/helpers";
-import SkillCard from "./SkillCard";
 import { popupCardStyles } from "@/styles";
 import type { ButtonProps } from "@mui/material";
+import TalentCard from "./TalentCard";
 
-type SkillButtonProps = { item: TieredId } & ButtonProps;
+type TalentButtonProps = { item: TieredId } & ButtonProps;
 
-export default function SkillButton({ item, ...props }: SkillButtonProps) {
+export default function TalentButton({ item, ...props }: TalentButtonProps) {
 	return (
 		<PopoverButton
 			id={toIdString(item)}
 			trigger={<TieredButton item={item} variant="outlined" {...props} />}
-			popover={() => <SkillCard id={item} sx={popupCardStyles} />}
+			popover={() => <TalentCard id={item} sx={popupCardStyles} />}
 		/>
 	);
 }

@@ -53,11 +53,7 @@ export const useColumns = () => {
 			header: "Notes",
 			size: 400,
 			enableSorting: false,
-			cell: ({ row }) => (
-				<Typography variant="body2" whiteSpace="pre-line">
-					<RichTextSpan data={row.original.note} />
-				</Typography>
-			),
+			cell: ({ row }) => <RichTextSpan data={row.original.note} />,
 			meta: {
 				bodyClassName: (cell) => {
 					if (cell.row.depth > 0) return "nested";

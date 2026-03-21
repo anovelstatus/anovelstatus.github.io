@@ -43,9 +43,7 @@ export default function SkillCard({ id, sx }: SkillCardProps) {
 			/>
 			<CardContent>
 				<Stack>
-					<Typography variant="body2" whiteSpace="pre-line">
-						<RichTextSpan data={skill.description} />
-					</Typography>
+					<RichTextSpan data={skill.description} />
 					<AttributeSummary item={skill} />
 					{prerequisiteList.length > 0 && (
 						<>
@@ -62,7 +60,7 @@ export default function SkillCard({ id, sx }: SkillCardProps) {
 							</Typography>
 							<Stack spacing={1}>
 								{previousSkills.map((x, index) => {
-									return <SkillButton key={index} skill={x} />;
+									return <SkillButton key={index} item={x} />;
 								})}
 							</Stack>
 						</>

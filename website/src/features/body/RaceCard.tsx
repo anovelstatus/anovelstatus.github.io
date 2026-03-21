@@ -1,19 +1,17 @@
-import { toIdString } from "@/data/helpers";
 import { Card, CardHeader, CardContent, Box, Stack, Typography, Button } from "@mui/material";
 import { ChaptersChip, TierChip } from "@/components/chips";
-import { TalentCard } from "@/features/talents";
-import TieredButton from "@/components/TieredButton";
 import { PopoverButton } from "@/components/PopoverButton";
 import LoadingCard from "@/components/LoadingCard";
 import { popupCardStyles } from "@/styles";
 import { useRaces } from "@/data/api";
 import { RichTextSpan } from "@/components/RichTextSpan";
+import TalentButton from "../talents/TalentButton";
 
-type RaceCardProps = {
+export type RaceCardProps = {
 	race?: Race;
-};
+} & PropsWithStyle;
 
-export default function RaceCard({ race }: RaceCardProps) {
+export function RaceCard({ race, sx }: RaceCardProps) {
 	const isLoading = !race;
 	const talents = race?.talents ?? [];
 	const races = useRaces();
@@ -23,7 +21,7 @@ export default function RaceCard({ race }: RaceCardProps) {
 	const previousRace = races.find((x) => x.chapter < race.chapter || x.tier < race.tier);
 
 	return (
-		<Card variant="outlined">
+		<Card sx={sx}>
 			<CardHeader
 				title={
 					<Stack direction="row" alignItems="center">
@@ -34,9 +32,7 @@ export default function RaceCard({ race }: RaceCardProps) {
 				}
 			/>
 			<CardContent>
-				<Typography variant="body2" fontStyle="italic" whiteSpace="pre-line">
-					<RichTextSpan data={race.note} />
-				</Typography>
+				<RichTextSpan data={race.note} />
 			</CardContent>
 			<CardContent>
 				<Typography variant="h6" gutterBottom>
@@ -44,12 +40,7 @@ export default function RaceCard({ race }: RaceCardProps) {
 				</Typography>
 				<Stack direction="row">
 					{talents.map((id, index) => (
-						<PopoverButton
-							key={index}
-							id={toIdString(id)}
-							trigger={<TieredButton item={id} variant="outlined" />}
-							popover={() => <TalentCard key={index} id={id} sx={popupCardStyles} />}
-						/>
+						<TalentButton key={index} item={id} />
 					))}
 				</Stack>
 			</CardContent>
@@ -61,7 +52,7 @@ export default function RaceCard({ race }: RaceCardProps) {
 					<PopoverButton
 						id={previousRace.name + previousRace.tier}
 						trigger={<Button variant="outlined">{previousRace.name}</Button>}
-						popover={() => <RaceCard race={previousRace} />}
+						popover={() => <RaceCard race={previousRace} sx={popupCardStyles} />}
 					/>
 				</CardContent>
 			)}

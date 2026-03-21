@@ -1,35 +1,11 @@
 import { Card, CardHeader, CardContent, Stack, Typography, Chip, Grid } from "@mui/material";
 import { ChaptersChip, RarityChip } from "@/components/chips";
-import { useBodyTempering, useChapter, useLoreTopic } from "@/data/api";
-import { orderBy } from "es-toolkit";
+import { useChapter, useLoreTopic } from "@/data/api";
 import { RichTextSpan } from "@/components/RichTextSpan";
 import { SkillButton } from "../skills";
 import { TitleButton } from "../titles";
 
-export default function TemperingSection() {
-	const chapter = useChapter();
-	const stages = useBodyTempering();
-
-	const filteredStages = stages?.filter((x) => x.chapter <= chapter);
-	if (!filteredStages?.length) return <></>;
-
-	const sorted = orderBy(filteredStages, [(x) => x.chapter], ["asc"]);
-
-	return (
-		<Card>
-			<CardHeader title="Tempering" />
-			<CardContent>
-				<Stack direction="column" spacing={2}>
-					{sorted.map((x, index) => {
-						return <TemperingStageCard key={index} stage={x} />;
-					})}
-				</Stack>
-			</CardContent>
-		</Card>
-	);
-}
-
-function TemperingStageCard({ stage }: { stage: TemperingStage }) {
+export function TemperingStageCard({ stage }: { stage: TemperingStage }) {
 	const chapter = useChapter();
 
 	const lore = useLoreTopic("Tempering - " + stage.name, chapter);
@@ -38,7 +14,7 @@ function TemperingStageCard({ stage }: { stage: TemperingStage }) {
 	const startedSteps = stage.updates.filter((x) => x.started <= chapter);
 	const stepsTotal = `${completedSteps.length} / ${stage.expectedSteps} steps completed`;
 	return (
-		<Card variant="outlined">
+		<Card>
 			<CardHeader
 				title={
 					<Stack direction="row" alignItems="center">
@@ -50,19 +26,11 @@ function TemperingStageCard({ stage }: { stage: TemperingStage }) {
 			/>
 			<CardContent>
 				<Stack>
-					<Typography variant="body2" whiteSpace="pre-line">
-						<RichTextSpan data={stage.description} />
-					</Typography>
-					{lore.description && (
-						<Typography variant="body2" whiteSpace="pre-line">
-							<RichTextSpan data={lore.description} />
-						</Typography>
-					)}
+					<RichTextSpan data={stage.description} />
+					{lore.description && <RichTextSpan data={lore.description} />}
 					{lore.updates.map((update, index) => (
 						<Stack direction="row" key={index}>
-							<Typography variant="body2" whiteSpace="pre-line">
-								<RichTextSpan data={update.note} />
-							</Typography>
+							<RichTextSpan data={update.note} />
 						</Stack>
 					))}
 					<Typography variant="h6">Steps</Typography>
@@ -75,15 +43,9 @@ function TemperingStageCard({ stage }: { stage: TemperingStage }) {
 									<Stack direction="row" alignItems="flex-start" justifyItems="baseline" spacing={1}>
 										<ChaptersChip chapters={chapters} />
 										<Stack direction="column" spacing={1}>
-											<Typography
-												variant="body2"
-												color={isCompleted ? "text.primary" : "text.secondary"}
-												whiteSpace="pre-line"
-											>
-												<RichTextSpan data={x.note} />
-											</Typography>
-											{x.link && x.linkType == "Skill" && <SkillButton skill={x.link} />}
-											{x.link && x.linkType == "Title" && <TitleButton title={x.link} />}
+											<RichTextSpan data={x.note} color={isCompleted ? "text.primary" : "text.secondary"} />
+											{x.link && x.linkType == "Skill" && <SkillButton item={x.link} />}
+											{x.link && x.linkType == "Title" && <TitleButton item={x.link} />}
 										</Stack>
 									</Stack>
 								</Grid>

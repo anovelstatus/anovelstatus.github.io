@@ -1,13 +1,13 @@
 import { TalentTable } from "@/features/talents";
-import { getRaceForChapter, sameId } from "@/data/helpers";
-import { useTalents, useChapter, useRaces } from "@/data/api";
+import { sameId } from "@/data/helpers";
+import { useTalents, useChapter, useRaceOnChapter } from "@/data/api";
 import { Stack, Typography, Chip } from "@mui/material";
 import { useMemo } from "react";
 
 export function TalentPage() {
 	const chapter = useChapter();
 	const { data: talents } = useTalents();
-	const races = useRaces();
+	const currentRace = useRaceOnChapter(chapter);
 
 	let filtered = talents.filter((x) => !x.temporary && x.chapterGained <= chapter);
 	filtered = filtered.filter((x) => !x.chapterUndone || x.chapterUndone <= chapter);
@@ -17,7 +17,6 @@ export function TalentPage() {
 	const racialTalents = useMemo(() => filtered.filter((x) => x.type == "Race"), [chapter, talents]);
 	const freeTalents = useMemo(() => filtered.filter((x) => x.type == "Racial Slot"), [chapter, talents]);
 
-	const currentRace = getRaceForChapter(races, chapter);
 	const slotsUsed = freeTalents.length;
 	const slots = currentRace?.freeSlots ?? 1;
 	const slotsText = `${slotsUsed}/${slots} used`;

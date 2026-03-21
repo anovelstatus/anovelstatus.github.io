@@ -13,9 +13,7 @@ export const useColumns = () => {
 			size: 300,
 			cell: ({ row }) => (
 				<Stack>
-					<Typography variant="body2" whiteSpace="pre-line">
-						<RichTextSpan data={row.original.description} />
-					</Typography>
+					<RichTextSpan data={row.original.description} />
 					<Stack direction="row" spacing={1} alignItems="center">
 						<RarityChip name={row.original.tier} />
 						<ChaptersChip chapters={row.original.chapter} />
@@ -33,9 +31,7 @@ export const useColumns = () => {
 			size: 300,
 			cell: ({ row }) => (
 				<Stack>
-					<Typography variant="body2" whiteSpace="pre-line">
-						<RichTextSpan data={row.original.message} />
-					</Typography>
+					<RichTextSpan data={row.original.message} />
 					<Typography variant="body2" fontStyle="italic">
 						Sent to {row.original.messageRecipients.join(", ")}
 					</Typography>
@@ -45,20 +41,12 @@ export const useColumns = () => {
 		createColumnHelper<Achievement>().accessor("rewards", {
 			header: "Rewards",
 			size: 300,
-			cell: ({ row }) => (
-				<Typography variant="body2" whiteSpace="pre-line">
-					<RichTextSpan data={row.original.rewards} />
-				</Typography>
-			),
+			cell: ({ row }) => <RichTextSpan data={row.original.rewards} />,
 		}),
 		createColumnHelper<Achievement>().accessor("note", {
 			header: "Other Notes",
 			size: 300,
-			cell: ({ row }) => (
-				<Typography variant="body2" whiteSpace="pre-line">
-					<RichTextSpan data={row.original.note} />
-				</Typography>
-			),
+			cell: ({ row }) => <RichTextSpan data={row.original.note} />,
 		}),
 	] as ColumnDef<Achievement>[];
 };
