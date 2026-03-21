@@ -38,7 +38,7 @@ export function RaceCard({ race, sx }: RaceCardProps) {
 				<Typography variant="h6" gutterBottom>
 					Talent{talents.length > 1 ? "s" : ""}:
 				</Typography>
-				<Stack direction="row">
+				<Stack direction="row" spacing={1} flexWrap="wrap">
 					{talents.map((id, index) => (
 						<TalentButton key={index} item={id} />
 					))}

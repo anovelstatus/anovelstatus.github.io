@@ -58,7 +58,7 @@ export default function SkillCard({ id, sx }: SkillCardProps) {
 							<Typography variant="h6" sx={{ marginTop: "20px" }}>
 								Previous/Merged Skill(s):
 							</Typography>
-							<Stack spacing={1}>
+							<Stack direction="row" spacing={1} flexWrap="wrap">
 								{previousSkills.map((x, index) => {
 									return <SkillButton key={index} item={x} />;
 								})}
