@@ -1,7 +1,8 @@
-import { BloodlineCard, BodyModificationCard, RaceCard, TemperingSection } from "@/features/body";
+import { BloodlineCard, BodyModificationCard, RaceCard, TemperingStageCard } from "@/features/body";
 import {
 	useBloodlinesOnChapter,
 	useBodyMutationsOnChapter,
+	useBodyTemperingForChapter,
 	useChapter,
 	useLoreTopic,
 	useRaceOnChapter,
@@ -17,6 +18,15 @@ export function BodyPage() {
 	const race = useRaceOnChapter(chapter);
 	const bloodlines = useBloodlinesOnChapter(chapter);
 	const mutations = useBodyMutationsOnChapter(chapter);
+	const stages = useBodyTemperingForChapter(chapter);
+
+	const temperingContents = (
+		<Stack direction="column" spacing={2}>
+			{stages.map((x, index) => {
+				return <TemperingStageCard key={index} stage={x} />;
+			})}
+		</Stack>
+	);
 
 	const bloodlineContents = (
 		<Grid container spacing={2}>
@@ -48,7 +58,7 @@ export function BodyPage() {
 			<Section title="Race" contents={<RaceCard race={race} />} />
 			{bloodlines.length > 0 && <Section title="Bloodlines" contents={bloodlineContents} />}
 			{mutations.length > 0 && <Section title="Modifications & Mutations" contents={mutationContents} />}
-			<Section title="Tempering" contents={<TemperingSection />} />
+			{stages.length > 0 && <Section title="Tempering" contents={temperingContents} />}
 		</Stack>
 	);
 }

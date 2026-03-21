@@ -1,28 +1,9 @@
 import { Card, CardHeader, CardContent, Stack, Typography, Chip, Grid } from "@mui/material";
 import { ChaptersChip, RarityChip } from "@/components/chips";
-import { useBodyTempering, useChapter, useLoreTopic } from "@/data/api";
-import { orderBy } from "es-toolkit";
+import { useChapter, useLoreTopic } from "@/data/api";
 import { RichTextSpan } from "@/components/RichTextSpan";
 import { SkillButton } from "../skills";
 import { TitleButton } from "../titles";
-
-export function TemperingSection() {
-	const chapter = useChapter();
-	const stages = useBodyTempering();
-
-	const filteredStages = stages?.filter((x) => x.chapter <= chapter);
-	if (!filteredStages?.length) return <></>;
-
-	const sorted = orderBy(filteredStages, [(x) => x.chapter], ["asc"]);
-
-	return (
-		<Stack direction="column" spacing={2}>
-			{sorted.map((x, index) => {
-				return <TemperingStageCard key={index} stage={x} />;
-			})}
-		</Stack>
-	);
-}
 
 export function TemperingStageCard({ stage }: { stage: TemperingStage }) {
 	const chapter = useChapter();

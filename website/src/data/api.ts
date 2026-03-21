@@ -81,6 +81,15 @@ export function useBodyTempering() {
 	return useBody().tempering;
 }
 
+export function useBodyTemperingForChapter(chapter: number) {
+	const stages = useBodyTempering() || [];
+
+	const filtered = stages.filter((x) => x.chapter <= chapter);
+	if (!filtered.length) return [];
+
+	return orderBy(filtered, [(x) => x.chapter], ["asc"]);
+}
+
 /** Race history in descending chapter and tier order */
 export function useRaces() {
 	const races = useBody().races;
