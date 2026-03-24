@@ -95,8 +95,9 @@ export function parseFormattedTable<T, TColumns>(
 
 	const data = [];
 	for (let i = 1; i < values.length; i++) {
-		// Make sure there's data in the row
-		if (!values[i]![0]) continue;
+		// Make sure there's data in the row.
+		// Don't just check the first cell because some have Chapter 0 entries that would be skipped.
+		if (!values[i]![0] && !values[i]![1]) continue;
 		const entry = mapRow(values[i]!, richValues[i]!, headers);
 		if (filter(entry)) {
 			data.push(entry);
