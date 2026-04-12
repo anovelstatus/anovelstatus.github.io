@@ -1,14 +1,40 @@
-import { AppBar, Box, Button, IconButton, LinearProgress, Menu, Toolbar } from "@mui/material";
+import {
+	AppBar,
+	Box,
+	Button,
+	IconButton,
+	LinearProgress,
+	Menu,
+	MenuItem,
+	Stack,
+	Toolbar,
+	useTheme,
+} from "@mui/material";
 import { Event, Menu as MenuIcon } from "@mui/icons-material";
-import RouterButton from "@/components/header/RouterButton";
 import ChapterPicker from "./ChapterPicker";
 import { useIsFetching } from "@tanstack/react-query";
 import { useState } from "react";
 import ChapterTimeline from "./ChapterTimeline";
-import { useLocation } from "@tanstack/react-router";
+import { Link, useLocation, type RegisteredRouter, type ValidateToPath } from "@tanstack/react-router";
 import PopupState, { bindMenu, bindTrigger } from "material-ui-popup-state";
 import { UnlockButton } from "../UnlockButton";
 import { useIsUnlocked } from "@/data/api";
+
+type NavLink = {
+	to: ValidateToPath<RegisteredRouter>;
+	title: string;
+	key: string;
+};
+const links: NavLink[] = [
+	{ key: "home", to: "/", title: "Home" },
+	{ key: "attributes", to: "/attributes", title: "Attributes" },
+	{ key: "overview", to: "/cultivation", title: "Cultivation" },
+	{ key: "body", to: "/body", title: "Body" },
+	{ key: "skills", to: "/skills", title: "Skills" },
+	{ key: "talents", to: "/talents", title: "Talents" },
+	{ key: "titles", to: "/titles", title: "Titles" },
+	{ key: "achievements", to: "/achievements", title: "Achievements" },
+];
 
 export default function NavBar() {
 	const isFetching = useIsFetching();
@@ -16,26 +42,16 @@ export default function NavBar() {
 	const loadingBarHeight = "4px";
 	const [showTimeline, setShowTimeline] = useState(false);
 
+	const theme = useTheme();
 	const location = useLocation();
 
-	const pages = [
-		<RouterButton key="home" to="/" title="Home" />,
-		<RouterButton key="attributes" to="/attributes" title="Attributes" />,
-		<RouterButton key="overview" to="/cultivation" title="Cultivation" />,
-		<RouterButton key="body" to="/body" title="Body" />,
-		<RouterButton key="skills" to="/skills" title="Skills" />,
-		<RouterButton key="talents" to="/talents" title="Talents" />,
-		<RouterButton key="titles" to="/titles" title="Titles" />,
-		<RouterButton key="achievements" to="/achievements" title="Achievements" />,
-	];
-
 	const compactMenu = (
-		<PopupState variant="popover" popupId="nav-bar-">
+		<PopupState variant="popover" popupId="nav-bar">
 			{(popupState) => (
 				<>
 					<Button
 						size="large"
-						aria-label="account of current user"
+						aria-label="navigation menu"
 						aria-controls="menu-appbar"
 						aria-haspopup="true"
 						{...bindTrigger(popupState)}
@@ -43,7 +59,7 @@ export default function NavBar() {
 						startIcon={<MenuIcon />}
 						variant="text"
 					>
-						{pages.find((x) => x.props.to === location.pathname)!.props.title as string}
+						{links.find((x) => x.to === location.pathname)!.title as string}
 					</Button>
 
 					<Menu
@@ -54,7 +70,11 @@ export default function NavBar() {
 							horizontal: "right",
 						}}
 					>
-						{pages}
+						{links.map((link) => (
+							<MenuItem key={link.key} component={Link} to={link.to} selected={location.pathname === link.to}>
+								{link.title}
+							</MenuItem>
+						))}
 					</Menu>
 				</>
 			)}
@@ -66,7 +86,26 @@ export default function NavBar() {
 			<AppBar position="static">
 				<Toolbar variant="dense" disableGutters>
 					<Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>{compactMenu}</Box>
-					<Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>{pages}</Box>
+					<Stack direction="row" sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
+						{links.map((link) => (
+							<Button
+								variant="text"
+								sx={{
+									color: theme.palette.text.primary,
+									"&.Mui-disabled": {
+										color: theme.palette.text.primary,
+										background: theme.palette.action.disabledBackground,
+									},
+								}}
+								disabled={location.pathname === link.to}
+								component={Link}
+								key={link.key}
+								to={link.to}
+							>
+								{link.title}
+							</Button>
+						))}
+					</Stack>
 					<Box sx={{ flexGrow: 1 }} />
 					<ChapterPicker />
 					<IconButton id="show-timeline" onClick={() => setShowTimeline(!showTimeline)}>
