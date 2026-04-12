@@ -16,7 +16,7 @@ export function CalculatedStatusPanel() {
 
 	return (
 		<Stack spacing={2}>
-			<Typography variant="body2">
+			<Typography variant="body2" component="div">
 				This displays a calculated status for <ChaptersChip chapters={[chapter]} /> based on total skill levels and
 				title boosts. For official published numbers, check out the other tab.
 			</Typography>
