@@ -24,7 +24,7 @@ export function RaceCard({ race, sx }: RaceCardProps) {
 		<Card sx={sx}>
 			<CardHeader
 				title={
-					<Stack direction="row" alignItems="center">
+					<Stack direction="row" sx={{ alignItems: "center" }}>
 						<Box>{race.name}</Box>
 						<TierChip tier={race.tier} />
 						<ChaptersChip chapters={[race.chapter]} />
@@ -38,7 +38,7 @@ export function RaceCard({ race, sx }: RaceCardProps) {
 				<Typography variant="h6" gutterBottom>
 					Talent{talents.length > 1 ? "s" : ""}:
 				</Typography>
-				<Stack direction="row" spacing={1} flexWrap="wrap">
+				<Stack direction="row" spacing={1} sx={{ flexWrap: "wrap" }}>
 					{talents.map((id, index) => (
 						<TalentButton key={index} item={id} />
 					))}

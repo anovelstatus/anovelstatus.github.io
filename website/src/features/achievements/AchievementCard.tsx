@@ -9,7 +9,7 @@ export default function AchievementCard({ achievement, sx }: AchievementCardProp
 		<Card sx={sx}>
 			<CardHeader
 				title={
-					<Grid container spacing={1} alignItems="center">
+					<Grid container spacing={1} sx={{ alignItems: "center" }}>
 						<RarityChip name={achievement.tier} />
 						<ChaptersChip chapters={[achievement.chapter]} />
 					</Grid>
@@ -20,7 +20,7 @@ export default function AchievementCard({ achievement, sx }: AchievementCardProp
 					<RichTextSpan data={achievement.description} />
 					<Typography variant="h6">Message</Typography>
 					<RichTextSpan data={achievement.message} />
-					<Typography variant="body2" fontStyle="italic">
+					<Typography variant="body2" sx={{ fontStyle: "italic" }}>
 						Sent to {achievement.messageRecipients.join(", ")}
 					</Typography>
 					<Typography variant="h6">Rewards</Typography>

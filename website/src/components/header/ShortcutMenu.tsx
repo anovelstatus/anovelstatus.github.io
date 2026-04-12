@@ -28,7 +28,7 @@ export function ShortcutMenu({ groups, label, onClick }: ShortcutMenuProps) {
 								{group[0] ? <ListSubheader>{group[0]}</ListSubheader> : undefined}
 								{group[1].map((x, index) => (
 									<MenuItem key={index} onClick={() => onClick(x.chapter)}>
-										<Typography marginRight={1}>{x.label}</Typography>
+										<Typography sx={{ marginRight: 1 }}>{x.label}</Typography>
 										<ChaptersChip chapters={[x.chapter]} />
 									</MenuItem>
 								))}

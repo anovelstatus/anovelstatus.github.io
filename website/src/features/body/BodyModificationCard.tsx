@@ -13,7 +13,7 @@ export function BodyModificationCard({ mutation }: BodyModificationCardProps) {
 		<Card>
 			<CardHeader
 				title={
-					<Stack direction="row" alignItems="center">
+					<Stack direction="row" sx={{ alignItems: "center" }}>
 						{mutation.name}
 						<ChaptersChip chapters={mutation.chapters} />
 					</Stack>
@@ -21,10 +21,10 @@ export function BodyModificationCard({ mutation }: BodyModificationCardProps) {
 			/>
 			<CardContent>
 				<Stack>
-					<Typography variant="body2" whiteSpace="pre-line">
+					<Typography variant="body2" sx={{ whiteSpace: "pre-line" }}>
 						<RichTextSpan data={parseNote(mutation, chapter)} />
 					</Typography>
-					<Typography variant="body2" whiteSpace="pre-line">
+					<Typography variant="body2" sx={{ whiteSpace: "pre-line" }}>
 						Source: <RichTextSpan data={mutation.source} />
 					</Typography>
 				</Stack>

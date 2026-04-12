@@ -21,7 +21,7 @@ export default function TalentCard({ id, sx }: TalentCardProps) {
 		<Card sx={sx}>
 			<CardHeader
 				title={
-					<Grid container spacing={1} alignItems="center">
+					<Grid container spacing={1} sx={{ alignItems: "center" }}>
 						{talent.name} <RarityChip name={talent.tier} />
 						<ChaptersChip chapters={[talent.chapterGained]} />
 					</Grid>
@@ -34,7 +34,7 @@ export default function TalentCard({ id, sx }: TalentCardProps) {
 				<CardActions>
 					<Stack>
 						<Typography variant="h6">Previous Talent{previousCount > 1 ? "s" : ""}:</Typography>
-						<Stack direction="row" spacing={1} flexWrap="wrap">
+						<Stack direction="row" spacing={1} sx={{ flexWrap: "wrap" }}>
 							{previousTalents.map((x, index) => (
 								<TalentButton key={index} item={x} />
 							))}

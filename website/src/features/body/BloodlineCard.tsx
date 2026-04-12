@@ -25,7 +25,7 @@ export function BloodlineCard({ bloodline }: BloodlineProps) {
 		<Card>
 			<CardHeader
 				title={
-					<Stack direction="row" alignItems="center">
+					<Stack direction="row" sx={{ alignItems: "center" }}>
 						{bloodline.name}, {formatPurity(latest.purity)}
 						<Chip label={bloodline.quality} size="small" variant="filled" color="default" />
 						<ChaptersChip chapters={[latest.chapter]} />
@@ -41,7 +41,7 @@ export function BloodlineCard({ bloodline }: BloodlineProps) {
 				<Stack>
 					<Typography variant="h6">Progress</Typography>
 					{updates.map((update, index) => (
-						<Stack key={index} direction="row" alignItems="center" spacing={1}>
+						<Stack key={index} direction="row" sx={{ alignItems: "center" }} spacing={1}>
 							<ChaptersChip chapters={[update.chapter]} />
 							<Typography variant="body2">
 								{formatPurity(update.purity)} from <RichTextSpan data={update.note!} />

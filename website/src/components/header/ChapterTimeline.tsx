@@ -39,7 +39,7 @@ export default function ChapterTimeline() {
 					onChange={handleSliderChange}
 				/>
 				{isFetching ? (
-					<Stack direction="row" justifyContent="center" alignItems="center" width="100%">
+					<Stack direction="row" sx={{ justifyContent: "center", alignItems: "center", width: "100%" }}>
 						<CircularProgress size="16px" color="inherit" />
 						<span>Loading shortcuts...</span>
 					</Stack>

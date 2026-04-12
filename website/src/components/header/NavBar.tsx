@@ -79,7 +79,7 @@ export default function NavBar() {
 			{isFetching ? (
 				<LinearProgress color="inherit" sx={{ height: loadingBarHeight }} />
 			) : (
-				<Box height={loadingBarHeight} />
+				<Box sx={{ height: loadingBarHeight }} />
 			)}
 		</Box>
 	);
