@@ -92,6 +92,7 @@ export default function NavBar() {
 								variant="text"
 								sx={{
 									color: theme.palette.text.primary,
+									textTransform: "none",
 									"&.Mui-disabled": {
 										color: theme.palette.text.primary,
 										background: theme.palette.action.disabledBackground,

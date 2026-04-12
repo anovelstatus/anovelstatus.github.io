@@ -30,7 +30,7 @@ export function AttributeDescriptions({ name, getNotes }: AttributeDescriptionsP
 												{attribute.name}
 											</Typography>
 											{getNotes(attribute).map((note, index) => (
-												<Typography key={index} variant="body2" color="text.secondary">
+												<Typography key={index} variant="body2" sx={{ color: "text.secondary" }}>
 													{note}
 												</Typography>
 											))}
