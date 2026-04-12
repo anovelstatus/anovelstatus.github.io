@@ -25,7 +25,7 @@ export const useColumns = () => {
 				const levelText = `Lvl ${level} / ${max}`;
 
 				return (
-					<Grid container spacing={1} alignItems="baseline">
+					<Grid container spacing={1} sx={{ alignItems: "baseline" }}>
 						<Typography variant="subtitle1">{row.original.name}</Typography>
 						<RarityChip name={row.original.tier} />
 						<IdealChip skill={row.original} />
@@ -67,7 +67,7 @@ export const useColumns = () => {
 			size: 40,
 			enableSorting: false,
 			cell: ({ row }) => (
-				<Box fontSize={"0.9em"}>
+				<Box sx={{ fontSize: "0.9em" }}>
 					<AttributeSummary item={row.original} />
 				</Box>
 			),
@@ -87,7 +87,7 @@ export const useColumns = () => {
 						{list.length > 0 && <Typography variant="h6">Ideal Prerequisites:</Typography>}
 						{list}
 						{previousSkills.length > 0 && <Typography variant="h6">Previous/Merged Skill(s):</Typography>}
-						<Stack direction="row" spacing={1} flexWrap="wrap">
+						<Stack direction="row" spacing={1} sx={{ flexWrap: "wrap" }}>
 							{previousSkills.map((x, index) => (
 								<SkillButton key={index} item={x} />
 							))}

@@ -22,7 +22,7 @@ export const useColumns = () => {
 			enableSorting: true,
 			cell: ({ row }) => (
 				<Stack direction="column">
-					<Grid container spacing={1} alignItems="center" paddingLeft={`${row.depth * 2}rem`}>
+					<Grid container spacing={1} sx={{ alignItems: "center", paddingLeft: `${row.depth * 2}rem` }}>
 						{row.depth > 0 ? <SubdirectoryArrowRight fontSize="small" /> : null}
 						<Typography variant="subtitle1">{row.original.name}</Typography>
 						<RarityChip name={row.original.tier} />

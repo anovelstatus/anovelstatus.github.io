@@ -14,7 +14,7 @@ export const useColumns = () => {
 			cell: ({ row }) => (
 				<Stack>
 					<RichTextSpan data={row.original.description} />
-					<Stack direction="row" spacing={1} alignItems="center">
+					<Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
 						<RarityChip name={row.original.tier} />
 						<ChaptersChip chapters={row.original.chapter} />
 					</Stack>
@@ -32,7 +32,7 @@ export const useColumns = () => {
 			cell: ({ row }) => (
 				<Stack>
 					<RichTextSpan data={row.original.message} />
-					<Typography variant="body2" fontStyle="italic">
+					<Typography variant="body2" sx={{ fontStyle: "italic" }}>
 						Sent to {row.original.messageRecipients.join(", ")}
 					</Typography>
 				</Stack>

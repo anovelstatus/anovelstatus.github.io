@@ -27,7 +27,7 @@ export const useColumns = () => {
 			size: 100,
 			cell: ({ row }) => (
 				<Stack direction="column">
-					<Stack direction="row" flexWrap="wrap" alignItems="baseline" paddingLeft={`${row.depth * 20}px`}>
+					<Stack direction="row" sx={{ flexWrap: "wrap", alignItems: "baseline", paddingLeft: `${row.depth * 20}px` }}>
 						{row.depth > 0 ? <SubdirectoryArrowRight fontSize="small" /> : null}
 						<Typography variant="subtitle1">{row.original.name}</Typography>
 						<RarityChip name={row.original.tier} growth={row.original.growth} />

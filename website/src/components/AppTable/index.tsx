@@ -48,7 +48,7 @@ export default function AppTable<T>({ sx, table, isLoading }: TableProps<T>): Re
 
 	if (isLoading)
 		return (
-			<Stack direction="row" alignItems="center">
+			<Stack direction="row" sx={{ alignItems: "center" }}>
 				<CircularProgress size="16px" />
 				Loading...
 			</Stack>

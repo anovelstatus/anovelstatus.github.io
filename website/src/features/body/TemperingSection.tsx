@@ -17,7 +17,7 @@ export function TemperingStageCard({ stage }: { stage: TemperingStage }) {
 		<Card>
 			<CardHeader
 				title={
-					<Stack direction="row" alignItems="center">
+					<Stack direction="row" sx={{ alignItems: "center" }}>
 						{stage.name} <RarityChip name={stage.tier} />
 						<ChaptersChip chapters={stage.chapter} />
 						<Chip size="small" label={stepsTotal} />
@@ -39,8 +39,8 @@ export function TemperingStageCard({ stage }: { stage: TemperingStage }) {
 							const isCompleted = x.completed && x.completed <= chapter;
 							const chapters = isCompleted ? [x.started, x.completed!] : [x.started];
 							return (
-								<Grid key={index} direction="column" alignItems="center" size={{ xs: 12, sm: 6, md: 4 }} spacing={2}>
-									<Stack direction="row" alignItems="flex-start" justifyItems="baseline" spacing={1}>
+								<Grid key={index} sx={{ alignItems: "center" }} size={{ xs: 12, sm: 6, md: 4 }} spacing={2}>
+									<Stack direction="row" sx={{ alignItems: "flex-start", justifyItems: "baseline" }} spacing={1}>
 										<ChaptersChip chapters={chapters} />
 										<Stack direction="column" spacing={1}>
 											<RichTextSpan data={x.note} color={isCompleted ? "text.primary" : "text.secondary"} />

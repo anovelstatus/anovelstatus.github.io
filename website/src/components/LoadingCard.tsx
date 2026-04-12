@@ -9,7 +9,7 @@ export default function LoadingCard({ headerOnly = false, sx }: LoadingCardProps
 		<Card sx={sx}>
 			<CardHeader
 				title={
-					<Stack direction="row" alignItems="center">
+					<Stack direction="row" sx={{ alignItems: "center" }}>
 						<CircularProgress size="20px" color="inherit" />
 						<span>Loading...</span>
 					</Stack>

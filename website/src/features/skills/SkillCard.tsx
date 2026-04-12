@@ -34,7 +34,7 @@ export default function SkillCard({ id, sx }: SkillCardProps) {
 			<CardHeader
 				sx={{ background: gradient }}
 				title={
-					<Grid container spacing={1} alignItems="center">
+					<Grid container spacing={1} sx={{ alignItems: "center" }}>
 						{skill.name} <RarityChip name={skill.tier} />
 						<IdealChip skill={skill} />
 						<Chip size="small" label={levelText} />
@@ -58,7 +58,7 @@ export default function SkillCard({ id, sx }: SkillCardProps) {
 							<Typography variant="h6" sx={{ marginTop: "20px" }}>
 								Previous/Merged Skill(s):
 							</Typography>
-							<Stack direction="row" spacing={1} flexWrap="wrap">
+							<Stack direction="row" spacing={1} sx={{ flexWrap: "wrap" }}>
 								{previousSkills.map((x, index) => {
 									return <SkillButton key={index} item={x} />;
 								})}
