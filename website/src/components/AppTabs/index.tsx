@@ -23,9 +23,14 @@ export default function AppTabs({ title, labels, panels, panelProps }: AppTabsPr
 			<Box sx={{ borderBottom: 1, borderColor: "divider", marginBottom: 2 }}>
 				<Tabs value={tabIndex} onChange={handleChange} aria-label={`${title} tabs`}>
 					{labels.map((label, index) => (
-						<Tab key={index} label={label} {...a11yProps(index)} sx={{
-							":not(:last-child)": { borderRight: 1, borderColor: "divider" },
-						}} />
+						<Tab
+							key={index}
+							label={label}
+							{...a11yProps(index)}
+							sx={{
+								":not(:last-child)": { borderRight: 1, borderColor: "divider" },
+							}}
+						/>
 					))}
 				</Tabs>
 			</Box>
