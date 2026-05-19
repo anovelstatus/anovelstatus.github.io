@@ -1,11 +1,12 @@
-import { useAttributes, useChapter, useLoreTopic, useRaceOnChapter } from "@/data/api";
-import { Box, Input, Stack, Typography } from "@mui/material";
+import { useAttributes, useChapter, useGroupedAttributes, useLoreTopic, useRaceOnChapter } from "@/data/api";
+import { Box, Grid, Input, Stack, Typography } from "@mui/material";
 import { AttributeStatus } from "../AttributeStatus";
 import { getCurrentBoost, useCalculatedStatus } from "../helpers";
 import ChaptersChip from "@/components/chips/ChaptersChip";
 import { useMemo, useState } from "react";
 import { RichTextSpan } from "@/components/RichTextSpan";
 import { maxBy } from "es-toolkit";
+import { AttributeGroupCard } from "../AttributeGroupCard";
 
 export function TribulationPanel() {
 	const chapter = useChapter();
@@ -31,14 +32,6 @@ export function TribulationPanel() {
 		return temp;
 	}, [status, attributes, tempChanges]);
 
-	const additions = attributes.map((attribute) => (
-		<TribulationAddition
-			key={attribute.name}
-			attribute={attribute}
-			onChange={(name, value) => setTempChanges((prev) => ({ ...prev, [name]: value }))}
-		/>
-	));
-
 	const thresholds = getTresholds(tempStatus, race, attributes);
 
 	return (
@@ -53,7 +46,7 @@ export function TribulationPanel() {
 			<Typography variant="body2" component="div" sx={{ fontStyle: "italic" }}>
 				Title boosts will be added for you. Just add what is gained directly from a skill level or other source.
 			</Typography>
-			<Stack>{additions}</Stack>
+			<AttributeInputs onChange={(changes) => setTempChanges(changes)} />
 			<Typography variant="h4">Thresholds ({thresholds.length})</Typography>
 			<Stack spacing={1}>
 				{thresholds.map((x) => (
@@ -66,36 +59,52 @@ export function TribulationPanel() {
 	);
 }
 
-type TribulationAdditionProps = {
-	attribute: Attribute.Details;
-	onChange?: (attribute: string, value: number) => void;
-};
+function AttributeInputs({ onChange }: { onChange: (changes: HasSomeAttributes) => void }) {
+	const groups = useGroupedAttributes();
+	const [changes, setChanges] = useState({} as HasSomeAttributes);
 
-function TribulationAddition({ attribute, onChange }: TribulationAdditionProps) {
-	const [value, setValue] = useState(0);
 	return (
-		<Box>
-			<Typography component="span" id={`input-${attribute.name}`}>
-				{attribute.name}
-			</Typography>
-			<Input
-				value={value}
-				size="small"
-				onChange={(e) => {
-					const newValue = Number(e.target.value);
-					setValue(newValue);
-					if (onChange) onChange(attribute.name, newValue);
-				}}
-				inputProps={{
-					step: 1,
-					min: 0,
-					type: "number",
-					"aria-labelledby": `input-${attribute.name}`,
-					"aria-label": attribute.name,
-				}}
-				sx={{ marginLeft: 1 }}
-			/>
-		</Box>
+		<Grid container spacing={1}>
+			{groups.map(([groupName, groupAttributes]) => (
+				<Grid key={groupName} size={{ xs: 12, md: 6, lg: 4 }}>
+					<AttributeGroupCard
+						groupName={groupName}
+						attributes={groupAttributes}
+						formatAttributes={(attributes) => (
+							<Stack spacing={2}>
+								{attributes.map((attribute) => (
+									<Box key={attribute.name}>
+										<Typography variant="body2" component="span">
+											{attribute.name}:
+										</Typography>
+										<Input
+											value={changes[attribute.name] || 0}
+											size="small"
+											onChange={(e) => {
+												const newValue = Number(e.target.value);
+												setChanges((prev) => {
+													const newChanges = { ...prev, [attribute.name]: newValue };
+													onChange(newChanges);
+													return newChanges;
+												});
+											}}
+											inputProps={{
+												step: 1,
+												min: 0,
+												type: "number",
+												"aria-labelledby": `input-${attribute.name}`,
+												"aria-label": attribute.name,
+											}}
+											sx={{ marginLeft: 1, width: "6ch" }}
+										/>
+									</Box>
+								))}
+							</Stack>
+						)}
+					/>
+				</Grid>
+			))}
+		</Grid>
 	);
 }
 
