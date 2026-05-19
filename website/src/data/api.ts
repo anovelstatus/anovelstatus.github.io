@@ -96,10 +96,11 @@ export function useRaces() {
 	return orderBy(races, [(x) => x.chapter, (x) => x.tier], ["desc", "desc"]);
 }
 
-export function useRaceOnChapter(chapter: number) {
+export function useRaceOnChapter(chapter: number): Race {
 	const races = useRaces();
 	chapter = chapter || 0;
-	return races.filter((x) => x.chapter <= chapter)[0]!;
+	const race = races.filter((x) => x.chapter <= chapter)[0];
+	return race || { name: "Unknown", tier: 0, chapter: 0, talents: [], freeSlots: 0, note: [] };
 }
 
 export function useTalents() {
