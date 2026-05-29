@@ -68,7 +68,7 @@ export function getChapterFilter<T>(chapterLimit: number, key: keyof T): (entry:
 
 /** Parse a table of plain text into an array of objects */
 export function parseTable<T, TColumns>(
-	range: GoogleAppsScript.Spreadsheet.Range,
+	range: Range,
 	mapColumns: (headerRow: SpreadsheetValue[]) => TColumns,
 	mapRow: (row: SpreadsheetValue[], headers: TColumns) => T,
 	filter: (item: T) => boolean,
@@ -84,7 +84,7 @@ export function parseTable<T, TColumns>(
 
 /** Parse a table that might contain formatted text into an array of objects */
 export function parseFormattedTable<T, TColumns>(
-	range: GoogleAppsScript.Spreadsheet.Range,
+	range: Range,
 	mapColumns: (headerRow: SpreadsheetValue[]) => TColumns,
 	mapRow: (row: SpreadsheetValue[], richRow: RichValue[], headers: TColumns) => T,
 	filter: (item: T) => boolean,

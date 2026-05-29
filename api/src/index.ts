@@ -1,6 +1,6 @@
 import "./global.d.ts";
 import "../../shared/types.d.ts";
-import { getPage, getSpreadsheetInfo, updatePageJson } from "./pages/index.js";
+import { getSpreadsheetInfo, updatePageJson } from "./pages/index.js";
 
 /**
  * Randomly-generated string that users should paste into the website
@@ -23,9 +23,8 @@ function doGet(e: GoogleAppsScript.Events.DoGet) {
 	try {
 		const page = e.parameter["page"] as Page;
 		const includePatreon = e.parameter["key"] === PATREON_KEY;
-		const info = getSpreadsheetInfo(ss, includePatreon);
-		const data = getPage(ss, info, page);
-		content = JSON.stringify(data);
+		const file = getFile(includePatreon, page);
+		content = file.getDataAsString();
 	} catch (err: Error | unknown) {
 		console.log(err);
 		if (err instanceof Error) content = err.message;
@@ -38,8 +37,7 @@ function doGet(e: GoogleAppsScript.Events.DoGet) {
 /* @ts-expect-error no-unused-local */
 function debug() {
 	const page = "skills";
-	const info = getSpreadsheetInfo(ss, true);
-	const test = getPage(ss, info, page);
+	const test = getFile(true, page);
 	console.log(test);
 }
 
@@ -65,7 +63,15 @@ function updateFiles() {
 	const patreonInfo = getSpreadsheetInfo(ss, true);
 
 	for (const page of allPages) {
+		console.log("Updating " + page);
 		updatePageJson(ss, rrFolder, rrInfo, page);
 		updatePageJson(ss, patreonFolder, patreonInfo, page);
 	}
+}
+
+function getFile(includePatreon: boolean, page: string): GoogleAppsScript.Base.Blob {
+	const folder = DriveApp.getFolderById(includePatreon ? PATREON_FOLDER : RR_FOLDER);
+	const fileResults = folder.getFilesByName(page + ".json");
+	if (fileResults.hasNext()) return fileResults.next().getBlob();
+	throw page + " not found";
 }
