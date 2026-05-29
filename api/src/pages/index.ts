@@ -1,7 +1,7 @@
 import { getAchievements } from "./achievements";
 import { getAttributes } from "./attributes/index";
 import { getBody } from "./body/index";
-import { getPatreonChapter, getRoyalRoadChapter, getConfiguration } from "./chapters";
+import { getConfiguration, getPatreonChapter, getRoyalRoadChapter } from "./chapters";
 import { getLore } from "./lore";
 import { getTimelineShortcuts } from "./shortcuts";
 import { getSkills } from "./skills/index";
@@ -24,7 +24,7 @@ export function getSpreadsheetInfo(spreadsheet: Spreadsheet, includePatreon: boo
 	return { chapterLimit, ranges, attributeNames, includePatreon };
 }
 
-export function getPage(spreadsheet: Spreadsheet, info: SpreadsheetInfo, page: Page) {
+function getPage(spreadsheet: Spreadsheet, info: SpreadsheetInfo, page: Page) {
 	const { ranges, chapterLimit, attributeNames, includePatreon } = info;
 
 	if (page === "chapters") return getConfiguration(includePatreon, spreadsheet, ranges, attributeNames, chapterLimit);
@@ -59,12 +59,7 @@ function getPageParser(page: Page): CacheableFunc<unknown> {
 	}
 }
 
-export function updatePageJson(
-	ss: Spreadsheet,
-	folder: GoogleAppsScript.Drive.Folder,
-	info: SpreadsheetInfo,
-	page: Page,
-) {
+export function updatePageJson(ss: Spreadsheet, folder: Folder, info: SpreadsheetInfo, page: Page) {
 	const fileName = page + ".json";
 	const data = getPage(ss, info, page);
 	const json = JSON.stringify(data);

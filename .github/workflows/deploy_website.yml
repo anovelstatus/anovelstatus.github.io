@@ -10,6 +10,7 @@ on:
       - "shared/**"
       - "website/**"
       - ".github/workflows/deploy_website.yml"
+      - "package-lock.json"
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
