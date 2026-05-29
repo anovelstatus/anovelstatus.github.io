@@ -52,6 +52,7 @@ function updateFiles() {
 	updateAllFiles();
 }
 
+/** Used to manually force a refresh. Useful if the response model changes, for example. */
 function updateAllFiles() {
 	const rrFolder = DriveApp.getFolderById(RR_FOLDER);
 	const patreonFolder = DriveApp.getFolderById(PATREON_FOLDER);
@@ -78,6 +79,7 @@ function updateAllFiles() {
 	}
 }
 
+/** Get contents of JSON file in folder */
 function getFile(includePatreon: boolean, page: string): GoogleAppsScript.Base.Blob {
 	const folder = DriveApp.getFolderById(includePatreon ? PATREON_FOLDER : RR_FOLDER);
 	const fileResults = folder.getFilesByName(page + ".json");
