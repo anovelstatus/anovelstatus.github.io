@@ -2,7 +2,7 @@ import { getNumbersLessThanLimit, parseFormattedTable, parseRichText } from "../
 
 type Columns = Record<keyof Body.Modification, number>;
 
-export const getMutations: CacheableFunc<Body.Modification[]> = (ss, ranges, _attributes, chapterLimit) => {
+export const getMutations: StandardParser<Body.Modification[]> = ({ ss, ranges, chapterLimit }) => {
 	return parseFormattedTable(
 		ss.getRange(ranges.Mutations),
 		mapColumns,

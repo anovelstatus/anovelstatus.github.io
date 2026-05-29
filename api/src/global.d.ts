@@ -41,12 +41,12 @@ declare type Page =
 	| "achievements"
 	| "lore";
 
-/** Keys for data cache - all the pages + one that stores where to find those pages */
-declare type CacheKey = Page | "table-ranges";
+declare type StandardParser<T> = (info: SpreadsheetInfo) => T;
 
-declare type CacheableFunc<T> = (
-	ss: Spreadsheet,
-	ranges: RangeLookup,
-	attributeNames: string[],
-	chapterLimit: number,
-) => T;
+declare type SpreadsheetInfo = {
+	ss: Spreadsheet;
+	chapterLimit: number;
+	ranges: RangeLookup;
+	attributeNames: string[];
+	includePatreon: boolean;
+};

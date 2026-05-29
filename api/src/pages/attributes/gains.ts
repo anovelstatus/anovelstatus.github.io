@@ -3,7 +3,7 @@ import { getChapterFilter, parseFormattedTable, parseRichText } from "../shared"
 export type InternalGain = Attribute.Gain;
 type Columns = Record<keyof InternalGain, number>;
 
-export const getGains: CacheableFunc<InternalGain[]> = (ss, _ranges, _attributes, chapterLimit) => {
+export const getGains: StandardParser<InternalGain[]> = ({ ss, chapterLimit }) => {
 	const range = ss.getSheetByName("Stat Gains")!.getDataRange();
 	return parseFormattedTable(range, mapColumns, mapRow, getChapterFilter(chapterLimit, "chapter"));
 };

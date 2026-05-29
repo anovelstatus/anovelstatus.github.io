@@ -3,11 +3,11 @@ import { getMutations } from "./mutations";
 import { getRaces } from "./race";
 import { getTempering } from "./tempering";
 
-export const getBody: CacheableFunc<Body.Details> = (ss, ranges, attributes, chapterLimit) => {
+export const getBody: StandardParser<Body.Details> = (info) => {
 	return {
-		mutations: getMutations(ss, ranges, attributes, chapterLimit),
-		races: getRaces(ss, ranges, attributes, chapterLimit),
-		bloodlines: getBloodlines(ss, ranges, attributes, chapterLimit),
-		tempering: getTempering(ss, ranges, attributes, chapterLimit),
+		mutations: getMutations(info),
+		races: getRaces(info),
+		bloodlines: getBloodlines(info),
+		tempering: getTempering(info),
 	};
 };

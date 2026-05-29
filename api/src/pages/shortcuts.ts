@@ -2,7 +2,7 @@ import { getChapterFilter, parseTable } from "./shared";
 
 type Columns = Record<keyof Shortcut, number>;
 
-export const getTimelineShortcuts: CacheableFunc<Shortcut[]> = (ss, ranges, _attributes, chapterLimit) => {
+export const getTimelineShortcuts: StandardParser<Shortcut[]> = ({ ss, ranges, chapterLimit }) => {
 	const range = ss.getRange(ranges["Chapter Shortcuts"]);
 
 	return parseTable(range, mapColumns, mapRow, getChapterFilter(chapterLimit, "chapter"));

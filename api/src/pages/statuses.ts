@@ -2,7 +2,7 @@ import { parseTable, setAttributeColumns, setAttributeValues } from "./shared";
 
 type Columns = Record<keyof Status, number>;
 
-export const getOfficialStatuses: CacheableFunc<Status[]> = (ss, _ranges, attributeNames, chapterLimit) => {
+export const getOfficialStatuses: StandardParser<Status[]> = ({ ss, attributeNames, chapterLimit }) => {
 	const sheet = ss.getSheetByName("Statuses")!;
 	const numberOfRows = sheet.getDataRange().getNumRows();
 	const range = sheet.getRange(2, 1, numberOfRows - 1, attributeNames.length + 1);

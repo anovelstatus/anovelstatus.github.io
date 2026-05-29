@@ -13,18 +13,12 @@ export function getPatreonSheetLink(ss: Spreadsheet) {
 	return ss.getRangeByName("PatreonSheetLink")!.getValue() as string;
 }
 
-export function getConfiguration(
-	includePatreon: boolean,
-	spreadsheet: Spreadsheet,
-	ranges: RangeLookup,
-	attributeNames: string[],
-	chapterLimit: number,
-): BasicInfo {
-	const tiers = getTiers(spreadsheet, ranges, attributeNames, chapterLimit);
+export function getConfiguration(info: SpreadsheetInfo): BasicInfo {
+	const tiers = getTiers(info);
 	return {
-		latest: chapterLimit,
+		latest: info.chapterLimit,
 		tiers: tiers,
-		unlocked: includePatreon,
-		patreonSheetLink: includePatreon ? getPatreonSheetLink(spreadsheet) : undefined,
+		unlocked: info.includePatreon,
+		patreonSheetLink: info.includePatreon ? getPatreonSheetLink(info.ss) : undefined,
 	};
 }

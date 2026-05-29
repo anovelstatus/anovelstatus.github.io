@@ -14,8 +14,6 @@ declare const SS_LINK: string;
 declare const RR_FOLDER: string;
 declare const PATREON_FOLDER: string;
 
-const ss = SpreadsheetApp.openByUrl(SS_LINK);
-
 /* @ts-expect-error no-unused-local */
 function doGet(e: GoogleAppsScript.Events.DoGet) {
 	let content = "";
@@ -47,13 +45,19 @@ function updateFiles() {
 	// Only update JSON files if the spreadsheet was updated more recently
 	const dataLastUpdated = DriveApp.getFolderById(PATREON_FOLDER).getFiles().next().getLastUpdated();
 	const bufferDate = new Date(dataLastUpdated.valueOf() - 1_000 * 60);
+
+	const ss = SpreadsheetApp.openByUrl(SS_LINK);
 	const ssLastUpdated = DriveApp.getFileById(ss.getId()).getLastUpdated();
-	if (bufferDate >= ssLastUpdated) return;
+	if (bufferDate >= ssLastUpdated) {
+		console.log("Spreadsheet has not changed.");
+		return;
+	}
 	updateAllFiles();
 }
 
 /** Used to manually force a refresh. Useful if the response model changes, for example. */
 function updateAllFiles() {
+	const ss = SpreadsheetApp.openByUrl(SS_LINK);
 	const rrFolder = DriveApp.getFolderById(RR_FOLDER);
 	const patreonFolder = DriveApp.getFolderById(PATREON_FOLDER);
 	const allPages: Page[] = [
@@ -74,8 +78,8 @@ function updateAllFiles() {
 
 	for (const page of allPages) {
 		console.log("Updating " + page);
-		updatePageJson(ss, rrFolder, rrInfo, page);
-		updatePageJson(ss, patreonFolder, patreonInfo, page);
+		updatePageJson(rrFolder, rrInfo, page);
+		updatePageJson(patreonFolder, patreonInfo, page);
 	}
 }
 

@@ -2,7 +2,7 @@ import { getChapterFilter, parseFormattedTable, parseRichText } from "./shared";
 
 type Columns = Record<keyof LoreEntry, number>;
 
-export const getLore: CacheableFunc<Lore> = (ss, _ranges, _attributes, chapterLimit) => {
+export const getLore: StandardParser<Lore> = ({ ss, chapterLimit }) => {
 	const descriptions = parseFormattedTable(
 		ss.getSheetByName("Lore")!.getDataRange(),
 		mapColumns,

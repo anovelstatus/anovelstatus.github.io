@@ -3,7 +3,7 @@ import { getChapterFilter, parseFormattedTable, parseRichText } from "../shared"
 export type InternalEvolution = Attribute.Evolution & { attribute: string };
 type Columns = Record<keyof InternalEvolution, number>;
 
-export const getEvolutions: CacheableFunc<InternalEvolution[]> = (ss, ranges, _attributes, chapterLimit) => {
+export const getEvolutions: StandardParser<InternalEvolution[]> = ({ ss, ranges, chapterLimit }) => {
 	const range = ss.getRange(ranges["Attribute Evolutions"]);
 	return parseFormattedTable(range, mapColumns, mapRow, getChapterFilter(chapterLimit, "chapter"));
 };
