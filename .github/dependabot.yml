@@ -9,6 +9,11 @@ updates:
     schedule:
       interval: "weekly"
     groups:
+      vite:
+        patterns:
+          - "*vite*"
+          - "rolldown"
+          - "oxfmt"
       tanstack:
         patterns:
           - "@tanstack/*"
