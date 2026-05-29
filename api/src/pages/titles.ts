@@ -3,7 +3,7 @@ import { getChapterFilter, parseFormattedTable, parseId, parseRichText } from ".
 type Columns = Omit<Record<keyof Title | "title" | "chapterReplaced", number>, keyof TieredId>;
 
 /** Get list of Titles and their metadata. This does NOT include metadata for attribute boosts. That is loaded separately. */
-export const getTitles: CacheableFunc<Title[]> = (ss, ranges, _attributes, chapterLimit) => {
+export const getTitles: StandardParser<Title[]> = ({ ss, ranges, chapterLimit }) => {
 	const range = ss.getRange(ranges.Titles);
 	return parseFormattedTable(
 		range,

@@ -3,7 +3,7 @@ import { parseFormattedTable, parseId, parseRichText, setAttributeValues } from 
 
 type Columns = Record<keyof (Skill & SkillDetails & TieredId), number>;
 
-export const getSkills: CacheableFunc<Skill[]> = (ss, ranges, attributeNames, chapterLimit) => {
+export const getSkills: StandardParser<Skill[]> = ({ ss, ranges, attributeNames, chapterLimit }) => {
 	const skillLevels = getLevels(ss, ranges, chapterLimit);
 	return getList(ss, ranges, attributeNames, skillLevels);
 };

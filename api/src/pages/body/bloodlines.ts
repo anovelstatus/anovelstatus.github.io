@@ -3,10 +3,10 @@ import { getChapterFilter, parseFormattedTable, parseId, parseRichText, parseTab
 type StatusColumns = Record<keyof BloodlineStatus, number>;
 type BloodlineColumns = Omit<Record<keyof Bloodline, number>, "updates">;
 
-export const getBloodlines: CacheableFunc<Bloodline[]> = (ss, ranges, attributes, chapterLimit) => {
-	const updates = getBloodlineUpdates(ss, ranges, attributes, chapterLimit);
+export const getBloodlines: StandardParser<Bloodline[]> = (info) => {
+	const updates = getBloodlineUpdates(info);
 	return parseTable(
-		ss.getRange(ranges.Bloodlines),
+		info.ss.getRange(info.ranges.Bloodlines),
 		mapBloodlineColumns,
 		(row, headers) => mapBloodlineRow(row, headers, updates),
 		(row) => row.updates.length > 0,
@@ -31,7 +31,7 @@ function mapBloodlineRow(row: SpreadsheetValue[], headers: BloodlineColumns, upd
 	};
 }
 
-const getBloodlineUpdates: CacheableFunc<BloodlineStatus[]> = (ss, ranges, _attributes, chapterLimit) => {
+const getBloodlineUpdates: StandardParser<BloodlineStatus[]> = ({ ss, ranges, chapterLimit }) => {
 	return parseFormattedTable(
 		ss.getRange(ranges["Bloodline Updates"]),
 		mapStatusColumns,

@@ -2,7 +2,7 @@ import { parseTable } from "./shared";
 
 type Columns = Record<keyof TierInfo, number>;
 
-export const getTiers: CacheableFunc<TierInfo[]> = (ss, _ranges, _attributes, chapterLimit) => {
+export const getTiers: StandardParser<TierInfo[]> = ({ ss, chapterLimit }) => {
 	const range = ss.getSheetByName("Tiers")!.getDataRange();
 	return parseTable(
 		range,

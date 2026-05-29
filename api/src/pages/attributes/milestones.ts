@@ -3,7 +3,7 @@ import { parseFormattedTable, parseRichText } from "../shared";
 export type InternalMilestone = Attribute.Milestone & { attribute: string };
 type Columns = Record<keyof InternalMilestone, number>;
 
-export const getMilestones: CacheableFunc<InternalMilestone[]> = (ss, ranges) => {
+export const getMilestones: StandardParser<InternalMilestone[]> = ({ ss, ranges }) => {
 	const range = ss.getRange(ranges["Attribute Milestones"]);
 	return parseFormattedTable(range, mapColumns, mapRow, (x) => !!x);
 };

@@ -3,10 +3,10 @@ import { getChapterFilter, parseFormattedTable, parseId, parseRichText } from ".
 type StageColumns = Omit<Record<keyof TemperingStage, number>, "updates">;
 type StepColumns = Record<keyof TemperingStep, number>;
 
-export const getTempering: CacheableFunc<TemperingStage[]> = (ss, ranges, attributes, chapterLimit) => {
-	const updates = getSteps(ss, ranges, attributes, chapterLimit);
+export const getTempering: StandardParser<TemperingStage[]> = (info) => {
+	const updates = getSteps(info);
 
-	const range = ss.getRange(ranges["Body Tempering Stages"]);
+	const range = info.ss.getRange(info.ranges["Body Tempering Stages"]);
 	return parseFormattedTable(
 		range,
 		mapStageColumns,
@@ -42,7 +42,7 @@ function mapStage(
 	};
 }
 
-const getSteps: CacheableFunc<TemperingStep[]> = (ss, ranges, _attributes, chapterLimit) => {
+const getSteps: StandardParser<TemperingStep[]> = ({ ss, ranges, chapterLimit }) => {
 	const range = ss.getRange(ranges["Body Tempering Progress"]);
 	return parseFormattedTable(
 		range,

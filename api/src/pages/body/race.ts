@@ -2,7 +2,7 @@ import { parseId, parseRichText, parseFormattedTable, getChapterFilter } from ".
 
 type Columns = Record<keyof Race, number>;
 
-export const getRaces: CacheableFunc<Race[]> = (ss, ranges, _attributes, chapterLimit) => {
+export const getRaces: StandardParser<Race[]> = ({ ss, ranges, chapterLimit }) => {
 	return parseFormattedTable(ss.getRange(ranges.Races), mapColumns, mapRow, getChapterFilter(chapterLimit, "chapter"));
 };
 

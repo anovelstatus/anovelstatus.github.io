@@ -3,7 +3,7 @@ import { getChapterFilter, parseFormattedTable, parseId, parseRichText } from ".
 export type InternalBoost = Attribute.Boost & { attribute: string };
 type Columns = Omit<Record<keyof InternalBoost, number>, "titleId">;
 
-export const getBoosts: CacheableFunc<InternalBoost[]> = (ss, ranges, _attributes, chapterLimit) => {
+export const getBoosts: StandardParser<InternalBoost[]> = ({ ss, ranges, chapterLimit }) => {
 	const range = ss.getRange(ranges["Attribute Boosts"]);
 	return parseFormattedTable(range, mapColumns, mapRow, getChapterFilter(chapterLimit, "chapter"));
 };

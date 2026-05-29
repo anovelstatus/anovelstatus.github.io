@@ -2,7 +2,7 @@ import { getChapterFilter, parseFormattedTable, parseRichText } from "./shared";
 
 type Columns = Record<keyof Achievement, number>;
 
-export const getAchievements: CacheableFunc<Achievement[]> = (ss, _ranges, _attributeNames, chapterLimit) => {
+export const getAchievements: StandardParser<Achievement[]> = ({ ss, chapterLimit }) => {
 	const range = ss.getSheetByName("Achievements")!.getDataRange();
 	return parseFormattedTable(range, mapColumns, mapRow, getChapterFilter(chapterLimit, "chapter"));
 };

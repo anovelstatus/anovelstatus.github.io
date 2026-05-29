@@ -10,7 +10,7 @@ import {
 type Columns = Record<keyof Talent | "id", number>;
 
 /** Get list of Talents and their metadata */
-export const getTalents: CacheableFunc<Talent[]> = (ss, _ranges, _attributes, chapterLimit) => {
+export const getTalents: StandardParser<Talent[]> = ({ ss, chapterLimit }) => {
 	const range = ss.getSheetByName("Talents")!.getDataRange();
 	return parseFormattedTable(
 		range,

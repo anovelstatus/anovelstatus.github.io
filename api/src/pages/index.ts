@@ -9,31 +9,15 @@ import { getOfficialStatuses } from "./statuses";
 import { getTalents } from "./talents";
 import { getTitles } from "./titles";
 
-export type SpreadsheetInfo = {
-	chapterLimit: number;
-	ranges: RangeLookup;
-	attributeNames: string[];
-	includePatreon: boolean;
-};
-
-export function getSpreadsheetInfo(spreadsheet: Spreadsheet, includePatreon: boolean): SpreadsheetInfo {
-	const chapterLimit = includePatreon ? getPatreonChapter(spreadsheet) : getRoyalRoadChapter(spreadsheet);
-	const ranges = getTableRanges(spreadsheet);
-	const attributes = getAttributes(spreadsheet, ranges, [], chapterLimit);
+export function getSpreadsheetInfo(ss: Spreadsheet, includePatreon: boolean): SpreadsheetInfo {
+	const chapterLimit = includePatreon ? getPatreonChapter(ss) : getRoyalRoadChapter(ss);
+	const ranges = getTableRanges(ss);
+	const attributes = getAttributes({ ss, ranges, chapterLimit, includePatreon, attributeNames: [] });
 	const attributeNames = attributes.map((x) => x.name);
-	return { chapterLimit, ranges, attributeNames, includePatreon };
+	return { ss, chapterLimit, ranges, attributeNames, includePatreon };
 }
 
-function getPage(spreadsheet: Spreadsheet, info: SpreadsheetInfo, page: Page) {
-	const { ranges, chapterLimit, attributeNames, includePatreon } = info;
-
-	if (page === "chapters") return getConfiguration(includePatreon, spreadsheet, ranges, attributeNames, chapterLimit);
-
-	const func = getPageParser(page);
-	return func(spreadsheet, ranges, attributeNames, chapterLimit);
-}
-
-function getPageParser(page: Page): CacheableFunc<unknown> {
+function getPageParser(page: Page): StandardParser<unknown> {
 	switch (page) {
 		case "achievements":
 			return getAchievements;
@@ -41,7 +25,8 @@ function getPageParser(page: Page): CacheableFunc<unknown> {
 			return getAttributes;
 		case "body":
 			return getBody;
-		// "chapters" handled separately for now
+		case "chapters":
+			return getConfiguration;
 		case "lore":
 			return getLore;
 		case "shortcuts":
@@ -59,9 +44,10 @@ function getPageParser(page: Page): CacheableFunc<unknown> {
 	}
 }
 
-export function updatePageJson(ss: Spreadsheet, folder: Folder, info: SpreadsheetInfo, page: Page) {
+export function updatePageJson(folder: Folder, info: SpreadsheetInfo, page: Page) {
 	const fileName = page + ".json";
-	const data = getPage(ss, info, page);
+	const parser = getPageParser(page);
+	const data = parser(info);
 	const json = JSON.stringify(data);
 
 	const fileResults = folder.getFilesByName(fileName);

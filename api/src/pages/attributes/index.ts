@@ -6,13 +6,13 @@ import { getMilestones, type InternalMilestone } from "./milestones";
 
 type Columns = Omit<Record<keyof Attribute.Details, number>, "milestones" | "evolutions" | "boosts" | "gains">;
 
-export const getAttributes: CacheableFunc<Attribute.Details[]> = (ss, ranges, attributes, chapterLimit) => {
-	const milestones = getMilestones(ss, ranges, attributes, chapterLimit);
-	const evolutions = getEvolutions(ss, ranges, attributes, chapterLimit);
-	const boosts = getBoosts(ss, ranges, attributes, chapterLimit);
-	const gains = getGains(ss, ranges, attributes, chapterLimit);
+export const getAttributes: StandardParser<Attribute.Details[]> = (info) => {
+	const milestones = getMilestones(info);
+	const evolutions = getEvolutions(info);
+	const boosts = getBoosts(info);
+	const gains = getGains(info);
 
-	const range = ss.getRange(ranges.Attributes);
+	const range = info.ss.getRange(info.ranges.Attributes);
 	return parseFormattedTable(
 		range,
 		mapColumns,
