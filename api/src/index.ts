@@ -44,6 +44,15 @@ function debug() {
 /** Used in trigger to update pre-generated responses */
 /* @ts-expect-error no-unused-local */
 function updateFiles() {
+	// Only update JSON files if the spreadsheet was updated more recently
+	const dataLastUpdated = DriveApp.getFolderById(PATREON_FOLDER).getFiles().next().getLastUpdated();
+	const bufferDate = new Date(dataLastUpdated.valueOf() - 1_000 * 60);
+	const ssLastUpdated = DriveApp.getFileById(ss.getId()).getLastUpdated();
+	if (bufferDate >= ssLastUpdated) return;
+	updateAllFiles();
+}
+
+function updateAllFiles() {
 	const rrFolder = DriveApp.getFolderById(RR_FOLDER);
 	const patreonFolder = DriveApp.getFolderById(PATREON_FOLDER);
 	const allPages: Page[] = [
