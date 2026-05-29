@@ -32,6 +32,8 @@ jobs:
         env:
           PATREON_KEY: ${{ secrets.PATREON_KEY }}
           SS_LINK: ${{ secrets.SS_LINK }}
+          RR_FOLDER: ${{ secrets.RR_FOLDER }}
+          PATREON_FOLDER: ${{ secrets.PATREON_FOLDER }}
       - name: Build Spreadsheet script
         run: npm run build-spreadsheet
       - name: Test Spreadsheet script

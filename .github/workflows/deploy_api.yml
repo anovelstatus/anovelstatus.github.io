@@ -41,8 +41,8 @@ jobs:
         env:
           PATREON_KEY: ${{ secrets.PATREON_KEY }}
           SS_LINK: ${{ secrets.SS_LINK }}
-      # - name: Test script
-      #   run: npm run test-api
+          RR_FOLDER: ${{ secrets.RR_FOLDER }}
+          PATREON_FOLDER: ${{ secrets.PATREON_FOLDER }}
       - name: Configure Clasp
         run: npm run config-api
         env:
