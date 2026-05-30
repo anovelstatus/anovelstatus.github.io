@@ -4,7 +4,7 @@ export function getTiers(info: SpreadsheetInfo) {
 	const definition: Table<TierInfo> = {
 		range: info.ss.getSheetByName("Tiers")!.getDataRange(),
 		fields: [
-			{ key: "tier", source: { type: "exact", name: "Tier" }, parse: { type: "string" } },
+			{ key: "tier", source: { type: "exact", name: "Tier" }, parse: { type: "number" } },
 			{ key: "skillName", source: { type: "exact", name: "Skill" }, parse: { type: "string" } },
 			{ key: "metalName", source: { type: "exact", name: "Metal" }, parse: { type: "string" } },
 			{

@@ -63,7 +63,8 @@ function updateFiles() {
 }
 
 /** Used to manually force a refresh. Useful if the response model changes, for example. */
-function updateAllFiles(ss: Spreadsheet) {
+function updateAllFiles(ss?: Spreadsheet) {
+	if (!ss) ss = SpreadsheetApp.openByUrl(SS_LINK);
 	const allPages: ApiPage[] = [
 		"chapters",
 		"achievements",
