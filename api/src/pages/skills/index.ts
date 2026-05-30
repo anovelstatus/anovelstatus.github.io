@@ -2,6 +2,7 @@ import { getLevels, type InternalSkillGain } from "./levels";
 import { parseFormattedTable, parseId, parseRichText, setAttributeValues } from "../shared";
 
 type Columns = Record<keyof (Skill & SkillDetails & TieredId), number>;
+type Extra = { attributeNames: string[]; skillLevels: InternalSkillGain[] };
 
 export const getSkills: StandardParser<Skill[]> = ({ ss, ranges, attributeNames, chapterLimit }) => {
 	const skillLevels = getLevels(ss, ranges, chapterLimit);
@@ -15,11 +16,13 @@ function getList(
 	skillLevels: InternalSkillGain[],
 ): Skill[] {
 	const range = ss.getSheetByName("Skill List")!.getDataRange();
+	const extra = { attributeNames, skillLevels };
 	return parseFormattedTable(
 		range,
 		(headerRow) => mapColumns(headerRow, attributeNames),
-		(row, richRow, headers) => mapRow(row, richRow, headers, attributeNames, skillLevels),
+		mapRow,
 		(x) => !!x.name && x.gains.length > 0,
+		extra,
 	);
 }
 
@@ -41,19 +44,13 @@ function mapColumns(headerRow: SpreadsheetValue[], attributeNames: string[]): Co
 	return headers as Columns;
 }
 
-function mapRow(
-	row: SpreadsheetValue[],
-	richRow: RichValue[],
-	headers: Columns,
-	attributeNames: string[],
-	skillLevels: InternalSkillGain[],
-): Skill {
+function mapRow(row: SpreadsheetValue[], richRow: RichValue[], headers: Columns, extra: Extra): Skill {
 	const tier = row[headers["tier"]!] as string;
 	const name = (row[headers["name"]!] as string).replace(" - " + tier, "");
 	const id = name + " - " + tier;
 
 	const previous = row[headers["previous"]!] ? (row[headers["previous"]!] as string).split(", ") : [];
-	const gains = skillLevels
+	const gains = extra.skillLevels
 		.filter((x) => x.id == id)
 		.map((x) => ({
 			note: x.note,
@@ -75,6 +72,6 @@ function mapRow(
 		tags: row[headers["tags"]!] as string,
 		// casting as unknown because the Record<string, number> for attribute gains messes with the type inference
 	} as unknown as Skill;
-	setAttributeValues(skill, row, headers, attributeNames);
+	setAttributeValues(skill, row, headers, extra.attributeNames);
 	return skill;
 }

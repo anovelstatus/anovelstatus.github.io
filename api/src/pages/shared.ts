@@ -83,11 +83,12 @@ export function parseTable<T, TColumns>(
 }
 
 /** Parse a table that might contain formatted text into an array of objects */
-export function parseFormattedTable<T, TColumns>(
+export function parseFormattedTable<T, TColumns, TExtra = never>(
 	range: Range,
 	mapColumns: (headerRow: SpreadsheetValue[]) => TColumns,
-	mapRow: (row: SpreadsheetValue[], richRow: RichValue[], headers: TColumns) => T,
+	mapRow: (row: SpreadsheetValue[], richRow: RichValue[], headers: TColumns, extra: TExtra) => T,
 	filter: (item: T) => boolean,
+	extra?: TExtra,
 ): T[] {
 	const values = range.getValues();
 	const richValues = range.getRichTextValues();
@@ -98,7 +99,7 @@ export function parseFormattedTable<T, TColumns>(
 		// Make sure there's data in the row.
 		// Don't just check the first cell because some have Chapter 0 entries that would be skipped.
 		if (!values[i]![0] && !values[i]![1]) continue;
-		const entry = mapRow(values[i]!, richValues[i]!, headers);
+		const entry = mapRow(values[i]!, richValues[i]!, headers, extra!);
 		if (filter(entry)) {
 			data.push(entry);
 		}

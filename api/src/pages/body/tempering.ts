@@ -7,12 +7,7 @@ export const getTempering: StandardParser<TemperingStage[]> = (info) => {
 	const updates = getSteps(info);
 
 	const range = info.ss.getRange(info.ranges["Body Tempering Stages"]);
-	return parseFormattedTable(
-		range,
-		mapStageColumns,
-		(row, richRow, headers) => mapStage(row, richRow, headers, updates),
-		(row) => row.updates.length > 0,
-	);
+	return parseFormattedTable(range, mapStageColumns, mapStage, (row) => row.updates.length > 0, updates);
 };
 
 function mapStageColumns(headerRow: SpreadsheetValue[]): StageColumns {
@@ -44,12 +39,7 @@ function mapStage(
 
 const getSteps: StandardParser<TemperingStep[]> = ({ ss, ranges, chapterLimit }) => {
 	const range = ss.getRange(ranges["Body Tempering Progress"]);
-	return parseFormattedTable(
-		range,
-		mapStepColumns,
-		(row, richRow, headers) => mapStep(row, richRow, headers, chapterLimit),
-		getChapterFilter(chapterLimit, "started"),
-	);
+	return parseFormattedTable(range, mapStepColumns, mapStep, getChapterFilter(chapterLimit, "started"), chapterLimit);
 };
 
 function mapStepColumns(headerRow: SpreadsheetValue[]): StepColumns {

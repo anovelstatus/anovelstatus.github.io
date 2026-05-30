@@ -6,8 +6,9 @@ export const getMutations: StandardParser<Body.Modification[]> = ({ ss, ranges, 
 	return parseFormattedTable(
 		ss.getRange(ranges.Mutations),
 		mapColumns,
-		(row, richRow, headers) => mapRow(row, richRow, headers, chapterLimit),
+		mapRow,
 		(row) => row.chapters.length > 0,
+		chapterLimit,
 	);
 };
 
