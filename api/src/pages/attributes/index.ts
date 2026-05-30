@@ -35,29 +35,27 @@ function mapColumns(headerRow: SpreadsheetValue[]): Columns {
 	};
 }
 
-function getAttributeFilter(attribute: string): (x: { attribute: string }) => boolean {
-	return (x) => x.attribute === attribute;
-}
-
 function mapRow(row: SpreadsheetValue[], richRow: RichValue[], headers: Columns, extra: Extra): Attribute.Details {
-	const attributeFilter = getAttributeFilter(row[headers.name] as string);
+	const attribute = row[headers.name] as string;
+	const attributeFilter = getAttributeFilter(attribute);
 	return {
-		name: row[headers.name] as string,
+		name: attribute,
 		abbreviation: row[headers.abbreviation] as string,
 		category: row[headers.category] as string,
 		categoryAbbreviation: row[headers.categoryAbbreviation] as string,
 		note: parseRichText(richRow[headers.note]!),
 		color: row[headers.color] as string,
-		milestones: extra.milestones.filter(attributeFilter).map((x) => ({ milestone: x.milestone, note: x.note })),
-		evolutions: extra.evolutions
-			.filter(attributeFilter)
-			.map((x) => ({ note: x.note, chapter: x.chapter, name: x.name })),
-		gains: extra.gains.filter(attributeFilter).map((x) => ({ chapter: x.chapter, gain: x.gain, note: x.note })),
-		boosts: extra.boosts.filter(attributeFilter).map((x) => ({
-			note: x.note,
-			chapter: x.chapter,
-			titleId: x.titleId,
-			boost: x.boost,
-		})),
+		milestones: extra.milestones.filter(attributeFilter).map(removeAttribute),
+		evolutions: extra.evolutions.filter(attributeFilter).map(removeAttribute),
+		gains: extra.gains.filter(attributeFilter).map(removeAttribute),
+		boosts: extra.boosts.filter(attributeFilter).map(removeAttribute),
 	};
+}
+
+function getAttributeFilter(attribute: string): (x: { attribute: string }) => boolean {
+	return (x) => x.attribute === attribute;
+}
+
+function removeAttribute<T>(x: T & { attribute: string }): T {
+	return { ...x, attribute: undefined };
 }

@@ -103,10 +103,10 @@ export function getChapterGains(chapter: number): React.ReactNode[] {
 					""
 				);
 				notes.push(
-					<Box key={`${attribute.name}-boost-${toIdString(boost.titleId)}`}>
+					<Box key={`${attribute.name}-boost-${toIdString(boost.title)}`}>
 						{boost.boost > 0 ? "+" : ""}
 						{`${Math.round(boost.boost * 100)}% ${attribute.name} from `}
-						<TitleButton item={boost.titleId} />
+						<TitleButton item={boost.title} />
 						{suffix}
 					</Box>,
 				);

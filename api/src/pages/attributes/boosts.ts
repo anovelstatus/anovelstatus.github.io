@@ -13,7 +13,7 @@ function mapColumns(headerRow: SpreadsheetValue[]): Columns {
 		chapter: headerRow.indexOf("Chapter"),
 		attribute: headerRow.indexOf("Attribute"),
 		boost: headerRow.findIndex((x) => (x as string).includes("Gain")),
-		titleId: headerRow.indexOf("Title"),
+		title: headerRow.indexOf("Title"),
 		note: headerRow.indexOf("Note"),
 	};
 }
@@ -23,7 +23,7 @@ function mapRow(row: SpreadsheetValue[], richRow: RichValue[], headers: Columns)
 		chapter: row[headers.chapter] as number,
 		attribute: row[headers.attribute] as string,
 		boost: row[headers.boost] as number,
-		titleId: parseId(row[headers.titleId] as string),
+		title: parseId(row[headers.title] as string),
 		note: parseRichText(richRow[headers.note]),
 	};
 }
