@@ -142,7 +142,6 @@ declare type BasicInfo = {
 	patreonSheetLink?: string;
 	tiers: TierInfo[];
 	shortcuts: Shortcut[];
-	attributeNames: string[];
 	attributes: Attribute.Basic[];
 };
 

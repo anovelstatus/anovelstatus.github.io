@@ -1,4 +1,4 @@
-import { useAttributes } from "@/data/api";
+import { useBasicAttributes } from "@/data/api";
 import { CircularProgress, Typography } from "@mui/material";
 
 type AttributeSummaryProps = {
@@ -7,7 +7,7 @@ type AttributeSummaryProps = {
 
 /** Write out list of attributes provided by something */
 export function AttributeSummary({ item }: AttributeSummaryProps) {
-	const { data: allAttributes, isFetching } = useAttributes();
+	const { data: allAttributes, isFetching } = useBasicAttributes();
 
 	if (isFetching) return <CircularProgress size="16px" color="inherit" />;
 

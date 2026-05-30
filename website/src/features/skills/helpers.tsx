@@ -6,7 +6,7 @@ export const IDEAL_QUALITY = "Ideal";
 export type SkillFiltersOptions = {
 	chapter: number;
 	showFormerSkills?: boolean;
-	providesAttributes: Attribute.Details[];
+	providesAttributes: Attribute.Basic[];
 	tier?: string;
 	idealOnly: boolean;
 };

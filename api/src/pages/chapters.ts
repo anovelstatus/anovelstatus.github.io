@@ -21,7 +21,6 @@ export function getConfiguration(info: SpreadsheetInfo): BasicInfo {
 		unlocked: info.includePatreon,
 		patreonSheetLink: info.includePatreon ? getPatreonSheetLink(info.ss) : undefined,
 		shortcuts: getTimelineShortcuts(info),
-		attributeNames: info.attributeNames,
 		attributes: info.attributes.map((x) => ({
 			name: x.name,
 			abbreviation: x.abbreviation,
