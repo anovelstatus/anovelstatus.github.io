@@ -1,11 +1,9 @@
 import { getLevels, type InternalSkillGain } from "./levels";
 import {
 	parseFormattedTable,
-	parseId,
 	parseIds,
 	parseOptional,
 	parseRichText,
-	parseSplitString,
 	parseString,
 	setAttributeValues,
 } from "../shared";
