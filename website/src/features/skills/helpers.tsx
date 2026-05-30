@@ -31,10 +31,11 @@ export function showSkill(x: Skill, filters: SkillFiltersOptions) {
 
 export function getPrerequisiteList(skill: Skill) {
 	const keyPrefix = toIdString(skill) + "-prerequisite";
-	const list = skill.prerequisites
-		.split("\n")
-		.map((x) => x.trim())
-		.filter((x) => x.length > 0);
+	const list =
+		skill.prerequisites
+			?.split("\n")
+			.map((x) => x.trim())
+			.filter((x) => x.length > 0) ?? [];
 
 	if (list.length === 0) return [];
 

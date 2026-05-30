@@ -204,7 +204,7 @@ declare type SkillDetails = {
 	replaced: boolean;
 	gains: SkillGain[];
 	description: RichText[];
-	prerequisites: string;
+	prerequisites: string | undefined;
 	quality: string;
 	bonuses: RichText[];
 	notes: RichText[];
