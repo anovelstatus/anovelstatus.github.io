@@ -20,6 +20,12 @@ export function parseBoolean(value: SpreadsheetValue): boolean {
 	return value === true;
 }
 
+export function parseOptionalBoolean(value: SpreadsheetValue): boolean | undefined {
+	if (value === "") return undefined;
+	if (value === false) return undefined;
+	return parseBoolean(value);
+}
+
 export function parseString(value: SpreadsheetValue): string {
 	if (typeof value !== "string") throw new Error("expected string");
 	return value;
@@ -231,11 +237,20 @@ function mapDynamicRow<T, TExtra>(
 			case "string":
 				item[key] = parse.optional ? parseOptionalString(value) : parseString(value);
 				break;
+			case "bool":
+				item[key] = parse.optional ? parseOptionalBoolean(value) : parseBoolean(value);
+				break;
 			case "tiered_id":
 				item[key] = parseId(value);
 				break;
+			case "split_tiered_id":
+				item[key] = parseIds(value);
+				break;
 			case "split-string":
 				item[key] = parseSplitString(value, ",");
+				break;
+			case "split-number":
+				item[key] = parse.limited ? getNumbersLessThanLimit(value, info.chapterLimit) : parseNumberArray(value);
 				break;
 			case "custom":
 				item[key] = parse.parse(item as Partial<T>, definition.extra);
