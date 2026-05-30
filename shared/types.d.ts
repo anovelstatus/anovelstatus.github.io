@@ -41,7 +41,7 @@ declare namespace Attribute {
 		chapter: number;
 		boost: number;
 		note: RichText[];
-		titleId: TieredId;
+		title: TieredId;
 	};
 
 	type Gain = {

@@ -19,7 +19,7 @@ export function BoostList({ attribute }: AttributeDetailsProps) {
 		<li key={index} style={{ marginBottom: "8px" }}>
 			<Typography component="span" variant="body2">
 				<span style={{ fontWeight: "bold" }}>{x.boost * 100}%</span> from{" "}
-				<TitleButton item={x.titleId} size="small" variant="text" />
+				<TitleButton item={x.title} size="small" variant="text" />
 				{hasNote(x.note) ? (
 					<>
 						{" ("}
