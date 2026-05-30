@@ -63,3 +63,15 @@ declare type Table<T> = {
 	range: Range;
 	filter?: (item: T) => boolean;
 };
+
+/**
+ * Randomly-generated string that users should paste into the website
+ * in order to get not just public Royal Road info, but also the Patreon info.
+ */
+declare const PATREON_KEY: string;
+
+declare const SS_LINK: string;
+
+// ID of Google Drive folders where JSON files are stored
+declare const RR_FOLDER: string;
+declare const PATREON_FOLDER: string;
