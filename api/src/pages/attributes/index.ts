@@ -1,5 +1,5 @@
 import { parseFormattedTable, parseRichText, parseString } from "../shared";
-import { newGetBoosts, type InternalBoost } from "./boosts";
+import { getBoosts, type InternalBoost } from "./boosts";
 import { getEvolutions, type InternalEvolution } from "./evolutions";
 import { getGains, type InternalGain } from "./gains";
 import { getMilestones, type InternalMilestone } from "./milestones";
@@ -15,7 +15,7 @@ type Extra = {
 export const getAttributes: StandardParser<Attribute.Details[]> = (info) => {
 	const milestones = getMilestones(info);
 	const evolutions = getEvolutions(info);
-	const boosts = newGetBoosts(info);
+	const boosts = getBoosts(info);
 	const gains = getGains(info);
 
 	const extra = { milestones, evolutions, gains, boosts };
