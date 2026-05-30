@@ -1,27 +1,26 @@
-import { chapterFilter, parseFormattedTable, parseNumber, parseRichText, parseString } from "../shared";
+import { chapterFilter, parseDynamicTable } from "../shared";
 
 export type InternalEvolution = Attribute.Evolution & { attribute: string };
-type Columns = Record<keyof InternalEvolution, number>;
 
-export const getEvolutions: StandardParser<InternalEvolution[]> = ({ ss, ranges, chapterLimit }) => {
-	const range = ss.getRange(ranges["Attribute Evolutions"]);
-	return parseFormattedTable(range, mapColumns, mapRow, chapterFilter(chapterLimit, "chapter"));
-};
-
-function mapColumns(headerRow: SpreadsheetValue[]): Columns {
-	return {
-		attribute: headerRow.indexOf("Attribute"),
-		name: headerRow.indexOf("Evolution"),
-		chapter: headerRow.indexOf("Chapter"),
-		note: headerRow.indexOf("Description"),
+export function getEvolutions(info: SpreadsheetInfo) {
+	const definition: Table<InternalEvolution> = {
+		getRange: (info) => info.ss.getRange(info.ranges["Attribute Evolutions"]),
+		filter: chapterFilter(info.chapterLimit, "chapter"),
+		fields: [
+			{ key: "chapter", source: { type: "column", name: "Chapter" }, parse: { type: "number" } },
+			{
+				key: "attribute",
+				source: { type: "column", name: "Attribute" },
+				parse: { type: "string" },
+			},
+			{
+				key: "name",
+				source: { type: "column", name: "Evolution" },
+				parse: { type: "string" },
+			},
+			{ key: "note", source: { type: "column", name: "Description" }, parse: { type: "rich" } },
+		],
+		extra: undefined,
 	};
-}
-
-function mapRow(row: SpreadsheetValue[], richRow: RichValue[], headers: Columns): InternalEvolution {
-	return {
-		chapter: parseNumber(row[headers.chapter]),
-		attribute: parseString(row[headers.attribute]),
-		note: parseRichText(richRow[headers.note]),
-		name: parseString(row[headers.name]),
-	};
+	return parseDynamicTable(info, definition);
 }
