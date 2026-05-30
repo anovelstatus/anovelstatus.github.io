@@ -3,7 +3,7 @@ import {
 	getNumberIfLessThanLimit,
 	parseId,
 	parseFormattedTable,
-	getChapterFilter,
+	chapterFilter,
 	parseRichText,
 } from "./shared";
 
@@ -12,12 +12,7 @@ type Columns = Record<keyof Talent | "id", number>;
 /** Get list of Talents and their metadata */
 export const getTalents: StandardParser<Talent[]> = ({ ss, chapterLimit }) => {
 	const range = ss.getSheetByName("Talents")!.getDataRange();
-	return parseFormattedTable(
-		range,
-		mapColumns,
-		(row, richRow, headers) => mapRow(row, richRow, headers, chapterLimit),
-		getChapterFilter(chapterLimit, "chapterGained"),
-	);
+	return parseFormattedTable(range, mapColumns, mapRow, chapterFilter(chapterLimit, "chapterGained"), chapterLimit);
 };
 
 function mapColumns(headerRow: SpreadsheetValue[]): Columns {

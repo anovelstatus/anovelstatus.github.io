@@ -19,7 +19,7 @@ function doGet(e: GoogleAppsScript.Events.DoGet) {
 	let content = "";
 	console.log(e);
 	try {
-		const page = e.parameter["page"] as Page;
+		const page = e.parameter["page"] as ApiPage;
 		const includePatreon = e.parameter["key"] === PATREON_KEY;
 		const file = getFile(includePatreon, page);
 		content = file.getDataAsString();
@@ -61,7 +61,7 @@ function updateAllFiles(ss?: Spreadsheet) {
 	ss = ss || SpreadsheetApp.openByUrl(SS_LINK);
 	const rrFolder = DriveApp.getFolderById(RR_FOLDER);
 	const patreonFolder = DriveApp.getFolderById(PATREON_FOLDER);
-	const allPages: Page[] = [
+	const allPages: ApiPage[] = [
 		"achievements",
 		"attributes",
 		"body",

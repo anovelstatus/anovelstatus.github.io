@@ -1,16 +1,12 @@
-import { getChapterFilter, parseFormattedTable, parseId, parseRichText, parseTable } from "../shared";
+import { chapterFilter, hasEntriesFilter, parseFormattedTable, parseId, parseRichText, parseTable } from "../shared";
 
 type StatusColumns = Record<keyof BloodlineStatus, number>;
 type BloodlineColumns = Omit<Record<keyof Bloodline, number>, "updates">;
 
 export const getBloodlines: StandardParser<Bloodline[]> = (info) => {
 	const updates = getBloodlineUpdates(info);
-	return parseTable(
-		info.ss.getRange(info.ranges.Bloodlines),
-		mapBloodlineColumns,
-		(row, headers) => mapBloodlineRow(row, headers, updates),
-		(row) => row.updates.length > 0,
-	);
+	const range = info.ss.getRange(info.ranges.Bloodlines);
+	return parseTable(range, mapBloodlineColumns, mapBloodlineRow, hasEntriesFilter("updates"), updates);
 };
 
 function mapBloodlineColumns(headerRow: SpreadsheetValue[]): BloodlineColumns {
@@ -32,12 +28,8 @@ function mapBloodlineRow(row: SpreadsheetValue[], headers: BloodlineColumns, upd
 }
 
 const getBloodlineUpdates: StandardParser<BloodlineStatus[]> = ({ ss, ranges, chapterLimit }) => {
-	return parseFormattedTable(
-		ss.getRange(ranges["Bloodline Updates"]),
-		mapStatusColumns,
-		mapStatusRow,
-		getChapterFilter(chapterLimit, "chapter"),
-	);
+	const range = ss.getRange(ranges["Bloodline Updates"]);
+	return parseFormattedTable(range, mapStatusColumns, mapStatusRow, chapterFilter(chapterLimit, "chapter"));
 };
 
 function mapStatusColumns(headerRow: SpreadsheetValue[]): StatusColumns {

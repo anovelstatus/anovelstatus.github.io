@@ -4,16 +4,14 @@ type Columns = Record<keyof Status, number>;
 
 export const getOfficialStatuses: StandardParser<Status[]> = ({ ss, attributeNames, chapterLimit }) => {
 	const sheet = ss.getSheetByName("Statuses")!;
-	const numberOfRows = sheet.getDataRange().getNumRows();
+	// Not using getDataRange because this sheet still has all the calculated numbers
+	const numberOfRows = sheet.getLastRow();
 	const range = sheet.getRange(2, 1, numberOfRows - 1, attributeNames.length + 1);
 
-	return parseTable(
-		range,
-		(headerRow) => mapColumns(headerRow, attributeNames),
-		(row, headers) => mapRow(row, headers, attributeNames),
-		// Don't just filter on chapter. Make sure there's actually data in the row.
-		(x) => x.chapter <= chapterLimit && x[attributeNames[0]!]! > 0,
-	);
+	// Don't just filter on chapter. Make sure there's actually data in the row.
+	const filter = (x: Status): boolean => x.chapter <= chapterLimit && x[attributeNames[0]!]! > 0;
+
+	return parseTable(range, mapColumns, mapRow, filter, attributeNames);
 };
 
 function mapColumns(headerRow: SpreadsheetValue[], attributeNames: string[]): Columns {

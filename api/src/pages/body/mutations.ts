@@ -1,14 +1,10 @@
-import { getNumbersLessThanLimit, parseFormattedTable, parseRichText } from "../shared";
+import { getNumbersLessThanLimit, hasEntriesFilter, parseFormattedTable, parseRichText } from "../shared";
 
 type Columns = Record<keyof Body.Modification, number>;
 
 export const getMutations: StandardParser<Body.Modification[]> = ({ ss, ranges, chapterLimit }) => {
-	return parseFormattedTable(
-		ss.getRange(ranges.Mutations),
-		mapColumns,
-		(row, richRow, headers) => mapRow(row, richRow, headers, chapterLimit),
-		(row) => row.chapters.length > 0,
-	);
+	const range = ss.getRange(ranges.Mutations);
+	return parseFormattedTable(range, mapColumns, mapRow, hasEntriesFilter("chapters"), chapterLimit);
 };
 
 function mapColumns(headerRow: SpreadsheetValue[]): Columns {

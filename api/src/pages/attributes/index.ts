@@ -5,6 +5,12 @@ import { getGains, type InternalGain } from "./gains";
 import { getMilestones, type InternalMilestone } from "./milestones";
 
 type Columns = Omit<Record<keyof Attribute.Details, number>, "milestones" | "evolutions" | "boosts" | "gains">;
+type Extra = {
+	milestones: InternalMilestone[];
+	evolutions: InternalEvolution[];
+	gains: InternalGain[];
+	boosts: InternalBoost[];
+};
 
 export const getAttributes: StandardParser<Attribute.Details[]> = (info) => {
 	const milestones = getMilestones(info);
@@ -12,13 +18,10 @@ export const getAttributes: StandardParser<Attribute.Details[]> = (info) => {
 	const boosts = getBoosts(info);
 	const gains = getGains(info);
 
+	const extra = { milestones, evolutions, gains, boosts };
+
 	const range = info.ss.getRange(info.ranges.Attributes);
-	return parseFormattedTable(
-		range,
-		mapColumns,
-		(row, richRow, headers) => mapRow(row, richRow, headers, milestones, evolutions, gains, boosts),
-		(_) => true,
-	);
+	return parseFormattedTable(range, mapColumns, mapRow, (_) => true, extra);
 };
 
 function mapColumns(headerRow: SpreadsheetValue[]): Columns {
@@ -36,15 +39,7 @@ function getAttributeFilter(attribute: string): (x: { attribute: string }) => bo
 	return (x) => x.attribute === attribute;
 }
 
-function mapRow(
-	row: SpreadsheetValue[],
-	richRow: RichValue[],
-	headers: Columns,
-	milestones: InternalMilestone[],
-	evolutions: InternalEvolution[],
-	gains: InternalGain[],
-	boosts: InternalBoost[],
-): Attribute.Details {
+function mapRow(row: SpreadsheetValue[], richRow: RichValue[], headers: Columns, extra: Extra): Attribute.Details {
 	const attributeFilter = getAttributeFilter(row[headers.name] as string);
 	return {
 		name: row[headers.name] as string,
@@ -53,10 +48,12 @@ function mapRow(
 		categoryAbbreviation: row[headers.categoryAbbreviation] as string,
 		note: parseRichText(richRow[headers.note]!),
 		color: row[headers.color] as string,
-		milestones: milestones.filter(attributeFilter).map((x) => ({ milestone: x.milestone, note: x.note })),
-		evolutions: evolutions.filter(attributeFilter).map((x) => ({ note: x.note, chapter: x.chapter, name: x.name })),
-		gains: gains.filter(attributeFilter),
-		boosts: boosts.filter(attributeFilter).map((x) => ({
+		milestones: extra.milestones.filter(attributeFilter).map((x) => ({ milestone: x.milestone, note: x.note })),
+		evolutions: extra.evolutions
+			.filter(attributeFilter)
+			.map((x) => ({ note: x.note, chapter: x.chapter, name: x.name })),
+		gains: extra.gains.filter(attributeFilter),
+		boosts: extra.boosts.filter(attributeFilter).map((x) => ({
 			note: x.note,
 			chapter: x.chapter,
 			title: x.title,

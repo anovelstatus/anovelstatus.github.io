@@ -1,18 +1,12 @@
-import { getChapterFilter, parseFormattedTable, parseId, parseRichText } from "../shared";
+import { chapterFilter, hasEntriesFilter, parseFormattedTable, parseId, parseRichText } from "../shared";
 
 type StageColumns = Omit<Record<keyof TemperingStage, number>, "updates">;
 type StepColumns = Record<keyof TemperingStep, number>;
 
 export const getTempering: StandardParser<TemperingStage[]> = (info) => {
 	const updates = getSteps(info);
-
 	const range = info.ss.getRange(info.ranges["Body Tempering Stages"]);
-	return parseFormattedTable(
-		range,
-		mapStageColumns,
-		(row, richRow, headers) => mapStage(row, richRow, headers, updates),
-		(row) => row.updates.length > 0,
-	);
+	return parseFormattedTable(range, mapStageColumns, mapStage, hasEntriesFilter("updates"), updates);
 };
 
 function mapStageColumns(headerRow: SpreadsheetValue[]): StageColumns {
@@ -44,12 +38,7 @@ function mapStage(
 
 const getSteps: StandardParser<TemperingStep[]> = ({ ss, ranges, chapterLimit }) => {
 	const range = ss.getRange(ranges["Body Tempering Progress"]);
-	return parseFormattedTable(
-		range,
-		mapStepColumns,
-		(row, richRow, headers) => mapStep(row, richRow, headers, chapterLimit),
-		getChapterFilter(chapterLimit, "started"),
-	);
+	return parseFormattedTable(range, mapStepColumns, mapStep, chapterFilter(chapterLimit, "started"), chapterLimit);
 };
 
 function mapStepColumns(headerRow: SpreadsheetValue[]): StepColumns {

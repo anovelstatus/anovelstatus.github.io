@@ -4,12 +4,7 @@ type Columns = Record<keyof TierInfo, number>;
 
 export const getTiers: StandardParser<TierInfo[]> = ({ ss, chapterLimit }) => {
 	const range = ss.getSheetByName("Tiers")!.getDataRange();
-	return parseTable(
-		range,
-		mapColumns,
-		(row, headers) => mapRow(row, headers, chapterLimit),
-		(_) => true,
-	);
+	return parseTable(range, mapColumns, mapRow, (_) => true, chapterLimit);
 };
 
 function mapColumns(headerRow: SpreadsheetValue[]): Columns {

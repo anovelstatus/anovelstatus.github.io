@@ -1,10 +1,10 @@
-import { getChapterFilter, parseFormattedTable, parseRichText } from "./shared";
+import { chapterFilter, parseFormattedTable, parseRichText } from "./shared";
 
 type Columns = Record<keyof Achievement, number>;
 
 export const getAchievements: StandardParser<Achievement[]> = ({ ss, chapterLimit }) => {
 	const range = ss.getSheetByName("Achievements")!.getDataRange();
-	return parseFormattedTable(range, mapColumns, mapRow, getChapterFilter(chapterLimit, "chapter"));
+	return parseFormattedTable(range, mapColumns, mapRow, chapterFilter(chapterLimit, "chapter"));
 };
 
 function mapColumns(headerRow: SpreadsheetValue[]): Columns {

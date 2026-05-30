@@ -16,7 +16,7 @@ export function getSpreadsheetInfo(ss: Spreadsheet, includePatreon: boolean): Sp
 	return { ss, chapterLimit, ranges, attributeNames, includePatreon };
 }
 
-function getPageParser(page: Page): StandardParser<unknown> {
+function getPageParser(page: ApiPage): StandardParser<unknown> {
 	switch (page) {
 		case "achievements":
 			return getAchievements;
@@ -41,7 +41,7 @@ function getPageParser(page: Page): StandardParser<unknown> {
 	}
 }
 
-export function updatePageJson(folder: Folder, info: SpreadsheetInfo, page: Page) {
+export function updatePageJson(folder: Folder, info: SpreadsheetInfo, page: ApiPage) {
 	const fileName = page + ".json";
 	const parser = getPageParser(page);
 	const data = parser(info);

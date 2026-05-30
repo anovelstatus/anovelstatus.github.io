@@ -1,11 +1,11 @@
-import { getChapterFilter, parseFormattedTable, parseRichText } from "../shared";
+import { chapterFilter, parseFormattedTable, parseRichText } from "../shared";
 
 export type InternalEvolution = Attribute.Evolution & { attribute: string };
 type Columns = Record<keyof InternalEvolution, number>;
 
 export const getEvolutions: StandardParser<InternalEvolution[]> = ({ ss, ranges, chapterLimit }) => {
 	const range = ss.getRange(ranges["Attribute Evolutions"]);
-	return parseFormattedTable(range, mapColumns, mapRow, getChapterFilter(chapterLimit, "chapter"));
+	return parseFormattedTable(range, mapColumns, mapRow, chapterFilter(chapterLimit, "chapter"));
 };
 
 function mapColumns(headerRow: SpreadsheetValue[]): Columns {

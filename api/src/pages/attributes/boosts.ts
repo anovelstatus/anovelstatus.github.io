@@ -1,11 +1,11 @@
-import { getChapterFilter, parseFormattedTable, parseId, parseRichText } from "../shared";
+import { chapterFilter, parseFormattedTable, parseId, parseRichText } from "../shared";
 
 export type InternalBoost = Attribute.Boost & { attribute: string };
 type Columns = Omit<Record<keyof InternalBoost, number>, "titleId">;
 
 export const getBoosts: StandardParser<InternalBoost[]> = ({ ss, ranges, chapterLimit }) => {
 	const range = ss.getRange(ranges["Attribute Boosts"]);
-	return parseFormattedTable(range, mapColumns, mapRow, getChapterFilter(chapterLimit, "chapter"));
+	return parseFormattedTable(range, mapColumns, mapRow, chapterFilter(chapterLimit, "chapter"));
 };
 
 function mapColumns(headerRow: SpreadsheetValue[]): Columns {
