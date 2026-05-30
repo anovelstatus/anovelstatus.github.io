@@ -2,7 +2,6 @@ import { Typography, Box } from "@mui/material";
 import { ChaptersChip } from "../../components/chips";
 import { useChapter } from "@/data/api";
 import { getPastBoosts } from "./helpers";
-import { parseId } from "@/data/helpers";
 import { TitleButton } from "../titles";
 import { hasNote, RichTextSpan } from "@/components/RichTextSpan";
 
@@ -20,7 +19,7 @@ export function BoostList({ attribute }: AttributeDetailsProps) {
 		<li key={index} style={{ marginBottom: "8px" }}>
 			<Typography component="span" variant="body2">
 				<span style={{ fontWeight: "bold" }}>{x.boost * 100}%</span> from{" "}
-				<TitleButton item={parseId(x.title)} size="small" variant="text" />
+				<TitleButton item={x.titleId} size="small" variant="text" />
 				{hasNote(x.note) ? (
 					<>
 						{" ("}

@@ -52,11 +52,10 @@ function mapRow(row: SpreadsheetValue[], richRow: RichValue[], headers: Columns,
 		evolutions: extra.evolutions
 			.filter(attributeFilter)
 			.map((x) => ({ note: x.note, chapter: x.chapter, name: x.name })),
-		gains: extra.gains.filter(attributeFilter),
+		gains: extra.gains.filter(attributeFilter).map((x) => ({ chapter: x.chapter, gain: x.gain, note: x.note })),
 		boosts: extra.boosts.filter(attributeFilter).map((x) => ({
 			note: x.note,
 			chapter: x.chapter,
-			title: x.title,
 			titleId: x.titleId,
 			boost: x.boost,
 		})),
