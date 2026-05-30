@@ -34,6 +34,7 @@ declare type SpreadsheetInfo = {
 	ss: Spreadsheet;
 	chapterLimit: number;
 	ranges: RangeLookup;
+	attributes: Attribute.Details[];
 	attributeNames: string[];
 	includePatreon: boolean;
 };

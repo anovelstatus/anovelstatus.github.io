@@ -11,9 +11,9 @@ import { getTitles } from "./titles";
 export function getSpreadsheetInfo(ss: Spreadsheet, includePatreon: boolean): SpreadsheetInfo {
 	const chapterLimit = includePatreon ? getPatreonChapter(ss) : getRoyalRoadChapter(ss);
 	const ranges = getTableRanges(ss);
-	const attributes = getAttributes({ ss, ranges, chapterLimit, includePatreon, attributeNames: [] });
+	const attributes = getAttributes({ ss, ranges, chapterLimit, includePatreon, attributeNames: [], attributes: [] });
 	const attributeNames = attributes.map((x) => x.name);
-	return { ss, chapterLimit, ranges, attributeNames, includePatreon };
+	return { ss, chapterLimit, ranges, attributes, attributeNames, includePatreon };
 }
 
 function getPageParser(page: ApiPage): StandardParser<unknown> {
@@ -21,7 +21,7 @@ function getPageParser(page: ApiPage): StandardParser<unknown> {
 		case "achievements":
 			return getAchievements;
 		case "attributes":
-			return getAttributes;
+			return (info) => info.attributes;
 		case "body":
 			return getBody;
 		case "chapters":
