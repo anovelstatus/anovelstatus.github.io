@@ -22,5 +22,11 @@ export function getConfiguration(info: SpreadsheetInfo): BasicInfo {
 		patreonSheetLink: info.includePatreon ? getPatreonSheetLink(info.ss) : undefined,
 		shortcuts: getTimelineShortcuts(info),
 		attributeNames: info.attributeNames,
+		attributes: info.attributes.map((x) => ({
+			name: x.name,
+			abbreviation: x.abbreviation,
+			category: x.category,
+			categoryAbbreviation: x.categoryAbbreviation,
+		})),
 	};
 }

@@ -50,11 +50,14 @@ declare namespace Attribute {
 		note: RichText[];
 	};
 
-	type Details = {
+	type Basic = {
 		name: string;
 		abbreviation: string;
 		category: string;
 		categoryAbbreviation: string;
+	};
+
+	type Details = Basic & {
 		color: string;
 		note: RichText[];
 		milestones: Milestone[];
@@ -140,6 +143,7 @@ declare type BasicInfo = {
 	tiers: TierInfo[];
 	shortcuts: Shortcut[];
 	attributeNames: string[];
+	attributes: Attribute.Basic[];
 };
 
 declare type TierInfo = {
