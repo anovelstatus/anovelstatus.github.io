@@ -34,30 +34,31 @@ function doGet(e: GoogleAppsScript.Events.DoGet) {
 /** Used for testing getting data from the spreadsheet */
 /* @ts-expect-error no-unused-local */
 function debug() {
-	const page = "skills";
-	const test = getFile(true, page);
+	const test = getFile(true, "skills");
 	console.log(test);
 }
 
 /** Used in trigger to update pre-generated responses */
 /* @ts-expect-error no-unused-local */
 function updateFiles() {
-	// Only update JSON files if the spreadsheet was updated more recently
-	const dataLastUpdated = DriveApp.getFolderById(PATREON_FOLDER).getFiles().next().getLastUpdated();
-	const bufferDate = new Date(dataLastUpdated.valueOf() - 1_000 * 60);
+	console.log("Checking last modified dates");
+	const tenMinutesAgo = new Date(new Date().valueOf() - 10 * 1_000 * 60);
 
 	const ss = SpreadsheetApp.openByUrl(SS_LINK);
 	const ssLastUpdated = DriveApp.getFileById(ss.getId()).getLastUpdated();
-	if (bufferDate >= ssLastUpdated) {
-		console.log("Spreadsheet has not changed.");
+	console.log("Spreadsheet last modified at " + ssLastUpdated.toISOString());
+
+	if (ssLastUpdated <= tenMinutesAgo) {
+		console.log("Skipping update, since spreadsheet was modified before " + tenMinutesAgo.toISOString());
 		return;
 	}
-	updateAllFiles();
+	console.log("Updating...");
+	updateAllFiles(ss);
 }
 
 /** Used to manually force a refresh. Useful if the response model changes, for example. */
-function updateAllFiles() {
-	const ss = SpreadsheetApp.openByUrl(SS_LINK);
+function updateAllFiles(ss?: Spreadsheet) {
+	ss ||= SpreadsheetApp.openByUrl(SS_LINK);
 	const rrFolder = DriveApp.getFolderById(RR_FOLDER);
 	const patreonFolder = DriveApp.getFolderById(PATREON_FOLDER);
 	const allPages: Page[] = [
@@ -66,7 +67,6 @@ function updateAllFiles() {
 		"body",
 		"chapters",
 		"lore",
-		"shortcuts",
 		"skills",
 		"statuses",
 		"talents",

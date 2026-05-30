@@ -1,14 +1,15 @@
 import { Button, CircularProgress, Container, Grid, Slider, Stack } from "@mui/material";
 import { useContext, useMemo } from "react";
 import { ChapterContext } from "@/providers/ChapterContext";
-import { useLatestChapter, useShortcuts } from "@/data/api";
+import { useBasicInfo } from "@/data/api";
 import { ShortcutMenu } from "./ShortcutMenu";
 import { mapMapValues } from "@/data/helpers";
 
 export default function ChapterTimeline() {
 	const { chapter, setChapter } = useContext(ChapterContext);
-	const latestChapter = useLatestChapter();
-	const { data: shortcuts, isFetching } = useShortcuts();
+	const { data, isFetching } = useBasicInfo();
+	const shortcuts = data.shortcuts;
+	const latestChapter = data.latest;
 
 	const groupedShortcuts = useMemo(() => {
 		const menus = Map.groupBy(shortcuts, (x) => x.menu || "");

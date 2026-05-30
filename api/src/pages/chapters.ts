@@ -1,3 +1,4 @@
+import { getTimelineShortcuts } from "./shortcuts";
 import { getTiers } from "./tiers";
 
 /** Get latest chapter number released to the public */
@@ -9,16 +10,16 @@ export function getPatreonChapter(ss: Spreadsheet) {
 	return ss.getRangeByName("PatreonChapter")!.getValue() as number;
 }
 
-export function getPatreonSheetLink(ss: Spreadsheet) {
+function getPatreonSheetLink(ss: Spreadsheet) {
 	return ss.getRangeByName("PatreonSheetLink")!.getValue() as string;
 }
 
 export function getConfiguration(info: SpreadsheetInfo): BasicInfo {
-	const tiers = getTiers(info);
 	return {
 		latest: info.chapterLimit,
-		tiers: tiers,
+		tiers: getTiers(info),
 		unlocked: info.includePatreon,
 		patreonSheetLink: info.includePatreon ? getPatreonSheetLink(info.ss) : undefined,
+		shortcuts: getTimelineShortcuts(info),
 	};
 }

@@ -122,6 +122,7 @@ declare type BasicInfo = {
 	unlocked: boolean;
 	patreonSheetLink?: string;
 	tiers: TierInfo[];
+	shortcuts: Shortcut[];
 };
 
 declare type TierInfo = {
