@@ -52,12 +52,10 @@ function mapRow(row: SpreadsheetValue[], richRow: RichValue[], headers: Columns,
 	};
 }
 
-type AttributeData = { attribute: string };
-
 function getAttributeFilter(attribute: string): (x: { attribute: string }) => boolean {
 	return (x) => x.attribute === attribute;
 }
 
-function removeAttribute<T>(x: T & AttributeData): T {
+function removeAttribute<T>(x: T & { attribute: string }): T {
 	return { ...x, attribute: undefined };
 }
