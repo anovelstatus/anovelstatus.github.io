@@ -1,27 +1,15 @@
-import { chapterFilter, parseNumber, parseOptional, parseString, parseTable } from "./shared";
+import { chapterFilter, parseDynamicTable } from "./shared";
 
-type Columns = Record<keyof Shortcut, number>;
-
-export const getTimelineShortcuts: StandardParser<Shortcut[]> = ({ ss, ranges, chapterLimit }) => {
-	const range = ss.getRange(ranges["Chapter Shortcuts"]);
-
-	return parseTable(range, mapColumns, mapRow, chapterFilter(chapterLimit, "chapter"));
-};
-
-function mapColumns(headerRow: SpreadsheetValue[]): Columns {
-	return {
-		chapter: headerRow.indexOf("Chapter"),
-		label: headerRow.indexOf("Label"),
-		group: headerRow.indexOf("Group"),
-		menu: headerRow.indexOf("Menu"),
+export function getTimelineShortcuts(info: SpreadsheetInfo) {
+	const definition: Table<Shortcut> = {
+		range: info.ss.getRange(info.ranges["Chapter Shortcuts"]),
+		filter: chapterFilter(info.chapterLimit, "chapter"),
+		fields: [
+			{ key: "chapter", source: { type: "exact", name: "Chapter" }, parse: { type: "number" } },
+			{ key: "label", source: { type: "exact", name: "Label" }, parse: { type: "string" } },
+			{ key: "group", source: { type: "exact", name: "Group" }, parse: { type: "string", optional: true } },
+			{ key: "menu", source: { type: "exact", name: "Menu" }, parse: { type: "string", optional: true } },
+		],
 	};
-}
-
-function mapRow(row: SpreadsheetValue[], headers: Columns): Shortcut {
-	return {
-		chapter: parseNumber(row[headers.chapter]),
-		label: parseString(row[headers.label]),
-		group: parseOptional<string>(row[headers.group]),
-		menu: parseOptional<string>(row[headers.menu]),
-	};
+	return parseDynamicTable(info, definition);
 }

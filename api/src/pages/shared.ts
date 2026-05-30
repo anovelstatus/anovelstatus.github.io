@@ -1,23 +1,29 @@
 /** Parse a value that might be a single number or a comma-separated list of numbers into a number array */
-export function getNumbersLessThanLimit(value: SpreadsheetValue, chapterLimit: number): number[] {
+function getNumbersLessThanLimit(value: SpreadsheetValue, chapterLimit: number): number[] {
 	return parseNumberArray(value).filter((x) => x <= chapterLimit);
 }
 
-export function parseNumberArray(value: SpreadsheetValue): number[] {
+function parseNumberArray(value: SpreadsheetValue): number[] {
 	if (typeof value === "number") return [value];
 	if (typeof value === "string") return parseSplitString(value, ",").map((x) => parseInt(x));
 	return [];
 }
 
-export function getNumberIfLessThanLimit(value: SpreadsheetValue, chapterLimit: number) {
+function getNumberIfLessThanLimit(value: SpreadsheetValue, chapterLimit: number) {
 	if (typeof value === "number" && value <= chapterLimit) return value;
 	return undefined;
 }
 
-export function parseBoolean(value: SpreadsheetValue): boolean {
+function parseBoolean(value: SpreadsheetValue): boolean {
 	if (typeof value === "number") throw new Error("expected boolean");
 	// Convert empty string and undefined to false
 	return value === true;
+}
+
+function parseOptionalBoolean(value: SpreadsheetValue): boolean | undefined {
+	if (value === "") return undefined;
+	if (value === false) return undefined;
+	return parseBoolean(value);
 }
 
 export function parseString(value: SpreadsheetValue): string {
@@ -25,12 +31,12 @@ export function parseString(value: SpreadsheetValue): string {
 	return value;
 }
 
-export function parseOptionalString(value: SpreadsheetValue): string | undefined {
+function parseOptionalString(value: SpreadsheetValue): string | undefined {
 	if (!value) return undefined;
 	return parseString(value);
 }
 
-export function parseSplitString(value: SpreadsheetValue, split: string): string[] {
+function parseSplitString(value: SpreadsheetValue, split: string): string[] {
 	if (!value) return [];
 	if (typeof value !== "string") throw new Error("expected string");
 	return value.split(split).map((x) => x.trim());
@@ -41,42 +47,13 @@ export function parseNumber(value: SpreadsheetValue): number {
 	return value;
 }
 
-export function parseOptional<T extends SpreadsheetValue>(value: SpreadsheetValue): T | undefined {
+function parseOptionalNumber(value: SpreadsheetValue): number | undefined {
 	if (value === "") return undefined;
-	if (value === false) return undefined;
-	return value as T;
+	return parseNumber(value);
 }
 
-export function parseOptionalId(value: SpreadsheetValue): TieredId | undefined {
-	if (!value) return undefined;
-	return parseId(value);
-}
-
-export function parseIds(value: SpreadsheetValue): TieredId[] {
+function parseIds(value: SpreadsheetValue): TieredId[] {
 	return parseSplitString(value, ",").map(parseId);
-}
-
-/** Figure out column indexes for all attributes in given row of headers */
-export function setAttributeColumns(
-	headers: HasSomeAttributes,
-	headerRow: SpreadsheetValue[],
-	attributeNames: string[],
-) {
-	for (const attribute of attributeNames) headers[attribute] = headerRow.indexOf(attribute);
-	return headers;
-}
-
-/** Set values for all attributes on given item, based on row of data and headers */
-export function setAttributeValues(
-	item: HasSomeAttributes,
-	row: SpreadsheetValue[],
-	headers: HasSomeAttributes,
-	attributeNames: string[],
-) {
-	for (const attribute of attributeNames) {
-		if (typeof row[headers[attribute]] === "number") item[attribute] = parseNumber(row[headers[attribute]]);
-	}
-	return item;
 }
 
 /** Parse something like `Name - Tier` into a name and tier */
@@ -90,7 +67,7 @@ export function parseId(fullName: SpreadsheetValue): TieredId {
 }
 
 /** Get all text formatting details from a cell value */
-export function parseRichText(value: RichValue | undefined): RichText[] {
+function parseRichText(value: RichValue | undefined): RichText[] {
 	if (!value) return [];
 	return value.getRuns().map((run) => {
 		const style = run.getTextStyle();
@@ -102,6 +79,7 @@ export function parseRichText(value: RichValue | undefined): RichText[] {
 		const strikethrough = style.isStrikethrough();
 		const underline = style.isUnderline();
 
+		// Only set non-default values, to keep the data smaller
 		if (color && color !== "#000000" && color !== "#FFFFFF" && color !== "#ffffff") obj.c = color;
 		if (bold) obj.b = bold;
 		if (italic) obj.i = italic;
@@ -122,50 +100,8 @@ export function chapterFilter<T>(chapterLimit: number, key: keyof T): (entry: T)
 	return (entry: T) => (entry[key] as unknown as number) <= chapterLimit;
 }
 
-/** Parse a table of plain text into an array of objects */
-export function parseTable<T, TColumns, TExtra = never>(
-	range: Range,
-	mapColumns: (headerRow: SpreadsheetValue[], extra: TExtra) => TColumns,
-	mapRow: (row: SpreadsheetValue[], headers: TColumns, extra: TExtra) => T,
-	filter: (item: T) => boolean,
-	extra?: TExtra,
-): T[] {
-	const values = range.getValues();
-	const headers = mapColumns(values[0]!, extra!);
-	return values
-		.slice(1)
-		.filter((row) => row[0] || row[0] === 0) // Skip rows with empty first cell
-		.map((row) => mapRow(row, headers, extra!))
-		.filter(filter);
-}
-
-/** Parse a table that might contain formatted text into an array of objects */
-export function parseFormattedTable<T, TColumns, TExtra = never>(
-	range: Range,
-	mapColumns: (headerRow: SpreadsheetValue[], extra: TExtra) => TColumns,
-	mapRow: (row: SpreadsheetValue[], richRow: RichValue[], headers: TColumns, extra: TExtra) => T,
-	filter: (item: T) => boolean,
-	extra?: TExtra,
-): T[] {
-	const values = range.getValues();
-	const richValues = range.getRichTextValues();
-	const headers = mapColumns(values[0]!, extra!);
-
-	const data = [];
-	for (let i = 1; i < values.length; i++) {
-		// Make sure there's data in the row.
-		// Don't just check the first cell because some have Chapter 0 entries that would be skipped.
-		if (!values[i]![0] && !values[i]![1]) continue;
-		const entry = mapRow(values[i]!, richValues[i]!, headers, extra!);
-		if (filter(entry)) {
-			data.push(entry);
-		}
-	}
-	return data;
-}
-
 export function parseDynamicTable<T>(info: SpreadsheetInfo, definition: Table<T>) {
-	const range = definition.getRange(info);
+	const range = definition.range;
 
 	const values = range.getValues();
 	const hasRichValues = definition.fields.some((x) => x.parse.type === "rich");
@@ -180,7 +116,7 @@ export function parseDynamicTable<T>(info: SpreadsheetInfo, definition: Table<T>
 		// Make sure there's data in the row.
 		// Don't just check the first cell because some have Chapter 0 entries that would be skipped.
 		if (!values[i]![0] && !values[i]![1]) continue;
-		const entry = mapDynamicRow(values[i]!, richValues[hasRichValues ? i : 0], headers, info, definition);
+		const entry = mapDynamicRow(values[i]!, richValues[hasRichValues ? i : 0], headers, info.chapterLimit, definition);
 		if (definition.filter(entry)) {
 			data.push(entry);
 		}
@@ -188,18 +124,18 @@ export function parseDynamicTable<T>(info: SpreadsheetInfo, definition: Table<T>
 	return data;
 }
 
-function mapDynamicColumns<T, TExtra>(headers: string[], definition: Table<T, TExtra>) {
+function mapDynamicColumns<T>(headers: string[], definition: Table<T>) {
 	const { fields } = definition;
 	const columns = {} as Record<string, number>;
 	for (const { key, source } of fields) {
+		if (!source) continue;
 		switch (source.type) {
-			case "column":
+			case "exact":
 				columns[key] = headers.indexOf(source.name);
 				break;
-			case "column-contains":
+			case "contains":
 				columns[key] = headers.findIndex((x) => parseString(x).includes(source.contains));
 				break;
-			// todo: other field types
 			default:
 				throw new Error(`Invalid source for '${key}': ${source}`);
 				break;
@@ -208,35 +144,61 @@ function mapDynamicColumns<T, TExtra>(headers: string[], definition: Table<T, TE
 	return columns;
 }
 
-function mapDynamicRow<T, TExtra>(
+function mapDynamicRow<T>(
 	values: SpreadsheetValue[],
 	richValues: RichValue[],
 	headers: Record<string, number>,
-	info: SpreadsheetInfo,
-	definition: Table<T, TExtra>,
+	chapterLimit: number,
+	definition: Table<T>,
 ) {
 	const { fields } = definition;
 	const item: Record<string, unknown> = {};
 
-	for (const { key, parse } of fields) {
-		const value = headers[key] ? values[headers[key]] : undefined;
-		switch (parse.type) {
-			case "rich":
-				item[key] = parseRichText(richValues[headers[key]]);
-				break;
-			case "number":
-				item[key] = parse.limited ? getNumberIfLessThanLimit(value, info.chapterLimit) : parseNumber(value);
-				break;
-			case "string":
-				item[key] = parse.optional ? parseOptionalString(value) : parseString(value);
-				break;
-			case "tiered_id":
-				item[key] = parseId(value);
-				break;
-			// todo: other field types
-			default:
-				throw new Error(`Invalid parse for '${key}': ${parse}`);
-				break;
+	for (const field of fields) {
+		const { key, parse } = field;
+		const value = headers[key] !== undefined ? values[headers[key]] : undefined;
+		try {
+			switch (parse.type) {
+				case "rich":
+					item[key] = parseRichText(richValues[headers[key]]);
+					break;
+				case "number":
+					item[key] = parse.limited
+						? getNumberIfLessThanLimit(value, chapterLimit)
+						: parse.optional
+							? parseOptionalNumber(value)
+							: parseNumber(value);
+					break;
+				case "string":
+					item[key] = parse.optional ? parseOptionalString(value) : parseString(value);
+					break;
+				case "bool":
+					item[key] = parse.optional ? parseOptionalBoolean(value) : parseBoolean(value);
+					break;
+				case "tiered_id":
+					item[key] = parse.optional && !value ? undefined : parseId(value);
+					break;
+				case "split_tiered_id":
+					item[key] = parseIds(value);
+					break;
+				case "split_string":
+					item[key] = parseSplitString(value, ",");
+					break;
+				case "split_number":
+					item[key] = parse.limited ? getNumbersLessThanLimit(value, chapterLimit) : parseNumberArray(value);
+					break;
+				case "custom":
+					item[key] = parse.parse({ rowSoFar: item as Partial<T>, value });
+					break;
+				case "string_number":
+					item[key] = value as string | number; // no great, but only used by one column
+					break;
+				default:
+					throw new Error(`Invalid parse for '${key}': ${parse}`);
+					break;
+			}
+		} catch (e) {
+			throw new Error(`Invalid parse for value '${value}': ${JSON.stringify(field)}`);
 		}
 	}
 	return item as T;

@@ -1,29 +1,17 @@
-import { parseRichText, parseFormattedTable, chapterFilter, parseNumber, parseString, parseIds } from "../shared";
+import { chapterFilter, parseDynamicTable } from "../shared";
 
-type Columns = Record<keyof Race, number>;
-
-export const getRaces: StandardParser<Race[]> = ({ ss, ranges, chapterLimit }) => {
-	return parseFormattedTable(ss.getRange(ranges.Races), mapColumns, mapRow, chapterFilter(chapterLimit, "chapter"));
-};
-
-function mapColumns(headerRow: SpreadsheetValue[]): Columns {
-	return {
-		name: headerRow.indexOf("Race"),
-		chapter: headerRow.indexOf("Chapter"),
-		tier: headerRow.indexOf("Tier"),
-		talents: headerRow.indexOf("Talents"),
-		note: headerRow.indexOf("Description"),
-		freeSlots: headerRow.indexOf("Free Slots"),
+export function getRaces(info: SpreadsheetInfo) {
+	const definition: Table<Race> = {
+		range: info.ss.getRange(info.ranges.Races),
+		filter: chapterFilter(info.chapterLimit, "chapter"),
+		fields: [
+			{ key: "chapter", source: { type: "exact", name: "Chapter" }, parse: { type: "number" } },
+			{ key: "name", source: { type: "exact", name: "Race" }, parse: { type: "string" } },
+			{ key: "tier", source: { type: "exact", name: "Tier" }, parse: { type: "number" } },
+			{ key: "talents", source: { type: "exact", name: "Talents" }, parse: { type: "split_tiered_id" } },
+			{ key: "freeSlots", source: { type: "exact", name: "Free Slots" }, parse: { type: "number" } },
+			{ key: "note", source: { type: "exact", name: "Description" }, parse: { type: "rich" } },
+		],
 	};
-}
-
-function mapRow(row: SpreadsheetValue[], richRow: RichValue[], headers: Columns): Race {
-	return {
-		name: parseString(row[headers.name]),
-		chapter: parseNumber(row[headers.chapter]),
-		tier: parseNumber(row[headers.tier]),
-		talents: parseIds(row[headers.talents]),
-		freeSlots: parseNumber(row[headers.freeSlots]),
-		note: parseRichText(richRow[headers.note]),
-	};
+	return parseDynamicTable(info, definition);
 }

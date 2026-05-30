@@ -1,25 +1,16 @@
-import { parseFormattedTable, parseNumber, parseRichText, parseString } from "../shared";
+import { parseDynamicTable } from "../shared";
 
 export type InternalMilestone = Attribute.Milestone & { attribute: string };
-type Columns = Record<keyof InternalMilestone, number>;
 
-export const getMilestones: StandardParser<InternalMilestone[]> = ({ ss, ranges }) => {
-	const range = ss.getRange(ranges["Attribute Milestones"]);
-	return parseFormattedTable(range, mapColumns, mapRow, (x) => !!x);
-};
-
-function mapColumns(headerRow: SpreadsheetValue[]): Columns {
-	return {
-		attribute: headerRow.indexOf("Attribute"),
-		milestone: headerRow.indexOf("Milestone"),
-		note: headerRow.indexOf("Description"),
+export function getMilestones(info: SpreadsheetInfo) {
+	const definition: Table<InternalMilestone> = {
+		range: info.ss.getRange(info.ranges["Attribute Milestones"]),
+		filter: (x) => !!x,
+		fields: [
+			{ key: "attribute", source: { type: "exact", name: "Attribute" }, parse: { type: "string" } },
+			{ key: "milestone", source: { type: "exact", name: "Milestone" }, parse: { type: "number" } },
+			{ key: "note", source: { type: "exact", name: "Description" }, parse: { type: "rich" } },
+		],
 	};
-}
-
-function mapRow(row: SpreadsheetValue[], richRow: RichValue[], headers: Columns): InternalMilestone {
-	return {
-		attribute: parseString(row[headers.attribute]),
-		note: parseRichText(richRow[headers.note]),
-		milestone: parseNumber(row[headers.milestone]),
-	};
+	return parseDynamicTable(info, definition);
 }

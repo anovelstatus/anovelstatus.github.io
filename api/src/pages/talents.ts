@@ -1,50 +1,29 @@
-import {
-	getNumbersLessThanLimit,
-	getNumberIfLessThanLimit,
-	parseFormattedTable,
-	chapterFilter,
-	parseRichText,
-	parseNumber,
-	parseOptional,
-	parseString,
-	parseIds,
-} from "./shared";
+import { chapterFilter, parseDynamicTable } from "./shared";
 
-type Columns = Record<keyof Talent | "id", number>;
-
-/** Get list of Talents and their metadata */
-export const getTalents: StandardParser<Talent[]> = ({ ss, chapterLimit }) => {
-	const range = ss.getSheetByName("Talents")!.getDataRange();
-	return parseFormattedTable(range, mapColumns, mapRow, chapterFilter(chapterLimit, "chapterGained"), chapterLimit);
-};
-
-function mapColumns(headerRow: SpreadsheetValue[]): Columns {
-	return {
-		id: headerRow.indexOf("Title"),
-		name: headerRow.indexOf("Name"),
-		tier: headerRow.indexOf("Tier"),
-		chapterGained: headerRow.indexOf("Chapter Gained"),
-		chapterUndone: headerRow.indexOf("Chapter Undone"),
-		chapterReplaced: headerRow.indexOf("Chapters Replaced"),
-		note: headerRow.indexOf("Description"),
-		growth: headerRow.indexOf("Growth"),
-		type: headerRow.indexOf("Type"),
-		previous: headerRow.indexOf("Previous"),
-		temporary: headerRow.indexOf("Temporary"),
+export function getTalents(info: SpreadsheetInfo) {
+	const definition: Table<Talent> = {
+		range: info.ss.getSheetByName("Talents")!.getDataRange(),
+		filter: chapterFilter(info.chapterLimit, "chapterGained"),
+		fields: [
+			{ key: "name", source: { type: "exact", name: "Name" }, parse: { type: "string" } },
+			{ key: "tier", source: { type: "exact", name: "Tier" }, parse: { type: "string" } },
+			{ key: "chapterGained", source: { type: "exact", name: "Chapter Gained" }, parse: { type: "number" } },
+			{
+				key: "chapterUndone",
+				source: { type: "exact", name: "Chapter Undone" },
+				parse: { type: "number", limited: true },
+			},
+			{
+				key: "chapterReplaced",
+				source: { type: "exact", name: "Chapters Replaced" },
+				parse: { type: "split_number", limited: true },
+			},
+			{ key: "note", source: { type: "exact", name: "Description" }, parse: { type: "rich" } },
+			{ key: "previous", source: { type: "exact", name: "Previous" }, parse: { type: "split_tiered_id" } },
+			{ key: "type", source: { type: "exact", name: "Type" }, parse: { type: "string" } },
+			{ key: "growth", source: { type: "exact", name: "Growth" }, parse: { type: "bool", optional: true } },
+			{ key: "temporary", source: { type: "exact", name: "Temporary" }, parse: { type: "bool", optional: true } },
+		],
 	};
-}
-
-function mapRow(row: SpreadsheetValue[], richRow: RichValue[], headers: Columns, chapterLimit: number): Talent {
-	return {
-		name: parseString(row[headers.name]),
-		tier: parseString(row[headers.tier]),
-		growth: parseOptional<boolean>(row[headers.growth]),
-		note: parseRichText(richRow[headers.note]),
-		chapterGained: parseNumber(row[headers.chapterGained]),
-		previous: parseIds(row[headers.previous]),
-		chapterUndone: getNumberIfLessThanLimit(row[headers.chapterUndone], chapterLimit),
-		chapterReplaced: getNumbersLessThanLimit(row[headers.chapterReplaced], chapterLimit),
-		temporary: parseOptional<boolean>(row[headers.temporary]),
-		type: parseString(row[headers.type]),
-	};
+	return parseDynamicTable(info, definition);
 }

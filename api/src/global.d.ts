@@ -39,22 +39,27 @@ declare type SpreadsheetInfo = {
 	includePatreon: boolean;
 };
 
-type NamedSource = { type: "column"; name: string };
-type ContainsSource = { type: "column-contains"; contains: string };
+type NamedSource = { type: "exact"; name: string };
+type ContainsSource = { type: "contains"; contains: string };
 
-type NoOptionParse = { type: "tiered_id" | "rich" };
-type OptionalParse = { type: "string"; optional?: boolean };
-type NumberParse = { type: "number"; limited?: boolean };
+type NoOptionParse = { type: "split_tiered_id" | "rich" | "split_string" | "string_number" };
+type OptionalParse = { type: "tiered_id" | "string" | "bool"; optional?: boolean };
+type NumberParse = { type: "number" | "split_number"; limited?: boolean; optional?: boolean };
+
+type CustomContext<T> = { rowSoFar: Partial<T>; value?: SpreadsheetValue };
+type CustomParse<T, TKey extends keyof T & string> = {
+	type: "custom";
+	parse: (context: CustomContext<T>) => T[TKey];
+};
 
 type Field<T, TKey extends keyof T & string> = {
 	key: TKey;
-	source: NamedSource | ContainsSource;
-	parse: NoOptionParse | OptionalParse | NumberParse;
+	source?: NamedSource | ContainsSource;
+	parse: NoOptionParse | OptionalParse | NumberParse | CustomParse<T, TKey>;
 };
 
-declare type Table<T, TExtra = undefined> = {
+declare type Table<T> = {
 	fields: Field<T, keyof T & string>[];
-	getRange: (info: SpreadsheetInfo) => Range;
+	range: Range;
 	filter?: (item: T) => boolean;
-	extra: TExtra;
 };

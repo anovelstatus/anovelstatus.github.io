@@ -31,11 +31,17 @@ function doGet(e: GoogleAppsScript.Events.DoGet) {
 	return ContentService.createTextOutput(content);
 }
 
-/** Used for testing getting data from the spreadsheet */
+/** Used for testing getting data from the API */
 /* @ts-expect-error no-unused-local */
 function debug() {
 	const test = getFile(true, "skills");
 	console.log(test);
+}
+/** Used for testing getting data from the spreadsheet */
+/* @ts-expect-error no-unused-local */
+function debugUpdateFile() {
+	const ss = SpreadsheetApp.openByUrl(SS_LINK);
+	updateSpecificFiles(ss, ["attributes"]);
 }
 
 /** Used in trigger to update pre-generated responses */
@@ -58,9 +64,7 @@ function updateFiles() {
 
 /** Used to manually force a refresh. Useful if the response model changes, for example. */
 function updateAllFiles(ss?: Spreadsheet) {
-	ss = ss || SpreadsheetApp.openByUrl(SS_LINK);
-	const rrFolder = DriveApp.getFolderById(RR_FOLDER);
-	const patreonFolder = DriveApp.getFolderById(PATREON_FOLDER);
+	if (!ss) ss = SpreadsheetApp.openByUrl(SS_LINK);
 	const allPages: ApiPage[] = [
 		"chapters",
 		"achievements",
@@ -72,13 +76,19 @@ function updateAllFiles(ss?: Spreadsheet) {
 		"talents",
 		"titles",
 	];
+	updateSpecificFiles(ss, allPages);
+}
+
+function updateSpecificFiles(ss: Spreadsheet, pages: ApiPage[]) {
+	const rrFolder = DriveApp.getFolderById(RR_FOLDER);
+	const patreonFolder = DriveApp.getFolderById(PATREON_FOLDER);
 
 	const rrInfo = getSpreadsheetInfo(ss, false);
 	const patreonInfo = getSpreadsheetInfo(ss, true);
 
 	const errors = [];
 
-	for (const page of allPages) {
+	for (const page of pages) {
 		try {
 			console.log("Updating " + page);
 			updatePageJson(rrFolder, rrInfo, page);

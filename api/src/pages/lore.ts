@@ -1,28 +1,22 @@
-import { chapterFilter, parseFormattedTable, parseNumber, parseRichText, parseString } from "./shared";
+import { chapterFilter, parseDynamicTable } from "./shared";
 
-type Columns = Record<keyof LoreEntry, number>;
+export function getLore(info: SpreadsheetInfo) {
+	const descDef: Table<LoreEntry> = {
+		range: info.ss.getSheetByName("Lore")!.getDataRange(),
+		filter: chapterFilter(info.chapterLimit, "chapter"),
+		fields: [
+			{ key: "chapter", source: { type: "exact", name: "Chapter" }, parse: { type: "number" } },
+			{ key: "key", source: { type: "exact", name: "Key" }, parse: { type: "string" } },
+			{ key: "note", source: { type: "exact", name: "Text" }, parse: { type: "rich" } },
+		],
+	};
+	const descriptions = parseDynamicTable(info, descDef);
 
-export const getLore: StandardParser<Lore> = ({ ss, chapterLimit }) => {
-	const descRange = ss.getSheetByName("Lore")!.getDataRange();
-	const descriptions = parseFormattedTable(descRange, mapColumns, mapRow, chapterFilter(chapterLimit, "chapter"));
+	const updateDef: Table<LoreEntry> = {
+		...descDef,
+		range: info.ss.getSheetByName("Updates")!.getDataRange(),
+	};
+	const updates = parseDynamicTable(info, updateDef);
 
-	const updateRange = ss.getSheetByName("Updates")!.getDataRange();
-	const updates = parseFormattedTable(updateRange, mapColumns, mapRow, chapterFilter(chapterLimit, "chapter"));
 	return { descriptions, updates };
-};
-
-function mapColumns(headerRow: SpreadsheetValue[]): Columns {
-	return {
-		chapter: headerRow.indexOf("Chapter"),
-		key: headerRow.indexOf("Key"),
-		note: headerRow.indexOf("Text"),
-	};
-}
-
-function mapRow(row: SpreadsheetValue[], richRow: RichValue[], headers: Columns): LoreEntry {
-	return {
-		chapter: parseNumber(row[headers.chapter]),
-		key: parseString(row[headers.key]),
-		note: parseRichText(richRow[headers.note]),
-	};
 }

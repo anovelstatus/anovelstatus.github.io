@@ -1,42 +1,17 @@
-import {
-	getNumbersLessThanLimit,
-	hasEntriesFilter,
-	parseFormattedTable,
-	parseOptional,
-	parseRichText,
-	parseString,
-} from "../shared";
+import { hasEntriesFilter, parseDynamicTable } from "../shared";
 
-type Columns = Record<keyof Body.Modification, number>;
-
-export const getMutations: StandardParser<Body.Modification[]> = ({ ss, ranges, chapterLimit }) => {
-	const range = ss.getRange(ranges.Mutations);
-	return parseFormattedTable(range, mapColumns, mapRow, hasEntriesFilter("chapters"), chapterLimit);
-};
-
-function mapColumns(headerRow: SpreadsheetValue[]): Columns {
-	return {
-		name: headerRow.indexOf("Mutation"),
-		chapters: headerRow.indexOf("Chapters"),
-		tier: headerRow.indexOf("Rarity"),
-		type: headerRow.indexOf("Type"),
-		note: headerRow.indexOf("Description"),
-		source: headerRow.indexOf("Source"),
+export function getMutations(info: SpreadsheetInfo) {
+	const definition: Table<Body.Modification> = {
+		range: info.ss.getRange(info.ranges.Mutations),
+		filter: hasEntriesFilter("chapters"),
+		fields: [
+			{ key: "name", source: { type: "exact", name: "Mutation" }, parse: { type: "string" } },
+			{ key: "chapters", source: { type: "exact", name: "Chapters" }, parse: { type: "split_number", limited: true } },
+			{ key: "tier", source: { type: "exact", name: "Rarity" }, parse: { type: "string", optional: true } },
+			{ key: "type", source: { type: "exact", name: "Type" }, parse: { type: "string" } },
+			{ key: "note", source: { type: "exact", name: "Description" }, parse: { type: "string", optional: true } },
+			{ key: "source", source: { type: "exact", name: "Source" }, parse: { type: "rich" } },
+		],
 	};
-}
-
-function mapRow(
-	row: SpreadsheetValue[],
-	richRow: RichValue[],
-	headers: Columns,
-	chapterLimit: number,
-): Body.Modification {
-	return {
-		name: parseString(row[headers.name]),
-		chapters: getNumbersLessThanLimit(row[headers.chapters], chapterLimit),
-		tier: parseOptional<string>(row[headers.tier]),
-		type: parseString(row[headers.type]),
-		note: parseOptional<string>(row[headers.note]),
-		source: parseRichText(richRow[headers.source]!),
-	};
+	return parseDynamicTable(info, definition);
 }

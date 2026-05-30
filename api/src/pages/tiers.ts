@@ -1,35 +1,28 @@
-import { parseNumber, parseOptional, parseString, parseTable } from "./shared";
+import { parseDynamicTable } from "./shared";
 
-type Columns = Record<keyof TierInfo, number>;
-
-export const getTiers: StandardParser<TierInfo[]> = ({ ss, chapterLimit }) => {
-	const range = ss.getSheetByName("Tiers")!.getDataRange();
-	return parseTable(range, mapColumns, mapRow, (_) => true, chapterLimit);
-};
-
-function mapColumns(headerRow: SpreadsheetValue[]): Columns {
-	return {
-		tier: headerRow.indexOf("Tier"),
-		skillName: headerRow.indexOf("Skill"),
-		metalName: headerRow.indexOf("Metal"),
-		chapterRevealed: headerRow.indexOf("Chapter Revealed"),
-		fgColor: headerRow.indexOf("Foreground"),
-		bgColor: headerRow.indexOf("Background"),
+export function getTiers(info: SpreadsheetInfo) {
+	const definition: Table<TierInfo> = {
+		range: info.ss.getSheetByName("Tiers")!.getDataRange(),
+		fields: [
+			{ key: "tier", source: { type: "exact", name: "Tier" }, parse: { type: "number" } },
+			{ key: "skillName", source: { type: "exact", name: "Skill" }, parse: { type: "string" } },
+			{ key: "metalName", source: { type: "exact", name: "Metal" }, parse: { type: "string" } },
+			{
+				key: "chapterRevealed",
+				source: { type: "exact", name: "Chapter Revealed" },
+				parse: { type: "number", optional: true },
+			},
+			{ key: "fgColor", source: { type: "exact", name: "Foreground" }, parse: { type: "string" } },
+			{ key: "bgColor", source: { type: "exact", name: "Background" }, parse: { type: "string" } },
+		],
 	};
-}
-
-function mapRow(row: SpreadsheetValue[], headers: Columns, chapterLimit: number): TierInfo {
-	const data: TierInfo = {
-		tier: parseNumber(row[headers.tier]),
-		skillName: parseString(row[headers.skillName]),
-		metalName: parseString(row[headers.metalName]),
-		chapterRevealed: parseOptional<number>(row[headers.chapterRevealed]),
-		fgColor: parseString(row[headers.fgColor]),
-		bgColor: parseString(row[headers.bgColor]),
-	};
-	if (data.chapterRevealed && data.chapterRevealed > chapterLimit) {
-		data.metalName = "?";
-		data.skillName = "?";
+	const table = parseDynamicTable(info, definition);
+	// Suppress future knowledge
+	for (const row of table) {
+		if (row.chapterRevealed && row.chapterRevealed > info.chapterLimit) {
+			row.metalName = "?";
+			row.skillName = "?";
+		}
 	}
-	return data;
+	return table;
 }
