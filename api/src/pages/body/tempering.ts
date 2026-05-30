@@ -3,7 +3,7 @@ import { chapterFilter, hasEntriesFilter, parseDynamicTable } from "../shared";
 export function getTempering(info: SpreadsheetInfo) {
 	const updates = getSteps(info);
 
-	const definition: Table<TemperingStage, TemperingStep[]> = {
+	const definition: Table<TemperingStage> = {
 		range: info.ss.getRange(info.ranges["Body Tempering Stages"]),
 		filter: hasEntriesFilter("updates"),
 		fields: [
@@ -16,13 +16,10 @@ export function getTempering(info: SpreadsheetInfo) {
 				key: "updates",
 				parse: {
 					type: "custom",
-					parse({ rowSoFar, extra }) {
-						return extra.filter((x) => x.stage === rowSoFar.name);
-					},
+					parse: ({ rowSoFar }) => updates.filter((x) => x.stage === rowSoFar.name),
 				},
 			},
 		],
-		extra: updates,
 	};
 	return parseDynamicTable(info, definition);
 }
@@ -40,7 +37,6 @@ export function getSteps(info: SpreadsheetInfo) {
 			{ key: "link", source: { type: "exact", name: "Link" }, parse: { type: "tiered_id", optional: true } },
 			{ key: "note", source: { type: "exact", name: "Update" }, parse: { type: "rich" } },
 		],
-		extra: undefined,
 	};
 	return parseDynamicTable(info, definition);
 }

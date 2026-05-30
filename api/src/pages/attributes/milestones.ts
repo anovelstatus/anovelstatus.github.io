@@ -7,19 +7,10 @@ export function getMilestones(info: SpreadsheetInfo) {
 		range: info.ss.getRange(info.ranges["Attribute Milestones"]),
 		filter: (x) => !!x,
 		fields: [
-			{
-				key: "attribute",
-				source: { type: "exact", name: "Attribute" },
-				parse: { type: "string" },
-			},
-			{
-				key: "milestone",
-				source: { type: "exact", name: "Milestone" },
-				parse: { type: "number" },
-			},
+			{ key: "attribute", source: { type: "exact", name: "Attribute" }, parse: { type: "string" } },
+			{ key: "milestone", source: { type: "exact", name: "Milestone" }, parse: { type: "number" } },
 			{ key: "note", source: { type: "exact", name: "Description" }, parse: { type: "rich" } },
 		],
-		extra: undefined,
 	};
 	return parseDynamicTable(info, definition);
 }

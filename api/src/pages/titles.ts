@@ -18,7 +18,6 @@ export function getTitles(info: SpreadsheetInfo) {
 				parse: { type: "number", limited: true, optional: true },
 			},
 		],
-		extra: undefined,
 	};
 
 	return parseDynamicTable(info, definition).map((x): Title => {

@@ -15,7 +15,6 @@ export function getTiers(info: SpreadsheetInfo) {
 			{ key: "fgColor", source: { type: "exact", name: "Foreground" }, parse: { type: "string" } },
 			{ key: "bgColor", source: { type: "exact", name: "Background" }, parse: { type: "string" } },
 		],
-		extra: undefined,
 	};
 	const table = parseDynamicTable(info, definition);
 	// Suppress unknown knowledge

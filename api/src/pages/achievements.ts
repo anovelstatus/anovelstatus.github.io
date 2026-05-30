@@ -17,7 +17,6 @@ export function getAchievements(info: SpreadsheetInfo) {
 			{ key: "rewards", source: { type: "exact", name: "Rewards" }, parse: { type: "rich" } },
 			{ key: "note", source: { type: "exact", name: "Other Notes" }, parse: { type: "rich" } },
 		],
-		extra: undefined,
 	};
 	return parseDynamicTable(info, definition);
 }

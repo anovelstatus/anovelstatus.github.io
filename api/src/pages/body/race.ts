@@ -12,7 +12,6 @@ export function getRaces(info: SpreadsheetInfo) {
 			{ key: "freeSlots", source: { type: "exact", name: "Free Slots" }, parse: { type: "number" } },
 			{ key: "note", source: { type: "exact", name: "Description" }, parse: { type: "rich" } },
 		],
-		extra: undefined,
 	};
 	return parseDynamicTable(info, definition);
 }

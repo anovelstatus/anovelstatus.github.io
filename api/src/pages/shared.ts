@@ -100,7 +100,7 @@ export function chapterFilter<T>(chapterLimit: number, key: keyof T): (entry: T)
 	return (entry: T) => (entry[key] as unknown as number) <= chapterLimit;
 }
 
-export function parseDynamicTable<T, TExtra = undefined>(info: SpreadsheetInfo, definition: Table<T, TExtra>) {
+export function parseDynamicTable<T>(info: SpreadsheetInfo, definition: Table<T>) {
 	const range = definition.range;
 
 	const values = range.getValues();
@@ -124,7 +124,7 @@ export function parseDynamicTable<T, TExtra = undefined>(info: SpreadsheetInfo, 
 	return data;
 }
 
-function mapDynamicColumns<T, TExtra>(headers: string[], definition: Table<T, TExtra>) {
+function mapDynamicColumns<T>(headers: string[], definition: Table<T>) {
 	const { fields } = definition;
 	const columns = {} as Record<string, number>;
 	for (const { key, source } of fields) {
@@ -145,12 +145,12 @@ function mapDynamicColumns<T, TExtra>(headers: string[], definition: Table<T, TE
 	return columns;
 }
 
-function mapDynamicRow<T, TExtra>(
+function mapDynamicRow<T>(
 	values: SpreadsheetValue[],
 	richValues: RichValue[],
 	headers: Record<string, number>,
 	chapterLimit: number,
-	definition: Table<T, TExtra>,
+	definition: Table<T>,
 ) {
 	const { fields } = definition;
 	const item: Record<string, unknown> = {};
@@ -189,7 +189,7 @@ function mapDynamicRow<T, TExtra>(
 					item[key] = parse.limited ? getNumbersLessThanLimit(value, chapterLimit) : parseNumberArray(value);
 					break;
 				case "custom":
-					item[key] = parse.parse({ rowSoFar: item as Partial<T>, extra: definition.extra, value });
+					item[key] = parse.parse({ rowSoFar: item as Partial<T>, value });
 					break;
 				case "string_number":
 					item[key] = value as string | number; // no great, but only used by one column

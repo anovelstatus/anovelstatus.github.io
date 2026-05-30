@@ -12,7 +12,6 @@ export function getMutations(info: SpreadsheetInfo) {
 			{ key: "note", source: { type: "exact", name: "Description" }, parse: { type: "string", optional: true } },
 			{ key: "source", source: { type: "exact", name: "Source" }, parse: { type: "rich" } },
 		],
-		extra: undefined,
 	};
 	return parseDynamicTable(info, definition);
 }

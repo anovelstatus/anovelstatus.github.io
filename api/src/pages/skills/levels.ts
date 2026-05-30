@@ -12,7 +12,6 @@ export function getLevels(info: SpreadsheetInfo) {
 			{ key: "count", source: { type: "exact", name: "# of Levels" }, parse: { type: "number" } },
 			{ key: "note", source: { type: "contains", contains: "Levels gained" }, parse: { type: "string" } },
 		],
-		extra: undefined,
 	};
 	return parseDynamicTable(info, definition);
 }

@@ -10,7 +10,6 @@ export function getTimelineShortcuts(info: SpreadsheetInfo) {
 			{ key: "group", source: { type: "exact", name: "Group" }, parse: { type: "string", optional: true } },
 			{ key: "menu", source: { type: "exact", name: "Menu" }, parse: { type: "string", optional: true } },
 		],
-		extra: undefined,
 	};
 	return parseDynamicTable(info, definition);
 }

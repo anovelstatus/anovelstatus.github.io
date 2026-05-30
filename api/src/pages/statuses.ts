@@ -9,7 +9,6 @@ export function getOfficialStatuses(info: SpreadsheetInfo) {
 		range,
 		filter: (x: Status): boolean => x.chapter <= info.chapterLimit && x[info.attributeNames[0]!]! > 0,
 		fields: [{ key: "chapter", source: { type: "exact", name: "Chapter" }, parse: { type: "number" } }],
-		extra: undefined,
 	};
 	for (const attribute of info.attributeNames) {
 		definition.fields.push({

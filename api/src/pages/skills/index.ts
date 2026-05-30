@@ -1,10 +1,10 @@
-import { getLevels, type InternalSkillGain } from "./levels";
+import { getLevels } from "./levels";
 import { parseDynamicTable, parseString } from "../shared";
 
 export function getSkills(info: SpreadsheetInfo) {
 	const skillLevels = getLevels(info);
 
-	const definition: Table<Skill, InternalSkillGain[]> = {
+	const definition: Table<Skill> = {
 		range: info.ss.getSheetByName("Skill List")!.getDataRange(),
 		filter: (x) => !!x.name && x.gains.length > 0,
 		fields: [
@@ -41,9 +41,9 @@ export function getSkills(info: SpreadsheetInfo) {
 				key: "gains",
 				parse: {
 					type: "custom",
-					parse: ({ rowSoFar, extra }) => {
+					parse: ({ rowSoFar }) => {
 						const id = rowSoFar.name + " - " + rowSoFar.tier;
-						return extra
+						return skillLevels
 							.filter((x) => x.id === id)
 							.map((x) => ({
 								note: x.note,
@@ -55,7 +55,6 @@ export function getSkills(info: SpreadsheetInfo) {
 				},
 			},
 		],
-		extra: skillLevels,
 	};
 	for (const attribute of info.attributeNames) {
 		definition.fields.push({

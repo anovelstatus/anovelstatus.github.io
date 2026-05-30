@@ -46,21 +46,20 @@ type NoOptionParse = { type: "split_tiered_id" | "rich" | "split_string" | "stri
 type OptionalParse = { type: "tiered_id" | "string" | "bool"; optional?: boolean };
 type NumberParse = { type: "number" | "split_number"; limited?: boolean; optional?: boolean };
 
-type CustomContext<T, TExtra> = { rowSoFar: Partial<T>; extra: TExtra; value?: SpreadsheetValue };
-type CustomParse<T, TKey extends keyof T & string, TExtra> = {
+type CustomContext<T> = { rowSoFar: Partial<T>; value?: SpreadsheetValue };
+type CustomParse<T, TKey extends keyof T & string> = {
 	type: "custom";
-	parse: (context: CustomContext<T, TExtra>) => T[TKey];
+	parse: (context: CustomContext<T>) => T[TKey];
 };
 
-type Field<T, TKey extends keyof T & string, TExtra> = {
+type Field<T, TKey extends keyof T & string> = {
 	key: TKey;
 	source?: NamedSource | ContainsSource;
-	parse: NoOptionParse | OptionalParse | NumberParse | CustomParse<T, TKey, TExtra>;
+	parse: NoOptionParse | OptionalParse | NumberParse | CustomParse<T, TKey>;
 };
 
-declare type Table<T, TExtra = undefined> = {
-	fields: Field<T, keyof T & string, TExtra>[];
+declare type Table<T> = {
+	fields: Field<T, keyof T & string>[];
 	range: Range;
 	filter?: (item: T) => boolean;
-	extra: TExtra;
 };

@@ -25,7 +25,6 @@ export function getTalents(info: SpreadsheetInfo) {
 			{ key: "growth", source: { type: "exact", name: "Growth" }, parse: { type: "bool", optional: true } },
 			{ key: "temporary", source: { type: "exact", name: "Temporary" }, parse: { type: "bool", optional: true } },
 		],
-		extra: undefined,
 	};
 	return parseDynamicTable(info, definition);
 }

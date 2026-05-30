@@ -9,7 +9,6 @@ export function getLore(info: SpreadsheetInfo) {
 			{ key: "key", source: { type: "exact", name: "Key" }, parse: { type: "string" } },
 			{ key: "note", source: { type: "exact", name: "Text" }, parse: { type: "rich" } },
 		],
-		extra: undefined,
 	};
 	const descriptions = parseDynamicTable(info, descDef);
 
