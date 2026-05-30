@@ -1,4 +1,4 @@
-import { chapterFilter, parseFormattedTable, parseId, parseRichText } from "../shared";
+import { chapterFilter, parseFormattedTable, parseId, parseNumber, parseRichText, parseString } from "../shared";
 
 export type InternalBoost = Attribute.Boost & { attribute: string };
 type Columns = Record<keyof InternalBoost, number>;
@@ -12,7 +12,7 @@ function mapColumns(headerRow: SpreadsheetValue[]): Columns {
 	return {
 		chapter: headerRow.indexOf("Chapter"),
 		attribute: headerRow.indexOf("Attribute"),
-		boost: headerRow.findIndex((x) => (x as string).includes("Gain")),
+		boost: headerRow.findIndex((x) => parseString(x).includes("Gain")),
 		title: headerRow.indexOf("Title"),
 		note: headerRow.indexOf("Note"),
 	};
@@ -20,10 +20,10 @@ function mapColumns(headerRow: SpreadsheetValue[]): Columns {
 
 function mapRow(row: SpreadsheetValue[], richRow: RichValue[], headers: Columns): InternalBoost {
 	return {
-		chapter: row[headers.chapter] as number,
-		attribute: row[headers.attribute] as string,
-		boost: row[headers.boost] as number,
-		title: parseId(row[headers.title] as string),
+		chapter: parseNumber(row[headers.chapter]),
+		attribute: parseString(row[headers.attribute]),
+		boost: parseNumber(row[headers.boost]),
+		title: parseId(row[headers.title]),
 		note: parseRichText(richRow[headers.note]),
 	};
 }

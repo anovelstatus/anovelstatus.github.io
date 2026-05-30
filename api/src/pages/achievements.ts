@@ -1,4 +1,11 @@
-import { chapterFilter, parseFormattedTable, parseRichText } from "./shared";
+import {
+	chapterFilter,
+	parseFormattedTable,
+	parseNumber,
+	parseRichText,
+	parseSplitString,
+	parseString,
+} from "./shared";
 
 type Columns = Record<keyof Achievement, number>;
 
@@ -21,11 +28,11 @@ function mapColumns(headerRow: SpreadsheetValue[]): Columns {
 
 function mapRow(row: SpreadsheetValue[], richRow: RichValue[], headers: Columns): Achievement {
 	return {
-		chapter: row[headers.chapter] as number,
-		tier: row[headers.tier] as string,
+		chapter: parseNumber(row[headers.chapter]),
+		tier: parseString(row[headers.tier]),
 		description: parseRichText(richRow[headers.description]),
 		message: parseRichText(richRow[headers.message]),
-		messageRecipients: (row[headers.messageRecipients] as string)?.split(",").map((s) => s.trim()) || [],
+		messageRecipients: parseSplitString(row[headers.messageRecipients], ","),
 		rewards: parseRichText(richRow[headers.rewards]),
 		note: parseRichText(richRow[headers.note]),
 	};

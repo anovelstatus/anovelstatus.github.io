@@ -1,4 +1,4 @@
-import { parseFormattedTable, parseRichText } from "../shared";
+import { parseFormattedTable, parseRichText, parseString } from "../shared";
 import { getBoosts, type InternalBoost } from "./boosts";
 import { getEvolutions, type InternalEvolution } from "./evolutions";
 import { getGains, type InternalGain } from "./gains";
@@ -36,15 +36,15 @@ function mapColumns(headerRow: SpreadsheetValue[]): Columns {
 }
 
 function mapRow(row: SpreadsheetValue[], richRow: RichValue[], headers: Columns, extra: Extra): Attribute.Details {
-	const attribute = row[headers.name] as string;
+	const attribute = parseString(row[headers.name]);
 	const attributeFilter = getAttributeFilter(attribute);
 	return {
 		name: attribute,
-		abbreviation: row[headers.abbreviation] as string,
-		category: row[headers.category] as string,
-		categoryAbbreviation: row[headers.categoryAbbreviation] as string,
+		abbreviation: parseString(row[headers.abbreviation]),
+		category: parseString(row[headers.category]),
+		categoryAbbreviation: parseString(row[headers.categoryAbbreviation]),
 		note: parseRichText(richRow[headers.note]!),
-		color: row[headers.color] as string,
+		color: parseString(row[headers.color]),
 		milestones: extra.milestones.filter(attributeFilter).map(removeAttribute),
 		evolutions: extra.evolutions.filter(attributeFilter).map(removeAttribute),
 		gains: extra.gains.filter(attributeFilter).map(removeAttribute),

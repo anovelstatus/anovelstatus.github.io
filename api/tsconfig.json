@@ -5,6 +5,9 @@
 		"types": ["google-apps-script", "node"],
 		"paths": {
 			"@/*": ["./src/*"]
-		}
+		},
+		// Less strict indexing for simpler column index lookups
+		"noUncheckedIndexedAccess": false,
+		"noPropertyAccessFromIndexSignature": false
 	}
 }

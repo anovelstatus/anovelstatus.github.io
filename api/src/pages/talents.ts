@@ -1,10 +1,13 @@
 import {
 	getNumbersLessThanLimit,
 	getNumberIfLessThanLimit,
-	parseId,
 	parseFormattedTable,
 	chapterFilter,
 	parseRichText,
+	parseNumber,
+	parseOptional,
+	parseString,
+	parseIds,
 } from "./shared";
 
 type Columns = Record<keyof Talent | "id", number>;
@@ -32,19 +35,16 @@ function mapColumns(headerRow: SpreadsheetValue[]): Columns {
 }
 
 function mapRow(row: SpreadsheetValue[], richRow: RichValue[], headers: Columns, chapterLimit: number): Talent {
-	const previous: string[] = row[headers.previous] ? (row[headers.previous] as string).split(", ") : [];
-	const previousLinks = previous.map(parseId);
-
 	return {
-		name: row[headers.name] as string,
-		tier: row[headers.tier] as string,
-		growth: row[headers.growth] as boolean,
+		name: parseString(row[headers.name]),
+		tier: parseString(row[headers.tier]),
+		growth: parseOptional<boolean>(row[headers.growth]),
 		note: parseRichText(richRow[headers.note]),
-		chapterGained: row[headers.chapterGained] as number,
-		previous: previousLinks,
+		chapterGained: parseNumber(row[headers.chapterGained]),
+		previous: parseIds(row[headers.previous]),
 		chapterUndone: getNumberIfLessThanLimit(row[headers.chapterUndone], chapterLimit),
 		chapterReplaced: getNumbersLessThanLimit(row[headers.chapterReplaced], chapterLimit),
-		temporary: row[headers.temporary] as boolean,
-		type: row[headers.type] as string,
+		temporary: parseOptional<boolean>(row[headers.temporary]),
+		type: parseString(row[headers.type]),
 	};
 }

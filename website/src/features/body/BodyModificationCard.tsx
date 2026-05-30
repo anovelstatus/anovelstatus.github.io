@@ -34,11 +34,12 @@ export function BodyModificationCard({ mutation }: BodyModificationCardProps) {
 }
 
 function parseNote(mutation: Body.Modification, currentChapter: number): string {
-	if (mutation.chapters.length == 1) return mutation.note;
+	const note = mutation.note ?? "";
+	if (mutation.chapters.length == 1) return note;
 
 	const latestChapter = mutation.chapters.findLast((x) => x <= currentChapter);
 
-	const lines = mutation.note.split("\n");
+	const lines = note.split("\n");
 	const prefix = `${latestChapter} - `;
-	return lines.find((x) => x.startsWith(prefix))?.replace(prefix, "") ?? mutation.note;
+	return lines.find((x) => x.startsWith(prefix))?.replace(prefix, "") ?? note;
 }

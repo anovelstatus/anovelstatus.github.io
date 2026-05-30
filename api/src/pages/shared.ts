@@ -1,17 +1,54 @@
 /** Parse a value that might be a single number or a comma-separated list of numbers into a number array */
 export function getNumbersLessThanLimit(value: SpreadsheetValue, chapterLimit: number): number[] {
-	const chapters = parseNumberArray(value);
-	return chapters.filter((x) => x <= chapterLimit);
+	return parseNumberArray(value).filter((x) => x <= chapterLimit);
 }
+
 export function parseNumberArray(value: SpreadsheetValue): number[] {
 	if (typeof value === "number") return [value];
-	if (typeof value === "string") return value.split(",").map((x) => parseInt(x));
+	if (typeof value === "string") return parseSplitString(value, ",").map((x) => parseInt(x));
 	return [];
 }
 
 export function getNumberIfLessThanLimit(value: SpreadsheetValue, chapterLimit: number) {
-	if (typeof value === "number" && value < chapterLimit) return value;
+	if (typeof value === "number" && value <= chapterLimit) return value;
 	return undefined;
+}
+
+export function parseBoolean(value: SpreadsheetValue): boolean {
+	if (typeof value === "number") throw "expected boolean";
+	// Convert empty string and undefined to false
+	return value === true;
+}
+
+export function parseString(value: SpreadsheetValue): string {
+	if (typeof value !== "string") throw "expected string";
+	return value;
+}
+
+export function parseSplitString(value: SpreadsheetValue, split: string): string[] {
+	if (!value) return [];
+	if (typeof value !== "string") throw "expected string";
+	return value.split(split).map((x) => x.trim());
+}
+
+export function parseNumber(value: SpreadsheetValue): number {
+	if (typeof value !== "number") throw "expected number";
+	return value;
+}
+
+export function parseOptional<T extends SpreadsheetValue>(value: SpreadsheetValue): T | undefined {
+	if (value === "") return undefined;
+	if (value === false) return undefined;
+	return value as T;
+}
+
+export function parseOptionalId(value: SpreadsheetValue): TieredId | undefined {
+	if (!value) return undefined;
+	return parseId(value);
+}
+
+export function parseIds(value: SpreadsheetValue): TieredId[] {
+	return parseSplitString(value, ",").map(parseId);
 }
 
 /** Figure out column indexes for all attributes in given row of headers */
@@ -32,16 +69,17 @@ export function setAttributeValues(
 	attributeNames: string[],
 ) {
 	for (const attribute of attributeNames) {
-		if (typeof row[headers[attribute]!] === "number") item[attribute] = row[headers[attribute]!] as number;
+		if (typeof row[headers[attribute]] === "number") item[attribute] = parseNumber(row[headers[attribute]]);
 	}
 	return item;
 }
 
 /** Parse something like `Name - Tier` into a name and tier */
-export function parseId(fullName: string): TieredId {
+export function parseId(fullName: SpreadsheetValue): TieredId {
+	fullName = parseString(fullName);
 	const parts = fullName.split(" - ");
 	// Get the last segment instead of assuming only 2 parts because at least one Talent has a dash in its name
-	const tier = parts.pop() as string;
+	const tier = parts.pop()!;
 	const name = parts.join(" - ");
 	return { name, tier };
 }
@@ -59,7 +97,7 @@ export function parseRichText(value: RichValue | undefined): RichText[] {
 		const strikethrough = style.isStrikethrough();
 		const underline = style.isUnderline();
 
-		if (color && color !== "#000000" && color !== "#FFFFFF") obj.c = color;
+		if (color && color !== "#000000" && color !== "#FFFFFF" && color !== "#ffffff") obj.c = color;
 		if (bold) obj.b = bold;
 		if (italic) obj.i = italic;
 		if (strikethrough) obj.s = strikethrough;
@@ -69,10 +107,12 @@ export function parseRichText(value: RichValue | undefined): RichText[] {
 	});
 }
 
+// todo: better types to remove unknown
 export function hasEntriesFilter<T>(key: keyof T): (entry: T) => boolean {
 	return (entry: T) => (entry[key] as unknown as []).length > 0;
 }
 
+// todo: better types to remove unknown
 export function chapterFilter<T>(chapterLimit: number, key: keyof T): (entry: T) => boolean {
 	return (entry: T) => (entry[key] as unknown as number) <= chapterLimit;
 }

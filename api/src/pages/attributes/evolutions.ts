@@ -1,4 +1,4 @@
-import { chapterFilter, parseFormattedTable, parseRichText } from "../shared";
+import { chapterFilter, parseFormattedTable, parseNumber, parseRichText, parseString } from "../shared";
 
 export type InternalEvolution = Attribute.Evolution & { attribute: string };
 type Columns = Record<keyof InternalEvolution, number>;
@@ -19,9 +19,9 @@ function mapColumns(headerRow: SpreadsheetValue[]): Columns {
 
 function mapRow(row: SpreadsheetValue[], richRow: RichValue[], headers: Columns): InternalEvolution {
 	return {
-		chapter: row[headers.chapter] as number,
-		attribute: row[headers.attribute] as string,
+		chapter: parseNumber(row[headers.chapter]),
+		attribute: parseString(row[headers.attribute]),
 		note: parseRichText(richRow[headers.note]),
-		name: row[headers.name] as string,
+		name: parseString(row[headers.name]),
 	};
 }

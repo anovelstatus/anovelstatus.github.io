@@ -62,10 +62,10 @@ function updateAllFiles(ss?: Spreadsheet) {
 	const rrFolder = DriveApp.getFolderById(RR_FOLDER);
 	const patreonFolder = DriveApp.getFolderById(PATREON_FOLDER);
 	const allPages: ApiPage[] = [
+		"chapters",
 		"achievements",
 		"attributes",
 		"body",
-		"chapters",
 		"lore",
 		"skills",
 		"statuses",
@@ -77,10 +77,16 @@ function updateAllFiles(ss?: Spreadsheet) {
 	const patreonInfo = getSpreadsheetInfo(ss, true);
 
 	for (const page of allPages) {
-		console.log("Updating " + page);
-		updatePageJson(rrFolder, rrInfo, page);
-		updatePageJson(patreonFolder, patreonInfo, page);
+		try {
+			console.log("Updating " + page);
+			updatePageJson(rrFolder, rrInfo, page);
+			updatePageJson(patreonFolder, patreonInfo, page);
+		} catch (e) {
+			console.log("Failed to update " + page);
+			console.error(e);
+		}
 	}
+	// todo: write error logs to spreadsheet for visibility
 }
 
 /** Get contents of JSON file in folder */

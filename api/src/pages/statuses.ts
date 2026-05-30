@@ -1,4 +1,4 @@
-import { parseTable, setAttributeColumns, setAttributeValues } from "./shared";
+import { parseNumber, parseTable, setAttributeColumns, setAttributeValues } from "./shared";
 
 type Columns = Record<keyof Status, number>;
 
@@ -23,7 +23,7 @@ function mapColumns(headerRow: SpreadsheetValue[], attributeNames: string[]): Co
 
 function mapRow(row: SpreadsheetValue[], headers: Columns, attributeNames: string[]): Status {
 	const status: Status = {
-		chapter: row[headers["chapter"]!] as number,
+		chapter: parseNumber(row[headers.chapter]),
 	};
 	return setAttributeValues(status, row, headers, attributeNames) as Status;
 }

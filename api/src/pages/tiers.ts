@@ -1,4 +1,4 @@
-import { parseTable } from "./shared";
+import { parseNumber, parseOptional, parseString, parseTable } from "./shared";
 
 type Columns = Record<keyof TierInfo, number>;
 
@@ -20,14 +20,14 @@ function mapColumns(headerRow: SpreadsheetValue[]): Columns {
 
 function mapRow(row: SpreadsheetValue[], headers: Columns, chapterLimit: number): TierInfo {
 	const data: TierInfo = {
-		tier: row[headers.tier] as number,
-		skillName: row[headers.skillName] as string,
-		metalName: row[headers.metalName] as string,
-		chapterRevealed: row[headers.chapterRevealed] as number,
-		fgColor: row[headers.fgColor] as string,
-		bgColor: row[headers.bgColor] as string,
+		tier: parseNumber(row[headers.tier]),
+		skillName: parseString(row[headers.skillName]),
+		metalName: parseString(row[headers.metalName]),
+		chapterRevealed: parseOptional<number>(row[headers.chapterRevealed]),
+		fgColor: parseString(row[headers.fgColor]),
+		bgColor: parseString(row[headers.bgColor]),
 	};
-	if (data.chapterRevealed > chapterLimit) {
+	if (data.chapterRevealed && data.chapterRevealed > chapterLimit) {
 		data.metalName = "?";
 		data.skillName = "?";
 	}

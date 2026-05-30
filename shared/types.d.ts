@@ -105,7 +105,7 @@ declare type TemperingStep = {
 	stage: string;
 	category: string;
 	started: number;
-	completed?: number;
+	completed: number | undefined;
 	note: RichText[];
 	linkType?: string;
 	link?: TieredId;
@@ -114,8 +114,8 @@ declare type TemperingStep = {
 declare namespace Body {
 	type Modification = {
 		name: string;
-		tier: string;
-		note: string; // todo: RichText[]
+		tier?: string;
+		note?: string; // todo: RichText[]
 		type: string;
 		source: RichText[];
 		chapters: number[];
@@ -132,6 +132,7 @@ declare namespace Body {
 /** An object that has properties related to the Attributes */
 declare type HasSomeAttributes = Record<string, number>;
 
+// todo: replace with slimmer array model
 declare type Status = HasSomeAttributes & {
 	chapter: number;
 };
@@ -149,7 +150,7 @@ declare type TierInfo = {
 	tier: number;
 	skillName: string;
 	metalName: string;
-	chapterRevealed: number;
+	chapterRevealed: number | undefined;
 	fgColor: string;
 	bgColor: string;
 };
@@ -195,7 +196,7 @@ declare type Talent = TieredId &
 		chapterReplaced?: number[];
 		type: string;
 		growth?: boolean;
-		temporary: boolean;
+		temporary?: boolean;
 	};
 
 /** Skill metadata */
@@ -203,7 +204,7 @@ declare type SkillDetails = {
 	replaced: boolean;
 	gains: SkillGain[];
 	description: RichText[];
-	prerequisites: string;
+	prerequisites: string | undefined;
 	quality: string;
 	bonuses: RichText[];
 	notes: RichText[];
