@@ -10,11 +10,7 @@ export function getSkills(info: SpreadsheetInfo) {
 		fields: [
 			// todo: name, gains
 			{ key: "tier", source: { type: "exact", name: "Tier" }, parse: { type: "string" } },
-			{
-				key: "previous",
-				source: { type: "contains", contains: "Previous" },
-				parse: { type: "split_tiered_id" },
-			},
+			{ key: "previous", source: { type: "contains", contains: "Previous" }, parse: { type: "split_tiered_id" } },
 			{ key: "replaced", source: { type: "contains", contains: "Replaced" }, parse: { type: "bool", optional: true } },
 			{ key: "description", source: { type: "exact", name: "Description" }, parse: { type: "rich" } },
 			{
@@ -32,6 +28,7 @@ export function getSkills(info: SpreadsheetInfo) {
 				parse: {
 					type: "custom",
 					parse: ({ rowSoFar, value }) => {
+						// Need to figure out how to get the generics working properly
 						// eslint-disable-next-line @typescript-eslint/no-explicit-any
 						return parseString(value).replace(" - " + rowSoFar.tier!, "") as any;
 					},
@@ -49,6 +46,7 @@ export function getSkills(info: SpreadsheetInfo) {
 								note: x.note,
 								chapter: x.chapter,
 								count: x.count,
+								// Need to figure out how to get the generics working properly
 								// eslint-disable-next-line @typescript-eslint/no-explicit-any
 							})) as any;
 					},
