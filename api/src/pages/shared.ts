@@ -15,24 +15,24 @@ export function getNumberIfLessThanLimit(value: SpreadsheetValue, chapterLimit: 
 }
 
 export function parseBoolean(value: SpreadsheetValue): boolean {
-	if (typeof value === "number") throw "expected boolean";
+	if (typeof value === "number") throw new Error("expected boolean");
 	// Convert empty string and undefined to false
 	return value === true;
 }
 
 export function parseString(value: SpreadsheetValue): string {
-	if (typeof value !== "string") throw "expected string";
+	if (typeof value !== "string") throw new Error("expected string");
 	return value;
 }
 
 export function parseSplitString(value: SpreadsheetValue, split: string): string[] {
 	if (!value) return [];
-	if (typeof value !== "string") throw "expected string";
+	if (typeof value !== "string") throw new Error("expected string");
 	return value.split(split).map((x) => x.trim());
 }
 
 export function parseNumber(value: SpreadsheetValue): number {
-	if (typeof value !== "number") throw "expected number";
+	if (typeof value !== "number") throw new Error("expected number");
 	return value;
 }
 

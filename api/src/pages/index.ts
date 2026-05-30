@@ -37,7 +37,7 @@ function getPageParser(page: ApiPage): StandardParser<unknown> {
 		case "titles":
 			return getTitles;
 		default:
-			throw "Unexpected page requested: " + page;
+			throw new Error("Unexpected page requested: " + page);
 	}
 }
 
