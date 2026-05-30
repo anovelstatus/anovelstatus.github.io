@@ -38,13 +38,13 @@ function mapRow(row: SpreadsheetValue[], richRow: RichValue[], headers: Columns,
 	return {
 		name: row[headers.name] as string,
 		tier: row[headers.tier] as string,
-		growth: row[headers.growth] as boolean,
+		growth: (row[headers.growth] as boolean) ? true : undefined,
 		note: parseRichText(richRow[headers.note]),
 		chapterGained: row[headers.chapterGained] as number,
 		previous: previousLinks,
 		chapterUndone: getNumberIfLessThanLimit(row[headers.chapterUndone], chapterLimit),
 		chapterReplaced: getNumbersLessThanLimit(row[headers.chapterReplaced], chapterLimit),
-		temporary: row[headers.temporary] as boolean,
+		temporary: (row[headers.temporary] as boolean) ? true : undefined,
 		type: row[headers.type] as string,
 	};
 }

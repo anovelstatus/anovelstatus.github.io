@@ -195,7 +195,7 @@ declare type Talent = TieredId &
 		chapterReplaced?: number[];
 		type: string;
 		growth?: boolean;
-		temporary: boolean;
+		temporary?: boolean;
 	};
 
 /** Skill metadata */
