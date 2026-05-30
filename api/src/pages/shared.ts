@@ -47,6 +47,11 @@ export function parseNumber(value: SpreadsheetValue): number {
 	return value;
 }
 
+export function parseOptionalNumber(value: SpreadsheetValue): number | undefined {
+	if (value === "") return undefined;
+	return parseNumber(value);
+}
+
 export function parseOptional<T extends SpreadsheetValue>(value: SpreadsheetValue): T | undefined {
 	if (value === "") return undefined;
 	if (value === false) return undefined;
@@ -232,7 +237,11 @@ function mapDynamicRow<T, TExtra>(
 				item[key] = parseRichText(richValues[headers[key]]);
 				break;
 			case "number":
-				item[key] = parse.limited ? getNumberIfLessThanLimit(value, info.chapterLimit) : parseNumber(value);
+				item[key] = parse.limited
+					? getNumberIfLessThanLimit(value, info.chapterLimit)
+					: parse.optional
+						? parseOptionalNumber(value)
+						: parseNumber(value);
 				break;
 			case "string":
 				item[key] = parse.optional ? parseOptionalString(value) : parseString(value);

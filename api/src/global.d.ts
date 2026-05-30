@@ -44,7 +44,7 @@ type ContainsSource = { type: "column-contains"; contains: string };
 
 type NoOptionParse = { type: "tiered_id" | "split_tiered_id" | "rich" | "split-string" };
 type OptionalParse = { type: "string" | "bool"; optional?: boolean };
-type NumberParse = { type: "number" | "split-number"; limited?: boolean };
+type NumberParse = { type: "number" | "split-number"; limited?: boolean; optional?: boolean };
 type CustomParse<T, TKey extends keyof T & string, TExtra> = {
 	type: "custom";
 	parse: (rowSoFar: Partial<T>, extra) => T[TKey];
