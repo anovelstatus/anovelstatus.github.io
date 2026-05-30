@@ -38,7 +38,8 @@ export function useBasicInfo() {
 }
 
 export function useShortcuts() {
-	return useBasicInfo().data.shortcuts;
+	const { data } = useBasicInfo();
+	return data.shortcuts ?? [];
 }
 
 function useBody() {
