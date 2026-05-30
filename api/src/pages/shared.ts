@@ -219,7 +219,7 @@ function mapDynamicRow<T, TExtra>(
 	const item: Record<string, unknown> = {};
 
 	for (const { key, parse } of fields) {
-		const value = headers[key] ? values[headers[key]] : undefined;
+		const value = headers[key] !== undefined ? values[headers[key]] : undefined;
 		switch (parse.type) {
 			case "rich":
 				item[key] = parseRichText(richValues[headers[key]]);
