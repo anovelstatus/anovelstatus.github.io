@@ -1,3 +1,15 @@
+/** Pages of data that can be fetched */
+declare type ApiPage =
+	| "chapters"
+	| "attributes"
+	| "talents"
+	| "titles"
+	| "body"
+	| "skills"
+	| "statuses"
+	| "achievements"
+	| "lore";
+
 declare type RichText = {
 	text: string;
 	fgColor: string;

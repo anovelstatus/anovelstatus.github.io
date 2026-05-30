@@ -28,18 +28,6 @@ declare type RangeKey =
 /** Range references for various things */
 declare type RangeLookup = Record<RangeKey, string>;
 
-/** Pages of data that can be fetched */
-declare type Page =
-	| "chapters"
-	| "attributes"
-	| "talents"
-	| "titles"
-	| "body"
-	| "skills"
-	| "statuses"
-	| "achievements"
-	| "lore";
-
 declare type StandardParser<T> = (info: SpreadsheetInfo) => T;
 
 declare type SpreadsheetInfo = {

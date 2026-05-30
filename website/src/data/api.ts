@@ -157,7 +157,7 @@ export function useLoreTopic(key: string, chapter: number) {
 
 // Copying type constraint from Tanstack's NonFunctionGuard type
 // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-function useSpreadsheet<T>(page: string, placeholder: T extends Function ? never : T) {
+function useSpreadsheet<T>(page: ApiPage, placeholder: T extends Function ? never : T) {
 	return useQuery<T>({
 		queryKey: ["page", page],
 		placeholderData: placeholder,
