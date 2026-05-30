@@ -51,14 +51,21 @@ export function parseRichText(value: RichValue | undefined): RichText[] {
 	if (!value) return [];
 	return value.getRuns().map((run) => {
 		const style = run.getTextStyle();
-		return {
-			text: run.getText(),
-			fgColor: style.getForegroundColor() ?? "#000000",
-			bold: style.isBold() ?? false,
-			italic: style.isItalic() ?? false,
-			strikethrough: style.isStrikethrough() ?? false,
-			underline: style.isUnderline() ?? false,
-		};
+		const obj: RichText = { t: run.getText() };
+
+		const color = style.getForegroundColor();
+		const bold = style.isBold();
+		const italic = style.isItalic();
+		const strikethrough = style.isStrikethrough();
+		const underline = style.isUnderline();
+
+		if (color) obj.c = color;
+		if (bold) obj.b = bold;
+		if (italic) obj.i = italic;
+		if (strikethrough) obj.s = strikethrough;
+		if (underline) obj.u = underline;
+
+		return obj;
 	});
 }
 

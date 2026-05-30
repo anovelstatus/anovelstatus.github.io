@@ -1,6 +1,6 @@
 import { chapterFilter, parseFormattedTable, parseRichText } from "../shared";
 
-export type InternalGain = Attribute.Gain;
+export type InternalGain = Attribute.Gain & { attribute: string };
 type Columns = Record<keyof InternalGain, number>;
 
 export const getGains: StandardParser<InternalGain[]> = ({ ss, chapterLimit }) => {

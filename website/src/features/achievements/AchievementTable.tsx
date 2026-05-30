@@ -39,7 +39,7 @@ export default function AchievementTable() {
 		data,
 		columns: useColumns(),
 		getRowId: (row) =>
-			typeof row.description === "string" ? row.description : row.description.map((x) => x.text).join(""),
+			typeof row.description === "string" ? row.description : row.description.map((x) => x.t).join(""),
 		initialState: {
 			sorting: [{ id: "chapter", desc: true }],
 		},

@@ -1,5 +1,5 @@
 import { useAttributes, useSkills } from "@/data/api";
-import { getCurrentLevel, sum } from "@/data/helpers";
+import { getCurrentLevel, sum, toIdString } from "@/data/helpers";
 import { Box } from "@mui/material";
 import { useMemo } from "react";
 import { SkillButton } from "../skills";
@@ -103,7 +103,7 @@ export function getChapterGains(chapter: number): React.ReactNode[] {
 					""
 				);
 				notes.push(
-					<Box key={`${attribute.name}-boost-${boost.title}`}>
+					<Box key={`${attribute.name}-boost-${toIdString(boost.titleId)}`}>
 						{boost.boost > 0 ? "+" : ""}
 						{`${Math.round(boost.boost * 100)}% ${attribute.name} from `}
 						<TitleButton item={boost.titleId} />

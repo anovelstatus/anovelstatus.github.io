@@ -7,7 +7,7 @@ export type RichTextSpanProps = {
 /** The cell often returns an array of 1 span with empty text, so check for non-empty text */
 export function hasNote(data: string | RichText[]): boolean {
 	if (typeof data === "string") return data.length > 0;
-	return (data || []).some((x) => x.text.length > 0);
+	return (data || []).some((x) => x.t.length > 0);
 }
 
 export function RichTextSpan({ data, sx, ...props }: RichTextSpanProps) {
@@ -33,13 +33,13 @@ function FormattedSpan(data: RichText) {
 	return (
 		<span
 			style={{
-				color: data.fgColor == "#000000" ? undefined : data.fgColor,
-				fontWeight: data.bold ? "bold" : "normal",
-				fontStyle: data.italic ? "italic" : "normal",
-				textDecoration: `${data.strikethrough ? "line-through " : ""}${data.underline ? "underline" : ""}`,
+				color: data.c == "#000000" ? undefined : data.c,
+				fontWeight: data.b ? "bold" : "normal",
+				fontStyle: data.i ? "italic" : "normal",
+				textDecoration: `${data.s ? "line-through " : ""}${data.u ? "underline" : ""}`,
 			}}
 		>
-			{data.text}
+			{data.t}
 		</span>
 	);
 }

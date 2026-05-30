@@ -11,12 +11,18 @@ declare type ApiPage =
 	| "lore";
 
 declare type RichText = {
-	text: string;
-	fgColor: string;
-	bold: boolean;
-	italic: boolean;
-	strikethrough: boolean;
-	underline: boolean;
+	/** Text */
+	t: string;
+	/** Foreground Color */
+	c?: string;
+	/** Bold */
+	b?: boolean;
+	/** Italic */
+	i?: boolean;
+	/** Strikethrough */
+	s?: boolean;
+	/** Underline */
+	u?: boolean;
 };
 
 declare namespace Attribute {
@@ -35,13 +41,11 @@ declare namespace Attribute {
 		chapter: number;
 		boost: number;
 		note: RichText[];
-		title: string;
 		titleId: TieredId;
 	};
 
 	type Gain = {
 		chapter: number;
-		attribute: string;
 		gain: number;
 		note: RichText[];
 	};
