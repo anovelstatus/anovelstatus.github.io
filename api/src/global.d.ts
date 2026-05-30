@@ -32,7 +32,6 @@ declare type RangeLookup = Record<RangeKey, string>;
 declare type Page =
 	| "chapters"
 	| "attributes"
-	| "shortcuts"
 	| "talents"
 	| "titles"
 	| "body"

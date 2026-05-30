@@ -3,7 +3,6 @@ import { getAttributes } from "./attributes/index";
 import { getBody } from "./body/index";
 import { getConfiguration, getPatreonChapter, getRoyalRoadChapter } from "./chapters";
 import { getLore } from "./lore";
-import { getTimelineShortcuts } from "./shortcuts";
 import { getSkills } from "./skills/index";
 import { getOfficialStatuses } from "./statuses";
 import { getTalents } from "./talents";
@@ -29,8 +28,6 @@ function getPageParser(page: Page): StandardParser<unknown> {
 			return getConfiguration;
 		case "lore":
 			return getLore;
-		case "shortcuts":
-			return getTimelineShortcuts;
 		case "skills":
 			return getSkills;
 		case "statuses":

@@ -34,11 +34,11 @@ export function useMetalTiers() {
 }
 
 export function useBasicInfo() {
-	return useSpreadsheet<BasicInfo>("chapters", { latest: 1, unlocked: false, tiers: [] });
+	return useSpreadsheet<BasicInfo>("chapters", { latest: 1, unlocked: false, tiers: [], shortcuts: [] });
 }
 
 export function useShortcuts() {
-	return useSpreadsheet<Shortcut[]>("shortcuts", []);
+	return useBasicInfo().data.shortcuts;
 }
 
 function useBody() {
