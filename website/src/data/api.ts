@@ -37,11 +37,6 @@ export function useBasicInfo() {
 	return useSpreadsheet<BasicInfo>("chapters", { latest: 1, unlocked: false, tiers: [], shortcuts: [] });
 }
 
-export function useShortcuts() {
-	const { data } = useBasicInfo();
-	return data.shortcuts ?? [];
-}
-
 function useBody() {
 	return useSpreadsheet<Body.Details>("body", {
 		bloodlines: [],
