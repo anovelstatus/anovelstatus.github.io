@@ -62,37 +62,42 @@ export function parseRichText(value: RichValue | undefined): RichText[] {
 	});
 }
 
-export function getChapterFilter<T>(chapterLimit: number, key: keyof T): (entry: T) => boolean {
+export function hasEntriesFilter<T>(key: keyof T): (entry: T) => boolean {
+	return (entry: T) => (entry[key] as unknown as []).length > 0;
+}
+
+export function chapterFilter<T>(chapterLimit: number, key: keyof T): (entry: T) => boolean {
 	return (entry: T) => (entry[key] as unknown as number) <= chapterLimit;
 }
 
 /** Parse a table of plain text into an array of objects */
-export function parseTable<T, TColumns>(
+export function parseTable<T, TColumns, TExtra = never>(
 	range: Range,
-	mapColumns: (headerRow: SpreadsheetValue[]) => TColumns,
-	mapRow: (row: SpreadsheetValue[], headers: TColumns) => T,
+	mapColumns: (headerRow: SpreadsheetValue[], extra: TExtra) => TColumns,
+	mapRow: (row: SpreadsheetValue[], headers: TColumns, extra: TExtra) => T,
 	filter: (item: T) => boolean,
+	extra?: TExtra,
 ): T[] {
 	const values = range.getValues();
-	const headers = mapColumns(values[0]!);
+	const headers = mapColumns(values[0]!, extra!);
 	return values
 		.slice(1)
 		.filter((row) => row[0] || row[0] === 0) // Skip rows with empty first cell
-		.map((row) => mapRow(row, headers))
+		.map((row) => mapRow(row, headers, extra!))
 		.filter(filter);
 }
 
 /** Parse a table that might contain formatted text into an array of objects */
 export function parseFormattedTable<T, TColumns, TExtra = never>(
 	range: Range,
-	mapColumns: (headerRow: SpreadsheetValue[]) => TColumns,
+	mapColumns: (headerRow: SpreadsheetValue[], extra: TExtra) => TColumns,
 	mapRow: (row: SpreadsheetValue[], richRow: RichValue[], headers: TColumns, extra: TExtra) => T,
 	filter: (item: T) => boolean,
 	extra?: TExtra,
 ): T[] {
 	const values = range.getValues();
 	const richValues = range.getRichTextValues();
-	const headers = mapColumns(values[0]!);
+	const headers = mapColumns(values[0]!, extra!);
 
 	const data = [];
 	for (let i = 1; i < values.length; i++) {

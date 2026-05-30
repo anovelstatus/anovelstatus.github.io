@@ -1,11 +1,11 @@
-import { getChapterFilter, parseFormattedTable, parseId, parseRichText } from "./shared";
+import { chapterFilter, parseFormattedTable, parseId, parseRichText } from "./shared";
 
 type Columns = Omit<Record<keyof Title | "title" | "chapterReplaced", number>, keyof TieredId>;
 
 /** Get list of Titles and their metadata. This does NOT include metadata for attribute boosts. That is loaded separately. */
 export const getTitles: StandardParser<Title[]> = ({ ss, ranges, chapterLimit }) => {
 	const range = ss.getRange(ranges.Titles);
-	return parseFormattedTable(range, mapColumns, mapRow, getChapterFilter(chapterLimit, "chapter"), chapterLimit);
+	return parseFormattedTable(range, mapColumns, mapRow, chapterFilter(chapterLimit, "chapter"), chapterLimit);
 };
 
 function mapColumns(headerRow: SpreadsheetValue[]): Columns {

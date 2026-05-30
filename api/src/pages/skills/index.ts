@@ -4,29 +4,14 @@ import { parseFormattedTable, parseId, parseRichText, setAttributeValues } from 
 type Columns = Record<keyof (Skill & SkillDetails & TieredId), number>;
 type Extra = { attributeNames: string[]; skillLevels: InternalSkillGain[] };
 
-export const getSkills: StandardParser<Skill[]> = ({ ss, ranges, attributeNames, chapterLimit }) => {
-	const skillLevels = getLevels(ss, ranges, chapterLimit);
-	return getList(ss, ranges, attributeNames, skillLevels);
+export const getSkills: StandardParser<Skill[]> = (info) => {
+	const skillLevels = getLevels(info);
+	const range = info.ss.getSheetByName("Skill List")!.getDataRange();
+	const extra = { attributeNames: info.attributeNames, skillLevels };
+	return parseFormattedTable(range, mapColumns, mapRow, (x) => !!x.name && x.gains.length > 0, extra);
 };
 
-function getList(
-	ss: Spreadsheet,
-	_ranges: RangeLookup,
-	attributeNames: string[],
-	skillLevels: InternalSkillGain[],
-): Skill[] {
-	const range = ss.getSheetByName("Skill List")!.getDataRange();
-	const extra = { attributeNames, skillLevels };
-	return parseFormattedTable(
-		range,
-		(headerRow) => mapColumns(headerRow, attributeNames),
-		mapRow,
-		(x) => !!x.name && x.gains.length > 0,
-		extra,
-	);
-}
-
-function mapColumns(headerRow: SpreadsheetValue[], attributeNames: string[]): Columns {
+function mapColumns(headerRow: SpreadsheetValue[], extra: Extra): Columns {
 	const headers: Partial<Columns> = {
 		name: headerRow.indexOf("Name"),
 		tier: headerRow.indexOf("Tier"),
@@ -39,7 +24,7 @@ function mapColumns(headerRow: SpreadsheetValue[], attributeNames: string[]): Co
 		notes: headerRow.indexOf("Note"),
 		tags: headerRow.indexOf("Tags"),
 	};
-	for (const attribute of attributeNames) headers[attribute] = headerRow.indexOf(attribute);
+	for (const attribute of extra.attributeNames) headers[attribute] = headerRow.indexOf(attribute);
 
 	return headers as Columns;
 }

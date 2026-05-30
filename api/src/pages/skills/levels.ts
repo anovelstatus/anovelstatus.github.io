@@ -1,11 +1,11 @@
-import { getChapterFilter, parseTable } from "../shared";
+import { chapterFilter, parseTable } from "../shared";
 
 export type InternalSkillGain = SkillGain & { id: string };
 type Columns = Record<keyof InternalSkillGain, number>;
 
-export function getLevels(ss: Spreadsheet, ranges: RangeLookup, chapterLimit: number): InternalSkillGain[] {
+export function getLevels({ ss, ranges, chapterLimit }: SpreadsheetInfo): InternalSkillGain[] {
 	const range = ss.getRange(ranges["Skill Levels"]);
-	return parseTable(range, mapColumns, mapRow, getChapterFilter(chapterLimit, "chapter"));
+	return parseTable(range, mapColumns, mapRow, chapterFilter(chapterLimit, "chapter"));
 }
 
 function mapColumns(headerRow: SpreadsheetValue[]): Columns {

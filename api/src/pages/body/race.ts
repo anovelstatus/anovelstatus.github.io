@@ -1,9 +1,9 @@
-import { parseId, parseRichText, parseFormattedTable, getChapterFilter } from "../shared";
+import { parseId, parseRichText, parseFormattedTable, chapterFilter } from "../shared";
 
 type Columns = Record<keyof Race, number>;
 
 export const getRaces: StandardParser<Race[]> = ({ ss, ranges, chapterLimit }) => {
-	return parseFormattedTable(ss.getRange(ranges.Races), mapColumns, mapRow, getChapterFilter(chapterLimit, "chapter"));
+	return parseFormattedTable(ss.getRange(ranges.Races), mapColumns, mapRow, chapterFilter(chapterLimit, "chapter"));
 };
 
 function mapColumns(headerRow: SpreadsheetValue[]): Columns {

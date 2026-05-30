@@ -1,20 +1,13 @@
-import { getChapterFilter, parseFormattedTable, parseRichText } from "./shared";
+import { chapterFilter, parseFormattedTable, parseRichText } from "./shared";
 
 type Columns = Record<keyof LoreEntry, number>;
 
 export const getLore: StandardParser<Lore> = ({ ss, chapterLimit }) => {
-	const descriptions = parseFormattedTable(
-		ss.getSheetByName("Lore")!.getDataRange(),
-		mapColumns,
-		mapRow,
-		getChapterFilter(chapterLimit, "chapter"),
-	);
-	const updates = parseFormattedTable(
-		ss.getSheetByName("Updates")!.getDataRange(),
-		mapColumns,
-		mapRow,
-		getChapterFilter(chapterLimit, "chapter"),
-	);
+	const descRange = ss.getSheetByName("Lore")!.getDataRange();
+	const descriptions = parseFormattedTable(descRange, mapColumns, mapRow, chapterFilter(chapterLimit, "chapter"));
+
+	const updateRange = ss.getSheetByName("Updates")!.getDataRange();
+	const updates = parseFormattedTable(updateRange, mapColumns, mapRow, chapterFilter(chapterLimit, "chapter"));
 	return { descriptions, updates };
 };
 

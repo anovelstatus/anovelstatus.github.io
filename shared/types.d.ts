@@ -135,6 +135,7 @@ declare type BasicInfo = {
 	patreonSheetLink?: string;
 	tiers: TierInfo[];
 	shortcuts: Shortcut[];
+	attributeNames: string[];
 };
 
 declare type TierInfo = {
