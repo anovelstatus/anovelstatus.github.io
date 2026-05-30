@@ -59,7 +59,7 @@ export function parseRichText(value: RichValue | undefined): RichText[] {
 		const strikethrough = style.isStrikethrough();
 		const underline = style.isUnderline();
 
-		if (color && color !== "#000000" && color !== "#FFFFFF") obj.c = color;
+		if (color && color !== "#000000" && color !== "#FFFFFF" && color !== "#ffffff") obj.c = color;
 		if (bold) obj.b = bold;
 		if (italic) obj.i = italic;
 		if (strikethrough) obj.s = strikethrough;
