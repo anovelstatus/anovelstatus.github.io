@@ -34,7 +34,13 @@ export function useMetalTiers() {
 }
 
 export function useBasicInfo() {
-	return useSpreadsheet<BasicInfo>("chapters", { latest: 1, unlocked: false, tiers: [], shortcuts: [] });
+	return useSpreadsheet<BasicInfo>("chapters", {
+		latest: 1,
+		unlocked: false,
+		tiers: [],
+		shortcuts: [],
+		attributeNames: [],
+	});
 }
 
 function useBody() {
