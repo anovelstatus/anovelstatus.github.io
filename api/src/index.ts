@@ -58,7 +58,7 @@ function updateFiles() {
 
 /** Used to manually force a refresh. Useful if the response model changes, for example. */
 function updateAllFiles(ss?: Spreadsheet) {
-	ss ||= SpreadsheetApp.openByUrl(SS_LINK);
+	ss = ss || SpreadsheetApp.openByUrl(SS_LINK);
 	const rrFolder = DriveApp.getFolderById(RR_FOLDER);
 	const patreonFolder = DriveApp.getFolderById(PATREON_FOLDER);
 	const allPages: Page[] = [
