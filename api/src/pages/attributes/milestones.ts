@@ -9,15 +9,15 @@ export function getMilestones(info: SpreadsheetInfo) {
 		fields: [
 			{
 				key: "attribute",
-				source: { type: "column", name: "Attribute" },
+				source: { type: "exact", name: "Attribute" },
 				parse: { type: "string" },
 			},
 			{
 				key: "milestone",
-				source: { type: "column", name: "Milestone" },
+				source: { type: "exact", name: "Milestone" },
 				parse: { type: "number" },
 			},
-			{ key: "note", source: { type: "column", name: "Description" }, parse: { type: "rich" } },
+			{ key: "note", source: { type: "exact", name: "Description" }, parse: { type: "rich" } },
 		],
 		extra: undefined,
 	};

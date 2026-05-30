@@ -1,39 +1,28 @@
-import {
-	chapterFilter,
-	getNumberIfLessThanLimit,
-	parseFormattedTable,
-	parseId,
-	parseNumber,
-	parseOptionalId,
-	parseRichText,
-} from "./shared";
+import { chapterFilter, parseDynamicTable, parseId } from "./shared";
 
-type Columns = Omit<Record<keyof Title | "title" | "chapterReplaced", number>, keyof TieredId>;
+type InternalTitle = Omit<Title, keyof TieredId> & { title: string };
 
 /** Get list of Titles and their metadata. This does NOT include metadata for attribute boosts. That is loaded separately. */
-export const getTitles: StandardParser<Title[]> = ({ ss, ranges, chapterLimit }) => {
-	const range = ss.getRange(ranges.Titles);
-	return parseFormattedTable(range, mapColumns, mapRow, chapterFilter(chapterLimit, "chapter"), chapterLimit);
-};
-
-function mapColumns(headerRow: SpreadsheetValue[]): Columns {
-	return {
-		title: headerRow.indexOf("Title"),
-		note: headerRow.indexOf("Description"),
-		chapter: headerRow.indexOf("Chapter"),
-		previous: headerRow.indexOf("Previous"),
-		replaced: headerRow.indexOf("Replaced"),
-		chapterReplaced: headerRow.indexOf("Chapter Replaced"),
+export function getTitles(info: SpreadsheetInfo) {
+	const definition: Table<InternalTitle> = {
+		getRange: ({ ss, ranges }) => ss.getRange(ranges.Titles),
+		filter: chapterFilter(info.chapterLimit, "chapter"),
+		fields: [
+			{ key: "title", source: { type: "exact", name: "Title" }, parse: { type: "string" } },
+			{ key: "note", source: { type: "exact", name: "Description" }, parse: { type: "rich" } },
+			{ key: "chapter", source: { type: "exact", name: "Chapter" }, parse: { type: "number" } },
+			{ key: "previous", source: { type: "exact", name: "Previous" }, parse: { type: "tiered_id", optional: true } },
+			{
+				key: "replaced",
+				source: { type: "exact", name: "Chapter Replaced" },
+				parse: { type: "number", limited: true, optional: true },
+			},
+		],
+		extra: undefined,
 	};
-}
 
-function mapRow(row: SpreadsheetValue[], richRow: RichValue[], headers: Columns, chapterLimit: number): Title {
-	const id = parseId(row[headers.title]);
-	return {
-		...id,
-		note: parseRichText(richRow[headers.note]),
-		chapter: parseNumber(row[headers.chapter]),
-		previous: parseOptionalId(row[headers.previous]),
-		replaced: getNumberIfLessThanLimit(row[headers.chapterReplaced], chapterLimit),
-	};
+	return parseDynamicTable(info, definition).map((x): Title => {
+		const id = parseId(x.title);
+		return { ...id, note: x.note, chapter: x.chapter, previous: x.previous, replaced: x.replaced };
+	});
 }

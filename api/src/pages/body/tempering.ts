@@ -1,81 +1,46 @@
-import {
-	chapterFilter,
-	getNumberIfLessThanLimit,
-	hasEntriesFilter,
-	parseFormattedTable,
-	parseNumber,
-	parseOptionalId,
-	parseRichText,
-	parseString,
-} from "../shared";
+import { chapterFilter, hasEntriesFilter, parseDynamicTable } from "../shared";
 
-type StageColumns = Omit<Record<keyof TemperingStage, number>, "updates">;
-type StepColumns = Record<keyof TemperingStep, number>;
-
-export const getTempering: StandardParser<TemperingStage[]> = (info) => {
+export function getTempering(info: SpreadsheetInfo) {
 	const updates = getSteps(info);
-	const range = info.ss.getRange(info.ranges["Body Tempering Stages"]);
-	return parseFormattedTable(range, mapStageColumns, mapStage, hasEntriesFilter("updates"), updates);
-};
 
-function mapStageColumns(headerRow: SpreadsheetValue[]): StageColumns {
-	return {
-		name: headerRow.indexOf("Stage"),
-		tier: headerRow.indexOf("Quality"),
-		chapter: headerRow.indexOf("Revealed"),
-		expectedSteps: headerRow.indexOf("Steps"),
-		description: headerRow.indexOf("Description"),
+	const definition: Table<TemperingStage, TemperingStep[]> = {
+		getRange: (info) => info.ss.getRange(info.ranges["Body Tempering Stages"]),
+		filter: hasEntriesFilter("updates"),
+		fields: [
+			{ key: "name", source: { type: "exact", name: "Stage" }, parse: { type: "string" } },
+			{ key: "tier", source: { type: "exact", name: "Quality" }, parse: { type: "string" } },
+			{ key: "chapter", source: { type: "exact", name: "Revealed" }, parse: { type: "number" } },
+			{ key: "expectedSteps", source: { type: "exact", name: "Steps" }, parse: { type: "number" } },
+			{ key: "description", source: { type: "exact", name: "Description" }, parse: { type: "rich" } },
+			{
+				key: "updates",
+				parse: {
+					type: "custom",
+					parse({ rowSoFar, extra }) {
+						return extra.filter((x) => x.stage === rowSoFar.name);
+					},
+				},
+			},
+		],
+		extra: updates,
 	};
+	return parseDynamicTable(info, definition);
 }
 
-function mapStage(
-	row: SpreadsheetValue[],
-	richRow: RichValue[],
-	headers: StageColumns,
-	updates: TemperingStep[],
-): TemperingStage {
-	const name = parseString(row[headers.name]);
-	return {
-		name: name,
-		tier: parseString(row[headers.tier]),
-		chapter: parseNumber(row[headers.chapter]),
-		expectedSteps: parseNumber(row[headers.expectedSteps]),
-		description: parseRichText(richRow[headers.description]!),
-		updates: updates.filter((x) => x.stage == name),
+export function getSteps(info: SpreadsheetInfo) {
+	const definition: Table<TemperingStep> = {
+		getRange: (info) => info.ss.getRange(info.ranges["Body Tempering Progress"]),
+		filter: chapterFilter(info.chapterLimit, "started"),
+		fields: [
+			{ key: "stage", source: { type: "exact", name: "Stage" }, parse: { type: "string" } },
+			{ key: "category", source: { type: "exact", name: "Step" }, parse: { type: "string" } },
+			{ key: "started", source: { type: "exact", name: "Started" }, parse: { type: "number" } },
+			{ key: "completed", source: { type: "exact", name: "Finished" }, parse: { type: "number", limited: true } },
+			{ key: "linkType", source: { type: "exact", name: "Link Type" }, parse: { type: "string" } },
+			{ key: "link", source: { type: "exact", name: "Link" }, parse: { type: "tiered_id", optional: true } },
+			{ key: "note", source: { type: "exact", name: "Update" }, parse: { type: "rich" } },
+		],
+		extra: undefined,
 	};
-}
-
-const getSteps: StandardParser<TemperingStep[]> = ({ ss, ranges, chapterLimit }) => {
-	const range = ss.getRange(ranges["Body Tempering Progress"]);
-	return parseFormattedTable(range, mapStepColumns, mapStep, chapterFilter(chapterLimit, "started"), chapterLimit);
-};
-
-function mapStepColumns(headerRow: SpreadsheetValue[]): StepColumns {
-	return {
-		stage: headerRow.indexOf("Stage"),
-		category: headerRow.indexOf("Step"),
-		started: headerRow.indexOf("Started"),
-		completed: headerRow.indexOf("Finished"),
-		linkType: headerRow.indexOf("Link Type"),
-		link: headerRow.indexOf("Link"),
-		note: headerRow.indexOf("Update"),
-	};
-}
-
-function mapStep(
-	row: SpreadsheetValue[],
-	richRow: RichValue[],
-	headers: StepColumns,
-	chapterLimit: number,
-): TemperingStep {
-	return {
-		stage: parseString(row[headers.stage]),
-		category: parseString(row[headers.category]),
-		started: parseNumber(row[headers.started]),
-		// If the step is completed in the future, treat it as not completed
-		completed: getNumberIfLessThanLimit(row[headers.completed], chapterLimit),
-		linkType: parseString(row[headers.linkType]),
-		link: parseOptionalId(row[headers.link]),
-		note: parseRichText(richRow[headers.note]),
-	};
+	return parseDynamicTable(info, definition);
 }

@@ -22,56 +22,56 @@ export function getAttributes(info: SpreadsheetInfo) {
 		fields: [
 			{
 				key: "name",
-				source: { type: "column", name: "Name" },
+				source: { type: "exact", name: "Name" },
 				parse: { type: "string" },
 			},
 			{
 				key: "abbreviation",
-				source: { type: "column", name: "Short" },
+				source: { type: "exact", name: "Short" },
 				parse: { type: "string" },
 			},
 			{
 				key: "category",
-				source: { type: "column", name: "Category" },
+				source: { type: "exact", name: "Category" },
 				parse: { type: "string" },
 			},
 			{
 				key: "categoryAbbreviation",
-				source: { type: "column", name: "CategoryShort" },
+				source: { type: "exact", name: "CategoryShort" },
 				parse: { type: "string" },
 			},
 			{
 				key: "color",
-				source: { type: "column", name: "Color" },
+				source: { type: "exact", name: "Color" },
 				parse: { type: "string" },
 			},
-			{ key: "note", source: { type: "column", name: "Description" }, parse: { type: "rich" } },
+			{ key: "note", source: { type: "exact", name: "Description" }, parse: { type: "rich" } },
 			{
 				key: "milestones",
 				parse: {
 					type: "custom",
-					parse: (rowSoFar, extra) => reduceAttributeData<Attribute.Milestone>(rowSoFar.name!, extra.milestones),
+					parse: ({ rowSoFar, extra }) => reduceAttributeData<Attribute.Milestone>(rowSoFar.name!, extra.milestones),
 				},
 			},
 			{
 				key: "evolutions",
 				parse: {
 					type: "custom",
-					parse: (rowSoFar, extra) => reduceAttributeData<Attribute.Evolution>(rowSoFar.name!, extra.evolutions),
+					parse: ({ rowSoFar, extra }) => reduceAttributeData<Attribute.Evolution>(rowSoFar.name!, extra.evolutions),
 				},
 			},
 			{
 				key: "gains",
 				parse: {
 					type: "custom",
-					parse: (rowSoFar, extra) => reduceAttributeData<Attribute.Gain>(rowSoFar.name!, extra.gains),
+					parse: ({ rowSoFar, extra }) => reduceAttributeData<Attribute.Gain>(rowSoFar.name!, extra.gains),
 				},
 			},
 			{
 				key: "boosts",
 				parse: {
 					type: "custom",
-					parse: (rowSoFar, extra) => reduceAttributeData<Attribute.Boost>(rowSoFar.name!, extra.boosts),
+					parse: ({ rowSoFar, extra }) => reduceAttributeData<Attribute.Boost>(rowSoFar.name!, extra.boosts),
 				},
 			},
 		],

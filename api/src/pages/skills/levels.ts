@@ -1,27 +1,18 @@
-import { chapterFilter, parseNumber, parseString, parseTable } from "../shared";
+import { chapterFilter, parseDynamicTable } from "../shared";
 
 export type InternalSkillGain = SkillGain & { id: string };
-type Columns = Record<keyof InternalSkillGain, number>;
 
-export function getLevels({ ss, ranges, chapterLimit }: SpreadsheetInfo): InternalSkillGain[] {
-	const range = ss.getRange(ranges["Skill Levels"]);
-	return parseTable(range, mapColumns, mapRow, chapterFilter(chapterLimit, "chapter"));
-}
-
-function mapColumns(headerRow: SpreadsheetValue[]): Columns {
-	return {
-		chapter: headerRow.indexOf("Chapter"),
-		id: headerRow.indexOf("Skill - Tier"),
-		count: headerRow.indexOf("# of Levels"),
-		note: headerRow.findIndex((x) => typeof x === "string" && x.startsWith("Levels gained")),
+export function getLevels(info: SpreadsheetInfo) {
+	const definition: Table<InternalSkillGain> = {
+		getRange: (info) => info.ss.getRange(info.ranges["Skill Levels"]),
+		filter: chapterFilter(info.chapterLimit, "chapter"),
+		fields: [
+			{ key: "chapter", source: { type: "exact", name: "Chapter" }, parse: { type: "number" } },
+			{ key: "id", source: { type: "exact", name: "Skill - Tier" }, parse: { type: "string" } },
+			{ key: "count", source: { type: "exact", name: "# of Levels" }, parse: { type: "number" } },
+			{ key: "note", source: { type: "contains", contains: "Levels gained" }, parse: { type: "string" } },
+		],
+		extra: undefined,
 	};
-}
-
-function mapRow(row: SpreadsheetValue[], headers: Columns): InternalSkillGain {
-	return {
-		id: parseString(row[headers.id]),
-		count: parseNumber(row[headers.count]),
-		note: parseString(row[headers.note]),
-		chapter: parseNumber(row[headers.chapter]),
-	};
+	return parseDynamicTable(info, definition);
 }

@@ -39,15 +39,17 @@ declare type SpreadsheetInfo = {
 	includePatreon: boolean;
 };
 
-type NamedSource = { type: "column"; name: string };
-type ContainsSource = { type: "column-contains"; contains: string };
+type NamedSource = { type: "exact"; name: string };
+type ContainsSource = { type: "contains"; contains: string };
 
-type NoOptionParse = { type: "tiered_id" | "split_tiered_id" | "rich" | "split-string" };
-type OptionalParse = { type: "string" | "bool"; optional?: boolean };
-type NumberParse = { type: "number" | "split-number"; limited?: boolean; optional?: boolean };
+type NoOptionParse = { type: "split_tiered_id" | "rich" | "split_string" | "string_number" };
+type OptionalParse = { type: "tiered_id" | "string" | "bool"; optional?: boolean };
+type NumberParse = { type: "number" | "split_number"; limited?: boolean; optional?: boolean };
+
+type CustomContext<T, TExtra> = { rowSoFar: Partial<T>; extra: TExtra; value?: SpreadsheetValue };
 type CustomParse<T, TKey extends keyof T & string, TExtra> = {
 	type: "custom";
-	parse: (rowSoFar: Partial<T>, extra) => T[TKey];
+	parse: (context: CustomContext<T, TExtra>) => T[TKey];
 };
 
 type Field<T, TKey extends keyof T & string, TExtra> = {
