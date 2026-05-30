@@ -2,7 +2,7 @@ import { parseDynamicTable } from "./shared";
 
 export function getTiers(info: SpreadsheetInfo) {
 	const definition: Table<TierInfo> = {
-		range: info.ss.getSheetByName("Talents")!.getDataRange(),
+		range: info.ss.getSheetByName("Tiers")!.getDataRange(),
 		fields: [
 			{ key: "tier", source: { type: "exact", name: "Tier" }, parse: { type: "string" } },
 			{ key: "skillName", source: { type: "exact", name: "Skill" }, parse: { type: "string" } },
@@ -17,7 +17,7 @@ export function getTiers(info: SpreadsheetInfo) {
 		],
 	};
 	const table = parseDynamicTable(info, definition);
-	// Suppress unknown knowledge
+	// Suppress future knowledge
 	for (const row of table) {
 		if (row.chapterRevealed && row.chapterRevealed > info.chapterLimit) {
 			row.metalName = "?";

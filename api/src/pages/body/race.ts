@@ -7,7 +7,7 @@ export function getRaces(info: SpreadsheetInfo) {
 		fields: [
 			{ key: "chapter", source: { type: "exact", name: "Chapter" }, parse: { type: "number" } },
 			{ key: "name", source: { type: "exact", name: "Race" }, parse: { type: "string" } },
-			{ key: "tier", source: { type: "exact", name: "Tier" }, parse: { type: "string" } },
+			{ key: "tier", source: { type: "exact", name: "Tier" }, parse: { type: "number" } },
 			{ key: "talents", source: { type: "exact", name: "Talents" }, parse: { type: "split_tiered_id" } },
 			{ key: "freeSlots", source: { type: "exact", name: "Free Slots" }, parse: { type: "number" } },
 			{ key: "note", source: { type: "exact", name: "Description" }, parse: { type: "rich" } },

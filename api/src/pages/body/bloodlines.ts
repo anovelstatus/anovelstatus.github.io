@@ -10,12 +10,10 @@ export function getBloodlines(info: SpreadsheetInfo) {
 			{ key: "name", source: { type: "exact", name: "Bloodline" }, parse: { type: "string" } },
 			{ key: "lore", source: { type: "exact", name: "Lore Key" }, parse: { type: "string" } },
 			{ key: "quality", source: { type: "exact", name: "Quality" }, parse: { type: "string" } },
+			// Must process after name
 			{
 				key: "updates",
-				parse: {
-					type: "custom",
-					parse: ({ rowSoFar }) => updates.filter((x) => x.name === rowSoFar.name),
-				},
+				parse: { type: "custom", parse: ({ rowSoFar }) => updates.filter((x) => x.name === rowSoFar.name) },
 			},
 		],
 	};

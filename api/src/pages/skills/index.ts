@@ -8,7 +8,6 @@ export function getSkills(info: SpreadsheetInfo) {
 		range: info.ss.getSheetByName("Skill List")!.getDataRange(),
 		filter: (x) => !!x.name && x.gains.length > 0,
 		fields: [
-			// todo: name, gains
 			{ key: "tier", source: { type: "exact", name: "Tier" }, parse: { type: "string" } },
 			{ key: "previous", source: { type: "contains", contains: "Previous" }, parse: { type: "split_tiered_id" } },
 			{ key: "replaced", source: { type: "contains", contains: "Replaced" }, parse: { type: "bool", optional: true } },
@@ -22,6 +21,7 @@ export function getSkills(info: SpreadsheetInfo) {
 			{ key: "bonuses", source: { type: "exact", name: "Bonus" }, parse: { type: "rich" } },
 			{ key: "notes", source: { type: "exact", name: "Note" }, parse: { type: "rich" } },
 			{ key: "tags", source: { type: "exact", name: "Tags" }, parse: { type: "string", optional: true } },
+			// Must process after tier
 			{
 				key: "name",
 				source: { type: "exact", name: "Name" },
@@ -34,6 +34,7 @@ export function getSkills(info: SpreadsheetInfo) {
 					},
 				},
 			},
+			// Must process after tier and name
 			{
 				key: "gains",
 				parse: {

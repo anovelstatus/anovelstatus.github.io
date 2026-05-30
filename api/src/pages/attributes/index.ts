@@ -19,39 +19,28 @@ export function getAttributes(info: SpreadsheetInfo) {
 			{ key: "categoryAbbreviation", source: { type: "exact", name: "CategoryShort" }, parse: { type: "string" } },
 			{ key: "color", source: { type: "exact", name: "Color" }, parse: { type: "string" } },
 			{ key: "note", source: { type: "exact", name: "Description" }, parse: { type: "rich" } },
+			// These must process after name
 			{
 				key: "milestones",
-				parse: {
-					type: "custom",
-					parse: ({ rowSoFar }) => reduceAttributeData<Attribute.Milestone>(rowSoFar.name!, milestones),
-				},
+				parse: { type: "custom", parse: ({ rowSoFar }) => filterAndMap(rowSoFar.name!, milestones) },
 			},
 			{
 				key: "evolutions",
-				parse: {
-					type: "custom",
-					parse: ({ rowSoFar }) => reduceAttributeData<Attribute.Evolution>(rowSoFar.name!, evolutions),
-				},
+				parse: { type: "custom", parse: ({ rowSoFar }) => filterAndMap(rowSoFar.name!, evolutions) },
 			},
 			{
 				key: "gains",
-				parse: {
-					type: "custom",
-					parse: ({ rowSoFar }) => reduceAttributeData<Attribute.Gain>(rowSoFar.name!, gains),
-				},
+				parse: { type: "custom", parse: ({ rowSoFar }) => filterAndMap(rowSoFar.name!, gains) },
 			},
 			{
 				key: "boosts",
-				parse: {
-					type: "custom",
-					parse: ({ rowSoFar }) => reduceAttributeData<Attribute.Boost>(rowSoFar.name!, boosts),
-				},
+				parse: { type: "custom", parse: ({ rowSoFar }) => filterAndMap(rowSoFar.name!, boosts) },
 			},
 		],
 	};
 	return parseDynamicTable(info, definition);
 }
 
-function reduceAttributeData<T>(attribute: string, data: (T & { attribute: string })[]): T[] {
+function filterAndMap<T>(attribute: string, data: (T & { attribute: string })[]): T[] {
 	return data.filter((x) => x.attribute === attribute).map((x) => ({ ...x, attribute: undefined }));
 }
