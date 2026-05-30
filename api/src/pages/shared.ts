@@ -101,7 +101,7 @@ export function chapterFilter<T>(chapterLimit: number, key: keyof T): (entry: T)
 }
 
 export function parseDynamicTable<T, TExtra = undefined>(info: SpreadsheetInfo, definition: Table<T, TExtra>) {
-	const range = definition.getRange(info);
+	const range = definition.range;
 
 	const values = range.getValues();
 	const hasRichValues = definition.fields.some((x) => x.parse.type === "rich");
@@ -116,7 +116,7 @@ export function parseDynamicTable<T, TExtra = undefined>(info: SpreadsheetInfo, 
 		// Make sure there's data in the row.
 		// Don't just check the first cell because some have Chapter 0 entries that would be skipped.
 		if (!values[i]![0] && !values[i]![1]) continue;
-		const entry = mapDynamicRow(values[i]!, richValues[hasRichValues ? i : 0], headers, info, definition);
+		const entry = mapDynamicRow(values[i]!, richValues[hasRichValues ? i : 0], headers, info.chapterLimit, definition);
 		if (definition.filter(entry)) {
 			data.push(entry);
 		}
@@ -149,7 +149,7 @@ function mapDynamicRow<T, TExtra>(
 	values: SpreadsheetValue[],
 	richValues: RichValue[],
 	headers: Record<string, number>,
-	info: SpreadsheetInfo,
+	chapterLimit: number,
 	definition: Table<T, TExtra>,
 ) {
 	const { fields } = definition;
@@ -165,7 +165,7 @@ function mapDynamicRow<T, TExtra>(
 					break;
 				case "number":
 					item[key] = parse.limited
-						? getNumberIfLessThanLimit(value, info.chapterLimit)
+						? getNumberIfLessThanLimit(value, chapterLimit)
 						: parse.optional
 							? parseOptionalNumber(value)
 							: parseNumber(value);
@@ -186,7 +186,7 @@ function mapDynamicRow<T, TExtra>(
 					item[key] = parseSplitString(value, ",");
 					break;
 				case "split_number":
-					item[key] = parse.limited ? getNumbersLessThanLimit(value, info.chapterLimit) : parseNumberArray(value);
+					item[key] = parse.limited ? getNumbersLessThanLimit(value, chapterLimit) : parseNumberArray(value);
 					break;
 				case "custom":
 					item[key] = parse.parse({ rowSoFar: item as Partial<T>, extra: definition.extra, value });

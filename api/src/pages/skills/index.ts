@@ -5,7 +5,7 @@ export function getSkills(info: SpreadsheetInfo) {
 	const skillLevels = getLevels(info);
 
 	const definition: Table<Skill, InternalSkillGain[]> = {
-		getRange: (info) => info.ss.getSheetByName("Skill List")!.getDataRange(),
+		range: info.ss.getSheetByName("Skill List")!.getDataRange(),
 		filter: (x) => !!x.name && x.gains.length > 0,
 		fields: [
 			// todo: name, gains

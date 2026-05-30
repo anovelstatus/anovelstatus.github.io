@@ -4,7 +4,7 @@ export type InternalMilestone = Attribute.Milestone & { attribute: string };
 
 export function getMilestones(info: SpreadsheetInfo) {
 	const definition: Table<InternalMilestone> = {
-		getRange: (info) => info.ss.getRange(info.ranges["Attribute Milestones"]),
+		range: info.ss.getRange(info.ranges["Attribute Milestones"]),
 		filter: (x) => !!x,
 		fields: [
 			{

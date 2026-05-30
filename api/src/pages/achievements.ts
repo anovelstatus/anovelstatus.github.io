@@ -2,7 +2,7 @@ import { chapterFilter, parseDynamicTable } from "./shared";
 
 export function getAchievements(info: SpreadsheetInfo) {
 	const definition: Table<Achievement> = {
-		getRange: (info) => info.ss.getSheetByName("Achievements")!.getDataRange(),
+		range: info.ss.getSheetByName("Achievements")!.getDataRange(),
 		filter: chapterFilter(info.chapterLimit, "chapter"),
 		fields: [
 			{ key: "chapter", source: { type: "exact", name: "Chapter" }, parse: { type: "number" } },

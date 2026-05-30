@@ -5,7 +5,7 @@ type InternalTitle = Omit<Title, keyof TieredId> & { title: string };
 /** Get list of Titles and their metadata. This does NOT include metadata for attribute boosts. That is loaded separately. */
 export function getTitles(info: SpreadsheetInfo) {
 	const definition: Table<InternalTitle> = {
-		getRange: ({ ss, ranges }) => ss.getRange(ranges.Titles),
+		range: info.ss.getRange(info.ranges.Titles),
 		filter: chapterFilter(info.chapterLimit, "chapter"),
 		fields: [
 			{ key: "title", source: { type: "exact", name: "Title" }, parse: { type: "string" } },

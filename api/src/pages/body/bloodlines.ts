@@ -4,7 +4,7 @@ export function getBloodlines(info: SpreadsheetInfo) {
 	const updates = getBloodlineUpdates(info);
 
 	const definition: Table<Bloodline, BloodlineStatus[]> = {
-		getRange: (info) => info.ss.getRange(info.ranges.Bloodlines),
+		range: info.ss.getRange(info.ranges.Bloodlines),
 		filter: hasEntriesFilter("updates"),
 		fields: [
 			{ key: "name", source: { type: "exact", name: "Bloodline" }, parse: { type: "string" } },
@@ -27,7 +27,7 @@ export function getBloodlines(info: SpreadsheetInfo) {
 
 export function getBloodlineUpdates(info: SpreadsheetInfo) {
 	const definition: Table<BloodlineStatus> = {
-		getRange: (info) => info.ss.getRange(info.ranges["Bloodline Updates"]),
+		range: info.ss.getRange(info.ranges["Bloodline Updates"]),
 		filter: chapterFilter(info.chapterLimit, "chapter"),
 		fields: [
 			{ key: "name", source: { type: "exact", name: "Race" }, parse: { type: "string" } },

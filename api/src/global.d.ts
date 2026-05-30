@@ -60,7 +60,7 @@ type Field<T, TKey extends keyof T & string, TExtra> = {
 
 declare type Table<T, TExtra = undefined> = {
 	fields: Field<T, keyof T & string, TExtra>[];
-	getRange: (info: SpreadsheetInfo) => Range;
+	range: Range;
 	filter?: (item: T) => boolean;
 	extra: TExtra;
 };

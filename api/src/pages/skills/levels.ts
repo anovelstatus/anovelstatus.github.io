@@ -4,7 +4,7 @@ export type InternalSkillGain = SkillGain & { id: string };
 
 export function getLevels(info: SpreadsheetInfo) {
 	const definition: Table<InternalSkillGain> = {
-		getRange: (info) => info.ss.getRange(info.ranges["Skill Levels"]),
+		range: info.ss.getRange(info.ranges["Skill Levels"]),
 		filter: chapterFilter(info.chapterLimit, "chapter"),
 		fields: [
 			{ key: "chapter", source: { type: "exact", name: "Chapter" }, parse: { type: "number" } },

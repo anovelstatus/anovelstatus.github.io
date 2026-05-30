@@ -4,7 +4,7 @@ export type InternalEvolution = Attribute.Evolution & { attribute: string };
 
 export function getEvolutions(info: SpreadsheetInfo) {
 	const definition: Table<InternalEvolution> = {
-		getRange: (info) => info.ss.getRange(info.ranges["Attribute Evolutions"]),
+		range: info.ss.getRange(info.ranges["Attribute Evolutions"]),
 		filter: chapterFilter(info.chapterLimit, "chapter"),
 		fields: [
 			{ key: "chapter", source: { type: "exact", name: "Chapter" }, parse: { type: "number" } },

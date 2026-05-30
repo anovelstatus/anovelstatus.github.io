@@ -2,7 +2,7 @@ import { parseDynamicTable } from "./shared";
 
 export function getTiers(info: SpreadsheetInfo) {
 	const definition: Table<TierInfo> = {
-		getRange: (info) => info.ss.getSheetByName("Talents")!.getDataRange(),
+		range: info.ss.getSheetByName("Talents")!.getDataRange(),
 		fields: [
 			{ key: "tier", source: { type: "exact", name: "Tier" }, parse: { type: "string" } },
 			{ key: "skillName", source: { type: "exact", name: "Skill" }, parse: { type: "string" } },

@@ -2,7 +2,7 @@ import { chapterFilter, parseDynamicTable } from "./shared";
 
 export function getLore(info: SpreadsheetInfo) {
 	const descDef: Table<LoreEntry> = {
-		getRange: (info) => info.ss.getSheetByName("Lore")!.getDataRange(),
+		range: info.ss.getSheetByName("Lore")!.getDataRange(),
 		filter: chapterFilter(info.chapterLimit, "chapter"),
 		fields: [
 			{ key: "chapter", source: { type: "exact", name: "Chapter" }, parse: { type: "number" } },
@@ -15,7 +15,7 @@ export function getLore(info: SpreadsheetInfo) {
 
 	const updateDef: Table<LoreEntry> = {
 		...descDef,
-		getRange: (info) => info.ss.getSheetByName("Updates")!.getDataRange(),
+		range: info.ss.getSheetByName("Updates")!.getDataRange(),
 	};
 	const updates = parseDynamicTable(info, updateDef);
 

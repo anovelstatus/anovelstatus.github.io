@@ -4,7 +4,7 @@ export type InternalGain = Attribute.Gain & { attribute: string };
 
 export function getGains(info: SpreadsheetInfo) {
 	const definition: Table<InternalGain> = {
-		getRange: (info) => info.ss.getSheetByName("Stat Gains")!.getDataRange(),
+		range: info.ss.getSheetByName("Stat Gains")!.getDataRange(),
 		filter: chapterFilter(info.chapterLimit, "chapter"),
 		fields: [
 			{ key: "chapter", source: { type: "exact", name: "Chapter" }, parse: { type: "number" } },

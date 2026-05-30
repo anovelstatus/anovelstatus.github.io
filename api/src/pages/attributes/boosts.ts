@@ -4,7 +4,7 @@ export type InternalBoost = Attribute.Boost & { attribute: string };
 
 export function getBoosts(info: SpreadsheetInfo) {
 	const definition: Table<InternalBoost> = {
-		getRange: (info) => info.ss.getRange(info.ranges["Attribute Boosts"]),
+		range: info.ss.getRange(info.ranges["Attribute Boosts"]),
 		filter: chapterFilter(info.chapterLimit, "chapter"),
 		fields: [
 			{ key: "chapter", source: { type: "exact", name: "Chapter" }, parse: { type: "number" } },

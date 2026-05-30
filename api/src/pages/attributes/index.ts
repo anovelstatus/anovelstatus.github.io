@@ -18,7 +18,7 @@ export function getAttributes(info: SpreadsheetInfo) {
 	const gains = getGains(info);
 
 	const definition: Table<Attribute.Details, Extra> = {
-		getRange: (info) => info.ss.getRange(info.ranges.Attributes),
+		range: info.ss.getRange(info.ranges.Attributes),
 		fields: [
 			{
 				key: "name",

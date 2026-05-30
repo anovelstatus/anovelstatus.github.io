@@ -4,7 +4,7 @@ export function getTempering(info: SpreadsheetInfo) {
 	const updates = getSteps(info);
 
 	const definition: Table<TemperingStage, TemperingStep[]> = {
-		getRange: (info) => info.ss.getRange(info.ranges["Body Tempering Stages"]),
+		range: info.ss.getRange(info.ranges["Body Tempering Stages"]),
 		filter: hasEntriesFilter("updates"),
 		fields: [
 			{ key: "name", source: { type: "exact", name: "Stage" }, parse: { type: "string" } },
@@ -29,7 +29,7 @@ export function getTempering(info: SpreadsheetInfo) {
 
 export function getSteps(info: SpreadsheetInfo) {
 	const definition: Table<TemperingStep> = {
-		getRange: (info) => info.ss.getRange(info.ranges["Body Tempering Progress"]),
+		range: info.ss.getRange(info.ranges["Body Tempering Progress"]),
 		filter: chapterFilter(info.chapterLimit, "started"),
 		fields: [
 			{ key: "stage", source: { type: "exact", name: "Stage" }, parse: { type: "string" } },

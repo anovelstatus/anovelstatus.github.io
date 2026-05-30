@@ -2,7 +2,7 @@ import { hasEntriesFilter, parseDynamicTable } from "../shared";
 
 export function getMutations(info: SpreadsheetInfo) {
 	const definition: Table<Body.Modification> = {
-		getRange: (info) => info.ss.getRange(info.ranges.Mutations),
+		range: info.ss.getRange(info.ranges.Mutations),
 		filter: hasEntriesFilter("chapters"),
 		fields: [
 			{ key: "name", source: { type: "exact", name: "Mutation" }, parse: { type: "string" } },
