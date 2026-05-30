@@ -164,7 +164,7 @@ export function parseFormattedTable<T, TColumns, TExtra = never>(
 	return data;
 }
 
-export function parseDynamicTable<T>(info: SpreadsheetInfo, definition: Table<T>) {
+export function parseDynamicTable<T, TExtra = undefined>(info: SpreadsheetInfo, definition: Table<T, TExtra>) {
 	const range = definition.getRange(info);
 
 	const values = range.getValues();
@@ -192,6 +192,7 @@ function mapDynamicColumns<T, TExtra>(headers: string[], definition: Table<T, TE
 	const { fields } = definition;
 	const columns = {} as Record<string, number>;
 	for (const { key, source } of fields) {
+		if (!source) continue;
 		switch (source.type) {
 			case "column":
 				columns[key] = headers.indexOf(source.name);
@@ -232,6 +233,9 @@ function mapDynamicRow<T, TExtra>(
 				break;
 			case "tiered_id":
 				item[key] = parseId(value);
+				break;
+			case "custom":
+				item[key] = parse.parse(item as Partial<T>, definition.extra);
 				break;
 			// todo: other field types
 			default:

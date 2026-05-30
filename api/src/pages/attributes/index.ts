@@ -1,10 +1,9 @@
-import { parseFormattedTable, parseRichText, parseString } from "../shared";
+import { parseDynamicTable } from "../shared";
 import { getBoosts, type InternalBoost } from "./boosts";
 import { getEvolutions, type InternalEvolution } from "./evolutions";
 import { getGains, type InternalGain } from "./gains";
 import { getMilestones, type InternalMilestone } from "./milestones";
 
-type Columns = Omit<Record<keyof Attribute.Details, number>, "milestones" | "evolutions" | "boosts" | "gains">;
 type Extra = {
 	milestones: InternalMilestone[];
 	evolutions: InternalEvolution[];
@@ -12,50 +11,75 @@ type Extra = {
 	boosts: InternalBoost[];
 };
 
-export const getAttributes: StandardParser<Attribute.Details[]> = (info) => {
+export function getAttributes(info: SpreadsheetInfo) {
 	const milestones = getMilestones(info);
 	const evolutions = getEvolutions(info);
 	const boosts = getBoosts(info);
 	const gains = getGains(info);
 
-	const extra = { milestones, evolutions, gains, boosts };
-
-	const range = info.ss.getRange(info.ranges.Attributes);
-	return parseFormattedTable(range, mapColumns, mapRow, (_) => true, extra);
-};
-
-function mapColumns(headerRow: SpreadsheetValue[]): Columns {
-	return {
-		name: headerRow.indexOf("Name"),
-		abbreviation: headerRow.indexOf("Short"),
-		category: headerRow.indexOf("Category"),
-		categoryAbbreviation: headerRow.indexOf("CategoryShort"),
-		note: headerRow.indexOf("Description"),
-		color: headerRow.indexOf("Color"),
+	const definition: Table<Attribute.Details, Extra> = {
+		getRange: (info) => info.ss.getRange(info.ranges.Attributes),
+		fields: [
+			{
+				key: "name",
+				source: { type: "column", name: "Name" },
+				parse: { type: "string" },
+			},
+			{
+				key: "abbreviation",
+				source: { type: "column", name: "Short" },
+				parse: { type: "string" },
+			},
+			{
+				key: "category",
+				source: { type: "column", name: "Category" },
+				parse: { type: "string" },
+			},
+			{
+				key: "categoryAbbreviation",
+				source: { type: "column", name: "CategoryShort" },
+				parse: { type: "string" },
+			},
+			{
+				key: "color",
+				source: { type: "column", name: "Color" },
+				parse: { type: "string" },
+			},
+			{ key: "note", source: { type: "column", name: "Description" }, parse: { type: "rich" } },
+			{
+				key: "milestones",
+				parse: {
+					type: "custom",
+					parse: (rowSoFar, extra) => reduceAttributeData<Attribute.Milestone>(rowSoFar.name!, extra.milestones),
+				},
+			},
+			{
+				key: "evolutions",
+				parse: {
+					type: "custom",
+					parse: (rowSoFar, extra) => reduceAttributeData<Attribute.Evolution>(rowSoFar.name!, extra.evolutions),
+				},
+			},
+			{
+				key: "gains",
+				parse: {
+					type: "custom",
+					parse: (rowSoFar, extra) => reduceAttributeData<Attribute.Gain>(rowSoFar.name!, extra.gains),
+				},
+			},
+			{
+				key: "boosts",
+				parse: {
+					type: "custom",
+					parse: (rowSoFar, extra) => reduceAttributeData<Attribute.Boost>(rowSoFar.name!, extra.boosts),
+				},
+			},
+		],
+		extra: { milestones, evolutions, gains, boosts },
 	};
+	return parseDynamicTable(info, definition);
 }
 
-function mapRow(row: SpreadsheetValue[], richRow: RichValue[], headers: Columns, extra: Extra): Attribute.Details {
-	const attribute = parseString(row[headers.name]);
-	const attributeFilter = getAttributeFilter(attribute);
-	return {
-		name: attribute,
-		abbreviation: parseString(row[headers.abbreviation]),
-		category: parseString(row[headers.category]),
-		categoryAbbreviation: parseString(row[headers.categoryAbbreviation]),
-		note: parseRichText(richRow[headers.note]!),
-		color: parseString(row[headers.color]),
-		milestones: extra.milestones.filter(attributeFilter).map(removeAttribute),
-		evolutions: extra.evolutions.filter(attributeFilter).map(removeAttribute),
-		gains: extra.gains.filter(attributeFilter).map(removeAttribute),
-		boosts: extra.boosts.filter(attributeFilter).map(removeAttribute),
-	};
-}
-
-function getAttributeFilter(attribute: string): (x: { attribute: string }) => boolean {
-	return (x) => x.attribute === attribute;
-}
-
-function removeAttribute<T>(x: T & { attribute: string }): T {
-	return { ...x, attribute: undefined };
+function reduceAttributeData<T>(attribute: string, data: (T & { attribute: string })[]): T[] {
+	return data.filter((x) => x.attribute === attribute).map((x) => ({ ...x, attribute: undefined }));
 }

@@ -45,15 +45,19 @@ type ContainsSource = { type: "column-contains"; contains: string };
 type NoOptionParse = { type: "tiered_id" | "rich" };
 type OptionalParse = { type: "string"; optional?: boolean };
 type NumberParse = { type: "number"; limited?: boolean };
+type CustomParse<T, TKey extends keyof T & string, TExtra> = {
+	type: "custom";
+	parse: (rowSoFar: Partial<T>, extra) => T[TKey];
+};
 
-type Field<T, TKey extends keyof T & string> = {
+type Field<T, TKey extends keyof T & string, TExtra> = {
 	key: TKey;
-	source: NamedSource | ContainsSource;
-	parse: NoOptionParse | OptionalParse | NumberParse;
+	source?: NamedSource | ContainsSource;
+	parse: NoOptionParse | OptionalParse | NumberParse | CustomParse<T, TKey, TExtra>;
 };
 
 declare type Table<T, TExtra = undefined> = {
-	fields: Field<T, keyof T & string>[];
+	fields: Field<T, keyof T & string, TExtra>[];
 	getRange: (info: SpreadsheetInfo) => Range;
 	filter?: (item: T) => boolean;
 	extra: TExtra;
