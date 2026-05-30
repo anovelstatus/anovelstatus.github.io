@@ -21,7 +21,14 @@ export default function AppTabs({ title, labels, panels, panelProps }: AppTabsPr
 	return (
 		<Box sx={{ width: "100%" }}>
 			<Box sx={{ borderBottom: 1, borderColor: "divider", marginBottom: 2 }}>
-				<Tabs value={tabIndex} onChange={handleChange} aria-label={`${title} tabs`}>
+				<Tabs
+					value={tabIndex}
+					onChange={handleChange}
+					aria-label={`${title} tabs`}
+					variant="scrollable"
+					scrollButtons="auto"
+					allowScrollButtonsMobile
+				>
 					{labels.map((label, index) => (
 						<Tab
 							key={index}
