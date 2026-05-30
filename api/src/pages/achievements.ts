@@ -1,39 +1,23 @@
-import {
-	chapterFilter,
-	parseFormattedTable,
-	parseNumber,
-	parseRichText,
-	parseSplitString,
-	parseString,
-} from "./shared";
+import { chapterFilter, parseDynamicTable } from "./shared";
 
-type Columns = Record<keyof Achievement, number>;
-
-export const getAchievements: StandardParser<Achievement[]> = ({ ss, chapterLimit }) => {
-	const range = ss.getSheetByName("Achievements")!.getDataRange();
-	return parseFormattedTable(range, mapColumns, mapRow, chapterFilter(chapterLimit, "chapter"));
-};
-
-function mapColumns(headerRow: SpreadsheetValue[]): Columns {
-	return {
-		chapter: headerRow.indexOf("Chapter"),
-		tier: headerRow.indexOf("Tier"),
-		description: headerRow.indexOf("Achievement"),
-		message: headerRow.indexOf("Message"),
-		messageRecipients: headerRow.indexOf("Message Recipients"),
-		rewards: headerRow.indexOf("Rewards"),
-		note: headerRow.indexOf("Other Notes"),
+export function getAchievements(info: SpreadsheetInfo) {
+	const definition: Table<Achievement> = {
+		getRange: (info) => info.ss.getSheetByName("Achievements")!.getDataRange(),
+		filter: chapterFilter(info.chapterLimit, "chapter"),
+		fields: [
+			{ key: "chapter", source: { type: "column", name: "Chapter" }, parse: { type: "number" } },
+			{ key: "tier", source: { type: "column", name: "Tier" }, parse: { type: "string" } },
+			{ key: "description", source: { type: "column", name: "Achievement" }, parse: { type: "rich" } },
+			{ key: "message", source: { type: "column", name: "Message" }, parse: { type: "rich" } },
+			{
+				key: "messageRecipients",
+				source: { type: "column", name: "Message Recipients" },
+				parse: { type: "split-string" },
+			},
+			{ key: "rewards", source: { type: "column", name: "Rewards" }, parse: { type: "rich" } },
+			{ key: "note", source: { type: "column", name: "Other Notes" }, parse: { type: "rich" } },
+		],
+		extra: undefined,
 	};
-}
-
-function mapRow(row: SpreadsheetValue[], richRow: RichValue[], headers: Columns): Achievement {
-	return {
-		chapter: parseNumber(row[headers.chapter]),
-		tier: parseString(row[headers.tier]),
-		description: parseRichText(richRow[headers.description]),
-		message: parseRichText(richRow[headers.message]),
-		messageRecipients: parseSplitString(row[headers.messageRecipients], ","),
-		rewards: parseRichText(richRow[headers.rewards]),
-		note: parseRichText(richRow[headers.note]),
-	};
+	return parseDynamicTable(info, definition);
 }

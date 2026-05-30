@@ -42,7 +42,7 @@ declare type SpreadsheetInfo = {
 type NamedSource = { type: "column"; name: string };
 type ContainsSource = { type: "column-contains"; contains: string };
 
-type NoOptionParse = { type: "tiered_id" | "rich" };
+type NoOptionParse = { type: "tiered_id" | "rich" | "split-string" };
 type OptionalParse = { type: "string"; optional?: boolean };
 type NumberParse = { type: "number"; limited?: boolean };
 type CustomParse<T, TKey extends keyof T & string, TExtra> = {

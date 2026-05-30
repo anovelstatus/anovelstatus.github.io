@@ -234,6 +234,9 @@ function mapDynamicRow<T, TExtra>(
 			case "tiered_id":
 				item[key] = parseId(value);
 				break;
+			case "split-string":
+				item[key] = parseSplitString(value, ",");
+				break;
 			case "custom":
 				item[key] = parse.parse(item as Partial<T>, definition.extra);
 				break;
