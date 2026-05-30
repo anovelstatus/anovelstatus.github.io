@@ -1,18 +1,6 @@
 import "./global.d.ts";
 import "../../shared/types.d.ts";
-import { getSpreadsheetInfo, updatePageJson } from "./pages/index.js";
-
-/**
- * Randomly-generated string that users should paste into the website
- * in order to get not just public Royal Road info, but also the Patreon info.
- */
-declare const PATREON_KEY: string;
-
-declare const SS_LINK: string;
-
-// ID of Google Drive folders where JSON files are stored
-declare const RR_FOLDER: string;
-declare const PATREON_FOLDER: string;
+import { updateSpecificFiles } from "./updater.js";
 
 /* @ts-expect-error no-unused-local */
 function doGet(e: GoogleAppsScript.Events.DoGet) {
@@ -37,6 +25,7 @@ function debug() {
 	const test = getFile(true, "skills");
 	console.log(test);
 }
+
 /** Used for testing getting data from the spreadsheet */
 /* @ts-expect-error no-unused-local */
 function debugUpdateFile() {
@@ -77,30 +66,6 @@ function updateAllFiles(ss?: Spreadsheet) {
 		"titles",
 	];
 	updateSpecificFiles(ss, allPages);
-}
-
-function updateSpecificFiles(ss: Spreadsheet, pages: ApiPage[]) {
-	const rrFolder = DriveApp.getFolderById(RR_FOLDER);
-	const patreonFolder = DriveApp.getFolderById(PATREON_FOLDER);
-
-	const rrInfo = getSpreadsheetInfo(ss, false);
-	const patreonInfo = getSpreadsheetInfo(ss, true);
-
-	const errors = [];
-
-	for (const page of pages) {
-		try {
-			console.log("Updating " + page);
-			updatePageJson(rrFolder, rrInfo, page);
-			updatePageJson(patreonFolder, patreonInfo, page);
-		} catch (e) {
-			errors.push(e);
-			console.log("Failed to update " + page);
-			console.error(e);
-		}
-	}
-	// todo: write error logs to spreadsheet for better visibility
-	if (errors.length > 0) throw errors;
 }
 
 /** Get contents of JSON file in folder */

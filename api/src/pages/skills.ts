@@ -1,5 +1,6 @@
-import { getLevels } from "./levels";
-import { parseDynamicTable, parseString } from "../shared";
+import { chapterFilter, parseDynamicTable, parseString } from "./shared";
+
+type InternalSkillGain = SkillGain & { id: string };
 
 export function getSkills(info: SpreadsheetInfo) {
 	const skillLevels = getLevels(info);
@@ -63,5 +64,19 @@ export function getSkills(info: SpreadsheetInfo) {
 		});
 	}
 
+	return parseDynamicTable(info, definition);
+}
+
+function getLevels(info: SpreadsheetInfo) {
+	const definition: Table<InternalSkillGain> = {
+		range: info.ss.getRange(info.ranges["Skill Levels"]),
+		filter: chapterFilter(info.chapterLimit, "chapter"),
+		fields: [
+			{ key: "chapter", source: { type: "exact", name: "Chapter" }, parse: { type: "number" } },
+			{ key: "id", source: { type: "exact", name: "Skill - Tier" }, parse: { type: "string" } },
+			{ key: "count", source: { type: "exact", name: "# of Levels" }, parse: { type: "number" } },
+			{ key: "note", source: { type: "contains", contains: "Levels gained" }, parse: { type: "string" } },
+		],
+	};
 	return parseDynamicTable(info, definition);
 }
