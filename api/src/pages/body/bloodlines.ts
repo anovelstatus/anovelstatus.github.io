@@ -1,4 +1,13 @@
-import { chapterFilter, hasEntriesFilter, parseFormattedTable, parseId, parseRichText, parseTable } from "../shared";
+import {
+	chapterFilter,
+	hasEntriesFilter,
+	parseFormattedTable,
+	parseId,
+	parseNumber,
+	parseRichText,
+	parseString,
+	parseTable,
+} from "../shared";
 
 type StatusColumns = Record<keyof BloodlineStatus, number>;
 type BloodlineColumns = Omit<Record<keyof Bloodline, number>, "updates">;
@@ -18,11 +27,11 @@ function mapBloodlineColumns(headerRow: SpreadsheetValue[]): BloodlineColumns {
 }
 
 function mapBloodlineRow(row: SpreadsheetValue[], headers: BloodlineColumns, updates: BloodlineStatus[]): Bloodline {
-	const name = row[headers.name];
+	const name = parseString(row[headers.name]);
 	return {
-		name: name as string,
-		lore: row[headers.lore] as string,
-		quality: row[headers.quality] as string,
+		name: name,
+		lore: parseString(row[headers.lore]),
+		quality: parseString(row[headers.quality]),
 		updates: updates.filter((x) => name == x.name),
 	};
 }
@@ -45,11 +54,11 @@ function mapStatusColumns(headerRow: SpreadsheetValue[]): StatusColumns {
 
 function mapStatusRow(row: SpreadsheetValue[], richRow: RichValue[], headers: StatusColumns): BloodlineStatus {
 	return {
-		name: row[headers.name] as string,
-		chapter: row[headers.chapter] as number,
+		name: parseString(row[headers.name]),
+		chapter: parseNumber(row[headers.chapter]),
 		purity: row[headers.purity] as string | number,
-		status: row[headers.status] as string,
+		status: parseString(row[headers.status]),
 		note: parseRichText(richRow[headers.note]!),
-		title: row[headers.title] ? parseId(row[headers.title] as string) : undefined,
+		title: row[headers.title] ? parseId(row[headers.title]) : undefined,
 	};
 }

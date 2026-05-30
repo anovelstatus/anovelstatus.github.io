@@ -1,5 +1,14 @@
 import { getLevels, type InternalSkillGain } from "./levels";
-import { parseFormattedTable, parseId, parseRichText, setAttributeValues } from "../shared";
+import {
+	parseFormattedTable,
+	parseId,
+	parseIds,
+	parseOptional,
+	parseRichText,
+	parseSplitString,
+	parseString,
+	setAttributeValues,
+} from "../shared";
 
 type Columns = Record<keyof (Skill & SkillDetails & TieredId), number>;
 type Extra = { attributeNames: string[]; skillLevels: InternalSkillGain[] };
@@ -30,11 +39,10 @@ function mapColumns(headerRow: SpreadsheetValue[], extra: Extra): Columns {
 }
 
 function mapRow(row: SpreadsheetValue[], richRow: RichValue[], headers: Columns, extra: Extra): Skill {
-	const tier = row[headers["tier"]!] as string;
-	const name = (row[headers["name"]!] as string).replace(" - " + tier, "");
+	const tier = parseString(row[headers.tier]);
+	const name = parseString(row[headers.name]).replace(" - " + tier, "");
 	const id = name + " - " + tier;
 
-	const previous = row[headers["previous"]!] ? (row[headers["previous"]!] as string).split(", ") : [];
 	const gains = extra.skillLevels
 		.filter((x) => x.id == id)
 		.map((x) => ({
@@ -46,15 +54,15 @@ function mapRow(row: SpreadsheetValue[], richRow: RichValue[], headers: Columns,
 	const skill = {
 		name: name,
 		tier: tier,
-		previous: previous.map(parseId),
-		replaced: row[headers["replaced"]!] as boolean,
+		previous: parseIds(row[headers.previous]),
+		replaced: parseOptional<boolean>(row[headers.replaced]),
 		gains: gains,
-		description: parseRichText(richRow[headers["description"]!]),
-		prerequisites: row[headers["prerequisites"]!] as string,
-		quality: row[headers["quality"]!] as string,
-		bonuses: parseRichText(richRow[headers["bonuses"]!]),
-		notes: parseRichText(richRow[headers["notes"]!]),
-		tags: row[headers["tags"]!] as string,
+		description: parseRichText(richRow[headers.description]),
+		prerequisites: parseOptional<string>(row[headers.prerequisites]),
+		quality: parseString(row[headers.quality]),
+		bonuses: parseRichText(richRow[headers.bonuses]),
+		notes: parseRichText(richRow[headers.notes]),
+		tags: parseOptional<string>(row[headers.tags]),
 		// casting as unknown because the Record<string, number> for attribute gains messes with the type inference
 	} as unknown as Skill;
 	setAttributeValues(skill, row, headers, extra.attributeNames);

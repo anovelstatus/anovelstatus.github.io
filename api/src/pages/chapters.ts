@@ -1,17 +1,18 @@
+import { parseNumber, parseString } from "./shared";
 import { getTimelineShortcuts } from "./shortcuts";
 import { getTiers } from "./tiers";
 
 /** Get latest chapter number released to the public */
 export function getRoyalRoadChapter(ss: Spreadsheet) {
-	return ss.getRangeByName("RoyalRoadChapter")!.getValue() as number;
+	return parseNumber(ss.getRangeByName("RoyalRoadChapter")!.getValue());
 }
 /** Get latest chapter number released to patrons */
 export function getPatreonChapter(ss: Spreadsheet) {
-	return ss.getRangeByName("PatreonChapter")!.getValue() as number;
+	return parseNumber(ss.getRangeByName("PatreonChapter")!.getValue());
 }
 
 function getPatreonSheetLink(ss: Spreadsheet) {
-	return ss.getRangeByName("PatreonSheetLink")!.getValue() as string;
+	return parseString(ss.getRangeByName("PatreonSheetLink")!.getValue());
 }
 
 export function getConfiguration(info: SpreadsheetInfo): BasicInfo {

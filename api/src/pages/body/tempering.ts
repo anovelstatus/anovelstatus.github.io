@@ -1,4 +1,13 @@
-import { chapterFilter, hasEntriesFilter, parseFormattedTable, parseId, parseRichText } from "../shared";
+import {
+	chapterFilter,
+	getNumberIfLessThanLimit,
+	hasEntriesFilter,
+	parseFormattedTable,
+	parseNumber,
+	parseOptionalId,
+	parseRichText,
+	parseString,
+} from "../shared";
 
 type StageColumns = Omit<Record<keyof TemperingStage, number>, "updates">;
 type StepColumns = Record<keyof TemperingStep, number>;
@@ -25,12 +34,12 @@ function mapStage(
 	headers: StageColumns,
 	updates: TemperingStep[],
 ): TemperingStage {
-	const name = row[headers.name];
+	const name = parseString(row[headers.name]);
 	return {
-		name: name as string,
-		tier: row[headers.tier] as string,
-		chapter: row[headers.chapter] as number,
-		expectedSteps: row[headers.expectedSteps] as number,
+		name: name,
+		tier: parseString(row[headers.tier]),
+		chapter: parseNumber(row[headers.chapter]),
+		expectedSteps: parseNumber(row[headers.expectedSteps]),
 		description: parseRichText(richRow[headers.description]!),
 		updates: updates.filter((x) => x.stage == name),
 	};
@@ -59,19 +68,14 @@ function mapStep(
 	headers: StepColumns,
 	chapterLimit: number,
 ): TemperingStep {
-	const note: RichText[] = parseRichText(richRow[headers.note]);
-
-	// If the step is completed in the future, treat it as not completed
-	let completed = row[headers.completed] as number | undefined;
-	if (completed && completed > chapterLimit) completed = undefined;
-
 	return {
-		stage: row[headers.stage] as string,
-		category: row[headers.category] as string,
-		started: row[headers.started] as number,
-		completed: completed,
-		linkType: row[headers.linkType] as string,
-		link: row[headers.link] ? parseId(row[headers.link] as string) : undefined,
-		note: note,
+		stage: parseString(row[headers.stage]),
+		category: parseString(row[headers.category]),
+		started: parseNumber(row[headers.started]),
+		// If the step is completed in the future, treat it as not completed
+		completed: getNumberIfLessThanLimit(row[headers.completed], chapterLimit),
+		linkType: parseString(row[headers.linkType]),
+		link: parseOptionalId(row[headers.link]),
+		note: parseRichText(richRow[headers.note]),
 	};
 }

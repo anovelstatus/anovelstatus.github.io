@@ -1,4 +1,4 @@
-import { parseId, parseRichText, parseFormattedTable, chapterFilter } from "../shared";
+import { parseRichText, parseFormattedTable, chapterFilter, parseNumber, parseString, parseIds } from "../shared";
 
 type Columns = Record<keyof Race, number>;
 
@@ -19,11 +19,11 @@ function mapColumns(headerRow: SpreadsheetValue[]): Columns {
 
 function mapRow(row: SpreadsheetValue[], richRow: RichValue[], headers: Columns): Race {
 	return {
-		name: row[headers.name] as string,
-		chapter: row[headers.chapter] as number,
-		tier: row[headers.tier] as number,
-		talents: row[headers.talents] ? (row[headers.talents] as string).split(", ").map(parseId) : [],
-		freeSlots: row[headers.freeSlots] as number,
+		name: parseString(row[headers.name]),
+		chapter: parseNumber(row[headers.chapter]),
+		tier: parseNumber(row[headers.tier]),
+		talents: parseIds(row[headers.talents]),
+		freeSlots: parseNumber(row[headers.freeSlots]),
 		note: parseRichText(richRow[headers.note]),
 	};
 }

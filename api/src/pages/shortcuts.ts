@@ -1,4 +1,4 @@
-import { chapterFilter, parseTable } from "./shared";
+import { chapterFilter, parseNumber, parseOptional, parseString, parseTable } from "./shared";
 
 type Columns = Record<keyof Shortcut, number>;
 
@@ -19,9 +19,9 @@ function mapColumns(headerRow: SpreadsheetValue[]): Columns {
 
 function mapRow(row: SpreadsheetValue[], headers: Columns): Shortcut {
 	return {
-		chapter: row[headers.chapter] as number,
-		label: row[headers.label] as string,
-		group: row[headers.group] as string | undefined,
-		menu: row[headers.menu] as string | undefined,
+		chapter: parseNumber(row[headers.chapter]),
+		label: parseString(row[headers.label]),
+		group: parseOptional<string>(row[headers.group]),
+		menu: parseOptional<string>(row[headers.menu]),
 	};
 }

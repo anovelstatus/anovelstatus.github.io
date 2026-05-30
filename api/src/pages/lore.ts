@@ -1,4 +1,4 @@
-import { chapterFilter, parseFormattedTable, parseRichText } from "./shared";
+import { chapterFilter, parseFormattedTable, parseNumber, parseRichText, parseString } from "./shared";
 
 type Columns = Record<keyof LoreEntry, number>;
 
@@ -21,8 +21,8 @@ function mapColumns(headerRow: SpreadsheetValue[]): Columns {
 
 function mapRow(row: SpreadsheetValue[], richRow: RichValue[], headers: Columns): LoreEntry {
 	return {
-		chapter: row[headers.chapter] as number,
-		key: row[headers.key] as string,
+		chapter: parseNumber(row[headers.chapter]),
+		key: parseString(row[headers.key]),
 		note: parseRichText(richRow[headers.note]),
 	};
 }

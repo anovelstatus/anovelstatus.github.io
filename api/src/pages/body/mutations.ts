@@ -1,4 +1,11 @@
-import { getNumbersLessThanLimit, hasEntriesFilter, parseFormattedTable, parseRichText } from "../shared";
+import {
+	getNumbersLessThanLimit,
+	hasEntriesFilter,
+	parseFormattedTable,
+	parseOptional,
+	parseRichText,
+	parseString,
+} from "../shared";
 
 type Columns = Record<keyof Body.Modification, number>;
 
@@ -25,11 +32,11 @@ function mapRow(
 	chapterLimit: number,
 ): Body.Modification {
 	return {
-		name: row[headers.name] as string,
+		name: parseString(row[headers.name]),
 		chapters: getNumbersLessThanLimit(row[headers.chapters], chapterLimit),
-		tier: row[headers.tier] as string,
-		type: row[headers.type] as string,
-		note: row[headers.note] as string,
+		tier: parseOptional<string>(row[headers.tier]),
+		type: parseString(row[headers.type]),
+		note: parseOptional<string>(row[headers.note]),
 		source: parseRichText(richRow[headers.source]!),
 	};
 }

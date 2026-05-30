@@ -1,4 +1,4 @@
-import { parseFormattedTable, parseRichText } from "../shared";
+import { parseFormattedTable, parseNumber, parseRichText, parseString } from "../shared";
 
 export type InternalMilestone = Attribute.Milestone & { attribute: string };
 type Columns = Record<keyof InternalMilestone, number>;
@@ -18,8 +18,8 @@ function mapColumns(headerRow: SpreadsheetValue[]): Columns {
 
 function mapRow(row: SpreadsheetValue[], richRow: RichValue[], headers: Columns): InternalMilestone {
 	return {
-		attribute: row[headers.attribute] as string,
+		attribute: parseString(row[headers.attribute]),
 		note: parseRichText(richRow[headers.note]),
-		milestone: row[headers.milestone] as number,
+		milestone: parseNumber(row[headers.milestone]),
 	};
 }

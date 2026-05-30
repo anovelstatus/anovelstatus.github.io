@@ -1,4 +1,12 @@
-import { chapterFilter, parseFormattedTable, parseId, parseRichText } from "./shared";
+import {
+	chapterFilter,
+	getNumberIfLessThanLimit,
+	parseFormattedTable,
+	parseId,
+	parseNumber,
+	parseOptionalId,
+	parseRichText,
+} from "./shared";
 
 type Columns = Omit<Record<keyof Title | "title" | "chapterReplaced", number>, keyof TieredId>;
 
@@ -20,18 +28,12 @@ function mapColumns(headerRow: SpreadsheetValue[]): Columns {
 }
 
 function mapRow(row: SpreadsheetValue[], richRow: RichValue[], headers: Columns, chapterLimit: number): Title {
-	const id = parseId(row[headers.title] as string);
-
-	const previous = row[headers.previous] ? parseId(row[headers.previous] as string) : undefined;
-
-	let chapterReplaced = row[headers.chapterReplaced] as number | undefined;
-	if (chapterReplaced && chapterReplaced >= chapterLimit) chapterReplaced = undefined;
-
+	const id = parseId(row[headers.title]);
 	return {
 		...id,
 		note: parseRichText(richRow[headers.note]),
-		chapter: row[headers.chapter] as number,
-		previous: previous,
-		replaced: chapterReplaced,
+		chapter: parseNumber(row[headers.chapter]),
+		previous: parseOptionalId(row[headers.previous]),
+		replaced: getNumberIfLessThanLimit(row[headers.chapterReplaced], chapterLimit),
 	};
 }

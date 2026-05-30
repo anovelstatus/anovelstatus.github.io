@@ -1,4 +1,4 @@
-import { chapterFilter, parseTable } from "../shared";
+import { chapterFilter, parseNumber, parseString, parseTable } from "../shared";
 
 export type InternalSkillGain = SkillGain & { id: string };
 type Columns = Record<keyof InternalSkillGain, number>;
@@ -19,9 +19,9 @@ function mapColumns(headerRow: SpreadsheetValue[]): Columns {
 
 function mapRow(row: SpreadsheetValue[], headers: Columns): InternalSkillGain {
 	return {
-		id: row[headers.id] as string,
-		count: row[headers.count] as number,
-		note: row[headers.note] as string,
-		chapter: row[headers.chapter] as number,
+		id: parseString(row[headers.id]),
+		count: parseNumber(row[headers.count]),
+		note: parseString(row[headers.note]),
+		chapter: parseNumber(row[headers.chapter]),
 	};
 }
