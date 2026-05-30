@@ -15,24 +15,29 @@ export function getNumberIfLessThanLimit(value: SpreadsheetValue, chapterLimit: 
 }
 
 export function parseBoolean(value: SpreadsheetValue): boolean {
-	if (typeof value === "number") throw "expected boolean";
+	if (typeof value === "number") throw new Error("expected boolean");
 	// Convert empty string and undefined to false
 	return value === true;
 }
 
 export function parseString(value: SpreadsheetValue): string {
-	if (typeof value !== "string") throw "expected string";
+	if (typeof value !== "string") throw new Error("expected string");
 	return value;
+}
+
+export function parseOptionalString(value: SpreadsheetValue): string | undefined {
+	if (!value) return undefined;
+	return parseString(value);
 }
 
 export function parseSplitString(value: SpreadsheetValue, split: string): string[] {
 	if (!value) return [];
-	if (typeof value !== "string") throw "expected string";
+	if (typeof value !== "string") throw new Error("expected string");
 	return value.split(split).map((x) => x.trim());
 }
 
 export function parseNumber(value: SpreadsheetValue): number {
-	if (typeof value !== "number") throw "expected number";
+	if (typeof value !== "number") throw new Error("expected number");
 	return value;
 }
 
@@ -157,4 +162,82 @@ export function parseFormattedTable<T, TColumns, TExtra = never>(
 		}
 	}
 	return data;
+}
+
+export function parseDynamicTable<T>(info: SpreadsheetInfo, definition: Table<T>) {
+	const range = definition.getRange(info);
+
+	const values = range.getValues();
+	const hasRichValues = definition.fields.some((x) => x.parse.type === "rich");
+	const richValues = hasRichValues ? range.getRichTextValues() : [[]];
+
+	const headers = mapDynamicColumns(values[0]!, definition);
+
+	if (!definition.filter) definition.filter = (_) => true;
+
+	const data: T[] = [];
+	for (let i = 1; i < values.length; i++) {
+		// Make sure there's data in the row.
+		// Don't just check the first cell because some have Chapter 0 entries that would be skipped.
+		if (!values[i]![0] && !values[i]![1]) continue;
+		const entry = mapDynamicRow(values[i]!, richValues[hasRichValues ? i : 0], headers, info, definition);
+		if (definition.filter(entry)) {
+			data.push(entry);
+		}
+	}
+	return data;
+}
+
+function mapDynamicColumns<T, TExtra>(headers: string[], definition: Table<T, TExtra>) {
+	const { fields } = definition;
+	const columns = {} as Record<string, number>;
+	for (const { key, source } of fields) {
+		switch (source.type) {
+			case "column":
+				columns[key] = headers.indexOf(source.name);
+				break;
+			case "column-contains":
+				columns[key] = headers.findIndex((x) => parseString(x).includes(source.contains));
+				break;
+			// todo: other field types
+			default:
+				throw new Error(`Invalid source for '${key}': ${source}`);
+				break;
+		}
+	}
+	return columns;
+}
+
+function mapDynamicRow<T, TExtra>(
+	values: SpreadsheetValue[],
+	richValues: RichValue[],
+	headers: Record<string, number>,
+	info: SpreadsheetInfo,
+	definition: Table<T, TExtra>,
+) {
+	const { fields } = definition;
+	const item: Record<string, unknown> = {};
+
+	for (const { key, parse } of fields) {
+		const value = headers[key] ? values[headers[key]] : undefined;
+		switch (parse.type) {
+			case "rich":
+				item[key] = parseRichText(richValues[headers[key]]);
+				break;
+			case "number":
+				item[key] = parse.limited ? getNumberIfLessThanLimit(value, info.chapterLimit) : parseNumber(value);
+				break;
+			case "string":
+				item[key] = parse.optional ? parseOptionalString(value) : parseString(value);
+				break;
+			case "tiered_id":
+				item[key] = parseId(value);
+				break;
+			// todo: other field types
+			default:
+				throw new Error(`Invalid parse for '${key}': ${parse}`);
+				break;
+		}
+	}
+	return item as T;
 }

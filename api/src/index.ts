@@ -76,17 +76,21 @@ function updateAllFiles(ss?: Spreadsheet) {
 	const rrInfo = getSpreadsheetInfo(ss, false);
 	const patreonInfo = getSpreadsheetInfo(ss, true);
 
+	const errors = [];
+
 	for (const page of allPages) {
 		try {
 			console.log("Updating " + page);
 			updatePageJson(rrFolder, rrInfo, page);
 			updatePageJson(patreonFolder, patreonInfo, page);
 		} catch (e) {
+			errors.push(e);
 			console.log("Failed to update " + page);
 			console.error(e);
 		}
 	}
-	// todo: write error logs to spreadsheet for visibility
+	// todo: write error logs to spreadsheet for better visibility
+	if (errors.length > 0) throw errors;
 }
 
 /** Get contents of JSON file in folder */
@@ -94,5 +98,5 @@ function getFile(includePatreon: boolean, page: string): GoogleAppsScript.Base.B
 	const folder = DriveApp.getFolderById(includePatreon ? PATREON_FOLDER : RR_FOLDER);
 	const fileResults = folder.getFilesByName(page + ".json");
 	if (fileResults.hasNext()) return fileResults.next().getBlob();
-	throw page + " not found";
+	throw new Error(page + " not found");
 }

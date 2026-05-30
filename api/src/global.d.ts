@@ -38,3 +38,23 @@ declare type SpreadsheetInfo = {
 	attributeNames: string[];
 	includePatreon: boolean;
 };
+
+type NamedSource = { type: "column"; name: string };
+type ContainsSource = { type: "column-contains"; contains: string };
+
+type NoOptionParse = { type: "tiered_id" | "rich" };
+type OptionalParse = { type: "string"; optional?: boolean };
+type NumberParse = { type: "number"; limited?: boolean };
+
+type Field<T, TKey extends keyof T & string> = {
+	key: TKey;
+	source: NamedSource | ContainsSource;
+	parse: NoOptionParse | OptionalParse | NumberParse;
+};
+
+declare type Table<T, TExtra = undefined> = {
+	fields: Field<T, keyof T & string>[];
+	getRange: (info: SpreadsheetInfo) => Range;
+	filter?: (item: T) => boolean;
+	extra: TExtra;
+};
