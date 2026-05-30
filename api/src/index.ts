@@ -41,7 +41,7 @@ function debug() {
 /* @ts-expect-error no-unused-local */
 function debugUpdateFile() {
 	const ss = SpreadsheetApp.openByUrl(SS_LINK);
-	updateAllFiles(ss, ["attributes"]);
+	updateSpecificFiles(ss, ["attributes"]);
 }
 
 /** Used in trigger to update pre-generated responses */
@@ -59,6 +59,11 @@ function updateFiles() {
 		return;
 	}
 	console.log("Updating...");
+	updateAllFiles(ss);
+}
+
+/** Used to manually force a refresh. Useful if the response model changes, for example. */
+function updateAllFiles(ss: Spreadsheet) {
 	const allPages: ApiPage[] = [
 		"chapters",
 		"achievements",
@@ -70,11 +75,10 @@ function updateFiles() {
 		"talents",
 		"titles",
 	];
-	updateAllFiles(ss, allPages);
+	updateSpecificFiles(ss, allPages);
 }
 
-/** Used to manually force a refresh. Useful if the response model changes, for example. */
-function updateAllFiles(ss: Spreadsheet, pages: ApiPage[]) {
+function updateSpecificFiles(ss: Spreadsheet, pages: ApiPage[]) {
 	const rrFolder = DriveApp.getFolderById(RR_FOLDER);
 	const patreonFolder = DriveApp.getFolderById(PATREON_FOLDER);
 
