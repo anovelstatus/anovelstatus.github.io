@@ -136,7 +136,6 @@ function mapDynamicColumns<T>(headers: string[], definition: Table<T>) {
 			case "contains":
 				columns[key] = headers.findIndex((x) => parseString(x).includes(source.contains));
 				break;
-			// todo: other field types
 			default:
 				throw new Error(`Invalid source for '${key}': ${source}`);
 				break;
