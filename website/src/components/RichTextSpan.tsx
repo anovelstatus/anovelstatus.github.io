@@ -1,7 +1,7 @@
 import { Typography, type TypographyProps } from "@mui/material";
 
 export type RichTextSpanProps = {
-	data: string | RichText[];
+	data: string | RichText[] | null | undefined;
 } & TypographyProps;
 
 /** The cell often returns an array of 1 span with empty text, so check for non-empty text */

@@ -113,10 +113,10 @@ export function mapTable<T>(info: SpreadsheetInfo, range: Range, fields: Fields<
 	for (let i = 1; i < values.length; i++) {
 		// Make sure there's data in the row.
 		// Don't just check the first cell because some have Chapter 0 entries that would be skipped.
-		if (!values[i]![0] && !values[i]![1]) continue;
+		if (!values[i][0] && !values[i][1]) continue;
 		data.push(
 			mapRow(
-				values[i]!,
+				values[i],
 				richValues[hasRichValues ? i : 0],
 				notes[usesNotes ? i : 0],
 				headers,

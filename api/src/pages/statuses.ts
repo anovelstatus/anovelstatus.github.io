@@ -20,5 +20,5 @@ export function getOfficialStatuses(info: SpreadsheetInfo) {
 		});
 	}
 
-	return mapTable(info, range, fields).filter((x) => x.chapter <= info.chapterLimit && x[info.attributeNames[0]!]! > 0);
+	return mapTable(info, range, fields).filter((x) => x.chapter <= info.chapterLimit && x[info.attributeNames[0]] > 0);
 }
