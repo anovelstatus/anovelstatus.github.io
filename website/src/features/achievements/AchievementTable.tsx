@@ -2,7 +2,7 @@ import AppTable, { useAppTable } from "@/components/AppTable";
 import { useAchievements, useChapter, useMetalTiers } from "@/data/api";
 import { RarityButtonChip } from "@/components/chips";
 import { getFilteredRowModel } from "@tanstack/react-table";
-import { Grid, Typography } from "@mui/material";
+import { Chip, Grid, Typography } from "@mui/material";
 import { useState, useEffect } from "react";
 import { useColumns } from "./columns";
 import AchievementCard from "./AchievementCard";
@@ -55,7 +55,7 @@ export default function AchievementTable() {
 	return (
 		<>
 			<Typography variant="h4" gutterBottom>
-				Priam's Achievements
+				Priam's Achievements <Chip label={currentAchievements.length} sx={{ fontWeight: "bold" }} />
 			</Typography>
 			<Grid container spacing={2}>
 				{metalTiers
