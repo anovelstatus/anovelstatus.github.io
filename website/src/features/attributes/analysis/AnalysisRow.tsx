@@ -1,5 +1,5 @@
 import { formatNumber } from "@/data/helpers";
-import { Stack, Tooltip } from "@mui/material";
+import { Box, Tooltip } from "@mui/material";
 import type { AttributeAnalysis } from "./types";
 import { getClass } from "./styles";
 import { CalculationText } from "./CalculationText";
@@ -14,10 +14,10 @@ export function AnalysisRow({ attribute, analysis }: AnalysisRowProps) {
 	const diffDisplay = diff === 0 ? "--" : diff > 0 ? `+${formatNumber(diff)}` : formatNumber(diff);
 
 	return (
-		<Stack direction="row" className={getClass(analysis)} sx={{ padding: 1 }}>
-			<span>{attribute.abbreviation}:</span>
-			<span>{analysis.officialValue} |</span>
-			<span>{diffDisplay} |</span>
+		<Box className={getClass(analysis)} sx={{ padding: 1 }}>
+			<span>
+				{attribute.abbreviation}: {analysis.officialValue} vs&nbsp;
+			</span>
 			<Tooltip
 				title={<CalculationText analysis={analysis} />}
 				arrow
@@ -25,8 +25,10 @@ export function AnalysisRow({ attribute, analysis }: AnalysisRowProps) {
 					popper: { modifiers: [{ name: "offset", options: { offset: [0, -14] } }] },
 				}}
 			>
-				<span>{formatNumber(analysis.calculatedValue)}</span>
+				<span>
+					{formatNumber(analysis.calculatedValue)} ({diffDisplay})
+				</span>
 			</Tooltip>
-		</Stack>
+		</Box>
 	);
 }

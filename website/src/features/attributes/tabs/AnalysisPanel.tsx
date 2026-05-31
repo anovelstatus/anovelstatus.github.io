@@ -1,9 +1,9 @@
 import AppTable, { useAppTable } from "@/components/AppTable";
-import { useAttributes, useChapter, useSkills, useStatusDictionary } from "@/data/api";
+import { useAttributes, useChapter, useLatestChapter, useSkills, useStatusDictionary } from "@/data/api";
 import { Box, Grid, Stack, Typography } from "@mui/material";
 import { calculateBaseAttributeValue, getCurrentBoost } from "../helpers";
-import { useMemo } from "react";
-import { createColumnHelper, type Cell, type ColumnDef } from "@tanstack/react-table";
+import { useEffect, useMemo, useState } from "react";
+import { createColumnHelper, getFilteredRowModel, type Cell, type ColumnDef } from "@tanstack/react-table";
 import { formatNumber } from "@/data/helpers";
 import LoadingPlaceholder from "@/components/LoadingPlaceholder";
 import type { AttributeAnalysis, AttributeAnalysisRow } from "../analysis/types";
@@ -21,28 +21,40 @@ const notes = [
 	{ class: "lower", note: "The calculated status is lower than the official status." },
 ];
 
+export type AnalysisFilterOptions = {
+	chapter: number;
+};
+
 export function AnalysisPanel() {
 	const chapter = useChapter();
+	const maxChapter = useLatestChapter();
 	const { data: attributes } = useAttributes();
 	const statuses = useStatusDictionary();
 	const { data: skills } = useSkills();
 
-	const columns: ColumnDef<AttributeAnalysisRow>[] = [
-		createColumnHelper<AttributeAnalysisRow>().accessor("chapter", {
-			header: "Chapter",
-			enableSorting: true,
-			meta: {
-				bodySx: { textAlign: "center" },
-				bodyClassName: (cell: Cell<AttributeAnalysisRow, unknown>) => (cell.row.original.note ? "ch-note" : ""),
-				title: (cell: Cell<AttributeAnalysisRow, unknown>) => cell.row.original.note,
-			},
-		}),
-		...attributes.map(createAttributeColumn),
-	] as ColumnDef<AttributeAnalysisRow>[];
+	const [filters, setFilters] = useState<AnalysisFilterOptions>({ chapter });
+	useEffect(() => {
+		setFilters((filters) => ({ ...filters, chapter: chapter }));
+	}, [chapter]);
+
+	const columns = useMemo(() => {
+		return [
+			createColumnHelper<AttributeAnalysisRow>().accessor("chapter", {
+				header: "Chapter",
+				enableSorting: true,
+				meta: {
+					bodySx: { textAlign: "center" },
+					bodyClassName: (cell: Cell<AttributeAnalysisRow, unknown>) => (cell.row.original.note ? "ch-note" : ""),
+					title: (cell: Cell<AttributeAnalysisRow, unknown>) => cell.row.original.note,
+				},
+			}),
+			...attributes.map(createAttributeColumn),
+		] as ColumnDef<AttributeAnalysisRow>[];
+	}, [attributes]);
 
 	const tableData = useMemo(
-		() => getTableData(chapter, attributes, statuses, skills),
-		[chapter, attributes, statuses, skills],
+		() => getTableData(maxChapter, attributes, statuses, skills),
+		[maxChapter, attributes, statuses, skills],
 	);
 
 	const table = useAppTable<AttributeAnalysisRow>({
@@ -50,7 +62,12 @@ export function AnalysisPanel() {
 		columns: columns,
 		getRowId: (row) => row.chapter.toString(),
 		initialState: { sorting: [{ id: "chapter", desc: true }] },
-		renderNarrowRow: (row) => <AnalysisCard data={row.original} />,
+		renderNarrowRow: (row) => <AnalysisCard key={row.id} data={row.original} />,
+		getFilteredRowModel: getFilteredRowModel(),
+		state: { globalFilter: filters },
+		globalFilterFn: (row, _, filterValue: AnalysisFilterOptions) => {
+			return row.original.chapter <= filterValue.chapter;
+		},
 	});
 
 	const isLoading = !attributes.length || !Object.keys(statuses).length || !skills.length;
@@ -81,6 +98,7 @@ function createAttributeColumn(attribute: Attribute.Details) {
 		id: attribute.name,
 		header: attribute.name,
 		enableSorting: false,
+		enableGlobalFilter: false,
 		meta: {
 			bodyClassName: (cell) => getClass(cell.row.original.attributes[attribute.name]!),
 		},
@@ -92,7 +110,7 @@ function createAttributeColumn(attribute: Attribute.Details) {
 }
 
 function getTableData(
-	chapterLimit: number,
+	maxChapter: number,
 	attributes: Attribute.Details[],
 	statuses: Record<number, Status>,
 	skills: Skill[],
@@ -105,7 +123,7 @@ function getTableData(
 
 	let previousStatus = statuses[1]!;
 	let lastOfficialStatus = statuses[1]!;
-	for (let chapter = 1; chapter <= chapterLimit; chapter++) {
+	for (let chapter = 1; chapter <= maxChapter; chapter++) {
 		const status = statuses[chapter];
 		if (status) {
 			lastOfficialStatus = status;
