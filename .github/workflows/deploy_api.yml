@@ -40,6 +40,7 @@ jobs:
         run: npm run build-api
         env:
           PATREON_KEY: ${{ secrets.PATREON_KEY }}
+          PATREON_SHEET: ${{ secrets.PATREON_SHEET }}
           SS_LINK: ${{ secrets.SS_LINK }}
           RR_FOLDER: ${{ secrets.RR_FOLDER }}
           PATREON_FOLDER: ${{ secrets.PATREON_FOLDER }}
