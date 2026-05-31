@@ -1,4 +1,4 @@
-import { Grid, Typography } from "@mui/material";
+import { Chip, Grid, Typography } from "@mui/material";
 import { toIdString } from "@/data/helpers";
 import { useState, useEffect } from "react";
 import TitleCard from "./TitleCard";
@@ -64,7 +64,7 @@ export default function TitleTable() {
 	return (
 		<>
 			<Typography variant="h4" gutterBottom>
-				Priam's Titles
+				Priam's Titles <Chip label={currentTitles.length} sx={{ fontWeight: "bold" }} />
 			</Typography>
 			<Grid container spacing={2}>
 				{metalTiers
