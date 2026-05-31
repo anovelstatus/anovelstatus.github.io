@@ -1,12 +1,13 @@
 import { Card, CardHeader, CardContent, Box, Stack, Grid, Typography, Chip } from "@mui/material";
 import { ChaptersChip, IdealChip, RarityChip } from "@/components/chips";
-import { findByIds, getCurrentLevel, sameId } from "@/data/helpers";
+import { findByIds, sameId } from "@/data/helpers";
 import { AttributeSummary } from "@/features/attributes";
 import { useChapter, useSkills, useSkillTiers } from "@/data/api";
 import SkillButton from "./SkillButton";
-import { getMaxLevel, getPrerequisiteList, getProgressGradient } from "./helpers";
+import { getLevelOnChapter, getMaxLevel, getProgressGradient } from "./helpers";
 import LoadingCard from "@/components/LoadingCard";
 import { RichTextSpan } from "@/components/RichTextSpan";
+import { PrerequisiteList } from "./PrerequisiteList";
 
 type SkillCardProps = { id: TieredId } & PropsWithStyle;
 
@@ -22,10 +23,8 @@ export default function SkillCard({ id, sx }: SkillCardProps) {
 
 	const previousSkills = findByIds(skills, skill.previous);
 
-	const prerequisiteList = getPrerequisiteList(skill);
-
 	const max = getMaxLevel(skill, skillTiers);
-	const level = getCurrentLevel(skill, chapter);
+	const level = getLevelOnChapter(skill, chapter);
 	const levelText = `Lvl ${level} / ${max}`;
 	const gradient = getProgressGradient(((1.0 * level) / max) * 100, "#333333");
 
@@ -45,14 +44,14 @@ export default function SkillCard({ id, sx }: SkillCardProps) {
 				<Stack>
 					<RichTextSpan data={skill.description} />
 					<AttributeSummary item={skill} />
-					{prerequisiteList.length > 0 && (
-						<>
+					<PrerequisiteList
+						skill={skill}
+						header={
 							<Typography variant="h6" sx={{ marginTop: "20px" }}>
 								Ideal Prerequisites:
 							</Typography>
-							{prerequisiteList}
-						</>
-					)}
+						}
+					/>
 					{previousSkills.length > 0 ? (
 						<>
 							<Typography variant="h6" sx={{ marginTop: "20px" }}>

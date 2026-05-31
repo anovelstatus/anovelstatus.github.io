@@ -1,14 +1,5 @@
-import { sumBy } from "es-toolkit";
-
 export function formatNumber(num: number | undefined) {
 	return num?.toLocaleString() ?? "";
-}
-
-export function getCurrentLevel(skill: Skill, chapter: number) {
-	return sumBy(
-		skill.gains.filter((x) => x.chapter <= chapter),
-		(x) => x.count,
-	);
 }
 
 export function getTierRank(tiers: string[], tier: string): number {

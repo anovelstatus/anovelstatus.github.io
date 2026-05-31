@@ -1,5 +1,6 @@
-import { getCurrentLevel, getTierRank, toIdString } from "@/data/helpers";
+import { getTierRank, toIdString } from "@/data/helpers";
 import { Typography } from "@mui/material";
+import { sumBy } from "es-toolkit";
 
 export const IDEAL_QUALITY = "Ideal";
 
@@ -14,7 +15,7 @@ export type SkillFiltersOptions = {
 export function showSkill(x: Skill, filters: SkillFiltersOptions) {
 	if (filters.tier && x.tier !== filters.tier) return false;
 
-	if (getCurrentLevel(x, filters.chapter) <= 0 && !filters.showFormerSkills) return false;
+	if (getLevelOnChapter(x, filters.chapter) <= 0 && !filters.showFormerSkills) return false;
 
 	if (!filters.showFormerSkills && x.replaced) return false;
 
@@ -29,47 +30,6 @@ export function showSkill(x: Skill, filters: SkillFiltersOptions) {
 	return true;
 }
 
-export function getPrerequisiteList(skill: Skill) {
-	const keyPrefix = toIdString(skill) + "-prerequisite";
-	const list =
-		skill.prerequisites
-			?.split("\n")
-			.map((x) => x.trim())
-			.filter((x) => x.length > 0) ?? [];
-
-	if (list.length === 0) return [];
-
-	if (list.length < 6) {
-		return list.map((x, index) => (
-			<Typography variant="body2" key={`${keyPrefix}-${index}`}>
-				{x}
-			</Typography>
-		));
-	}
-
-	const selected = list.slice(0, 5);
-	const extra = list.slice(5);
-
-	return [
-		<Typography variant="h6" key={`${keyPrefix}-selected`}>
-			Selected
-		</Typography>,
-		...selected.map((x, index) => (
-			<Typography variant="body2" key={`${keyPrefix}-${index}`}>
-				{x}
-			</Typography>
-		)),
-		<Typography variant="h6" key={`${keyPrefix}-more`}>
-			and {list.length - 5} more...
-		</Typography>,
-		...extra.map((x, index) => (
-			<Typography variant="body2" key={`${keyPrefix}-${index + 5}`}>
-				{x}
-			</Typography>
-		)),
-	];
-}
-
 export function getMaxLevel(skill: Skill, skillTiers: string[]): number {
 	return (getTierRank(skillTiers, skill.tier) + 1) * 20;
 }
@@ -77,4 +37,11 @@ export function getMaxLevel(skill: Skill, skillTiers: string[]): number {
 export function getProgressGradient(percent: number, hexColor: string): string {
 	const transparent = hexColor + "00";
 	return `linear-gradient(90deg, ${hexColor} 0%, ${hexColor} ${percent}%, ${transparent} ${percent}%, ${transparent} 100%)`;
+}
+
+export function getLevelOnChapter(skill: Skill, chapter: number) {
+	return sumBy(
+		skill.gains.filter((x) => x.chapter <= chapter),
+		(x) => x.count,
+	);
 }

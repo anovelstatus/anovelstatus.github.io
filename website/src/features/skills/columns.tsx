@@ -1,13 +1,14 @@
 import { Box, Chip, Grid, Stack, Typography } from "@mui/material";
 import { AttributeSummary } from "@/features/attributes";
-import { findByIds, getCurrentLevel } from "@/data/helpers";
+import { findByIds } from "@/data/helpers";
 import { ChaptersChip, IdealChip, RarityChip } from "@/components/chips";
 import type { Cell, ColumnDef } from "@tanstack/react-table";
 import { useChapter, useSkills, useSkillTiers } from "@/data/api";
 import { createCollapsedTierColumn } from "@/components/AppTable/columns";
 import SkillButton from "./SkillButton";
-import { getMaxLevel, getPrerequisiteList, getProgressGradient } from "./helpers";
+import { getLevelOnChapter, getMaxLevel, getProgressGradient } from "./helpers";
 import { RichTextSpan } from "@/components/RichTextSpan";
+import { PrerequisiteList } from "./PrerequisiteList";
 
 export const useColumns = () => {
 	const skillTiers = useSkillTiers();
@@ -21,7 +22,7 @@ export const useColumns = () => {
 			cell: ({ row }) => {
 				const chapter = useChapter();
 				const max = getMaxLevel(row.original, skillTiers);
-				const level = getCurrentLevel(row.original, chapter);
+				const level = getLevelOnChapter(row.original, chapter);
 				const levelText = `Lvl ${level} / ${max}`;
 
 				return (
@@ -38,7 +39,7 @@ export const useColumns = () => {
 				bodySx: (cell: Cell<Skill, unknown>) => {
 					const chapter = useChapter();
 					const row = cell.row.original;
-					const value = getCurrentLevel(row, chapter);
+					const value = getLevelOnChapter(row, chapter);
 					const max = getMaxLevel(row, skillTiers);
 
 					if (value > max) return { backgroundColor: "error.main" };
@@ -78,14 +79,15 @@ export const useColumns = () => {
 			enableSorting: false,
 			size: 300,
 			cell: ({ row }) => {
-				const list = getPrerequisiteList(row.original);
 				const { data: skills } = useSkills();
 				const previousSkills = findByIds(skills, row.original.previous);
 				return (
 					<Stack>
 						<RichTextSpan data={row.original.description} />
-						{list.length > 0 && <Typography variant="h6">Ideal Prerequisites:</Typography>}
-						{list}
+						<PrerequisiteList
+							skill={row.original}
+							header={<Typography variant="h6">Ideal Prerequisites:</Typography>}
+						/>
 						{previousSkills.length > 0 && <Typography variant="h6">Previous/Merged Skill(s):</Typography>}
 						<Stack direction="row" spacing={1} sx={{ flexWrap: "wrap" }}>
 							{previousSkills.map((x, index) => (

@@ -1,11 +1,12 @@
 import { useAttributes, useSkills } from "@/data/api";
-import { getCurrentLevel, toIdString } from "@/data/helpers";
+import { toIdString } from "@/data/helpers";
 import { Box } from "@mui/material";
 import { useMemo } from "react";
 import { SkillButton } from "../skills";
 import { TitleButton } from "../titles";
 import { hasNote, RichTextSpan } from "@/components/RichTextSpan";
 import { sumBy } from "es-toolkit";
+import { getLevelOnChapter } from "../skills/helpers";
 
 export function getEvolvedName(attribute: Attribute.Details, status: Status): string {
 	const evolution = getCurrentEvolution(status, attribute);
@@ -80,7 +81,7 @@ export function calculateBaseAttributeValue(skills: Skill[], attribute: Attribut
 		(x) => x.gain,
 	);
 	for (const skill of attributeSkills) {
-		baseValue += getCurrentLevel(skill, chapter) * skill[attribute.name]!;
+		baseValue += getLevelOnChapter(skill, chapter) * skill[attribute.name]!;
 	}
 	return baseValue;
 }
