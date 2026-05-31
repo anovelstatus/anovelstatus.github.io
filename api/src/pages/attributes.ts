@@ -38,7 +38,6 @@ function filterAndMap<T>(attribute: Partial<Attribute.Details>, data: (T & HasAt
 function getBoosts(info: SpreadsheetInfo) {
 	const definition: Table<InternalBoost> = {
 		range: info.ss.getRange(info.ranges["Attribute Boosts"]),
-		filter: chapterFilter(info.chapterLimit, "chapter"),
 		fields: [
 			{ key: "chapter", source: { type: "exact", name: "Chapter" }, parse: "number" },
 			{ key: "attribute", source: { type: "exact", name: "Attribute" }, parse: "string" },
@@ -47,13 +46,12 @@ function getBoosts(info: SpreadsheetInfo) {
 			{ key: "note", source: { type: "exact", name: "Note" }, parse: "rich" },
 		],
 	};
-	return mapTable(info, definition);
+	return mapTable(info, definition).filter(chapterFilter(info.chapterLimit, "chapter"));
 }
 
 function getEvolutions(info: SpreadsheetInfo) {
 	const definition: Table<InternalEvolution> = {
 		range: info.ss.getRange(info.ranges["Attribute Evolutions"]),
-		filter: chapterFilter(info.chapterLimit, "chapter"),
 		fields: [
 			{ key: "chapter", source: { type: "exact", name: "Chapter" }, parse: "number" },
 			{ key: "attribute", source: { type: "exact", name: "Attribute" }, parse: "string" },
@@ -61,13 +59,12 @@ function getEvolutions(info: SpreadsheetInfo) {
 			{ key: "note", source: { type: "exact", name: "Description" }, parse: "rich" },
 		],
 	};
-	return mapTable(info, definition);
+	return mapTable(info, definition).filter(chapterFilter(info.chapterLimit, "chapter"));
 }
 
 function getGains(info: SpreadsheetInfo) {
 	const definition: Table<InternalGain> = {
 		range: info.ss.getSheetByName("Stat Gains")!.getDataRange(),
-		filter: chapterFilter(info.chapterLimit, "chapter"),
 		fields: [
 			{ key: "chapter", source: { type: "exact", name: "Chapter" }, parse: "number" },
 			{ key: "attribute", source: { type: "exact", name: "Attribute" }, parse: "string" },
@@ -75,18 +72,17 @@ function getGains(info: SpreadsheetInfo) {
 			{ key: "note", source: { type: "exact", name: "How / Why" }, parse: "rich" },
 		],
 	};
-	return mapTable(info, definition);
+	return mapTable(info, definition).filter(chapterFilter(info.chapterLimit, "chapter"));
 }
 
 function getMilestones(info: SpreadsheetInfo) {
 	const definition: Table<InternalMilestone> = {
 		range: info.ss.getRange(info.ranges["Attribute Milestones"]),
-		filter: (x) => !!x,
 		fields: [
 			{ key: "attribute", source: { type: "exact", name: "Attribute" }, parse: "string" },
 			{ key: "milestone", source: { type: "exact", name: "Milestone" }, parse: "number" },
 			{ key: "note", source: { type: "exact", name: "Description" }, parse: "rich" },
 		],
 	};
-	return mapTable(info, definition);
+	return mapTable(info, definition).filter((x) => !!x);
 }

@@ -3,7 +3,6 @@ import { chapterFilter, mapTable } from "./shared";
 export function getTalents(info: SpreadsheetInfo) {
 	const definition: Table<Talent> = {
 		range: info.ss.getSheetByName("Talents")!.getDataRange(),
-		filter: chapterFilter(info.chapterLimit, "chapterGained"),
 		fields: [
 			{ key: "name", source: { type: "exact", name: "Name" }, parse: "string" },
 			{ key: "tier", source: { type: "exact", name: "Tier" }, parse: "string" },
@@ -22,5 +21,5 @@ export function getTalents(info: SpreadsheetInfo) {
 			{ key: "temporary", source: { type: "exact", name: "Temporary" }, parse: "bool", optional: true },
 		],
 	};
-	return mapTable(info, definition);
+	return mapTable(info, definition).filter(chapterFilter(info.chapterLimit, "chapterGained"));
 }

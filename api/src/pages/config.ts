@@ -19,7 +19,6 @@ export function getConfiguration(info: SpreadsheetInfo): BasicInfo {
 function getTimelineShortcuts(info: SpreadsheetInfo) {
 	const definition: Table<Shortcut> = {
 		range: info.ss.getRange(info.ranges["Chapter Shortcuts"]),
-		filter: chapterFilter(info.chapterLimit, "chapter"),
 		fields: [
 			{ key: "chapter", source: { type: "exact", name: "Chapter" }, parse: "number" },
 			{ key: "label", source: { type: "exact", name: "Label" }, parse: "string" },
@@ -27,7 +26,7 @@ function getTimelineShortcuts(info: SpreadsheetInfo) {
 			{ key: "menu", source: { type: "exact", name: "Menu" }, parse: "string", optional: true },
 		],
 	};
-	return mapTable(info, definition);
+	return mapTable(info, definition).filter(chapterFilter(info.chapterLimit, "chapter"));
 }
 
 function getTiers(info: SpreadsheetInfo) {

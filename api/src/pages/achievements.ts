@@ -3,7 +3,6 @@ import { chapterFilter, mapTable } from "./shared";
 export function getAchievements(info: SpreadsheetInfo) {
 	const definition: Table<Achievement> = {
 		range: info.ss.getSheetByName("Achievements")!.getDataRange(),
-		filter: chapterFilter(info.chapterLimit, "chapter"),
 		fields: [
 			{ key: "chapter", source: { type: "exact", name: "Chapter" }, parse: "number" },
 			{ key: "tier", source: { type: "exact", name: "Tier" }, parse: "string" },
@@ -14,5 +13,5 @@ export function getAchievements(info: SpreadsheetInfo) {
 			{ key: "note", source: { type: "exact", name: "Other Notes" }, parse: "rich" },
 		],
 	};
-	return mapTable(info, definition);
+	return mapTable(info, definition).filter(chapterFilter(info.chapterLimit, "chapter"));
 }

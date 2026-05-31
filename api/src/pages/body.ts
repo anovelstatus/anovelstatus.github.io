@@ -12,7 +12,6 @@ export function getBody(info: SpreadsheetInfo): Body.Details {
 function getMutations(info: SpreadsheetInfo) {
 	const definition: Table<Body.Modification> = {
 		range: info.ss.getRange(info.ranges.Mutations),
-		filter: (x) => x.chapters.length > 0,
 		fields: [
 			{ key: "name", source: { type: "exact", name: "Mutation" }, parse: "string" },
 			{ key: "chapters", source: { type: "exact", name: "Chapters" }, parse: "split_number", limited: true },
@@ -22,13 +21,12 @@ function getMutations(info: SpreadsheetInfo) {
 			{ key: "source", source: { type: "exact", name: "Source" }, parse: "rich" },
 		],
 	};
-	return mapTable(info, definition);
+	return mapTable(info, definition).filter((x) => x.chapters.length > 0);
 }
 
 function getRaces(info: SpreadsheetInfo) {
 	const definition: Table<Race> = {
 		range: info.ss.getRange(info.ranges.Races),
-		filter: chapterFilter(info.chapterLimit, "chapter"),
 		fields: [
 			{ key: "chapter", source: { type: "exact", name: "Chapter" }, parse: "number" },
 			{ key: "name", source: { type: "exact", name: "Race" }, parse: "string" },
@@ -38,7 +36,7 @@ function getRaces(info: SpreadsheetInfo) {
 			{ key: "note", source: { type: "exact", name: "Description" }, parse: "rich" },
 		],
 	};
-	return mapTable(info, definition);
+	return mapTable(info, definition).filter(chapterFilter(info.chapterLimit, "chapter"));
 }
 
 export function getTempering(info: SpreadsheetInfo) {
@@ -46,7 +44,6 @@ export function getTempering(info: SpreadsheetInfo) {
 
 	const definition: Table<TemperingStage> = {
 		range: info.ss.getRange(info.ranges["Body Tempering Stages"]),
-		filter: (x) => x.updates.length > 0,
 		fields: [
 			{ key: "name", source: { type: "exact", name: "Stage" }, parse: "string" },
 			{ key: "tier", source: { type: "exact", name: "Quality" }, parse: "string" },
@@ -57,13 +54,12 @@ export function getTempering(info: SpreadsheetInfo) {
 			{ key: "updates", parse: ({ rowSoFar }) => updates.filter((x) => x.stage === rowSoFar.name) },
 		],
 	};
-	return mapTable(info, definition);
+	return mapTable(info, definition).filter((x) => x.updates.length > 0);
 }
 
 function getTemperingSteps(info: SpreadsheetInfo) {
 	const definition: Table<TemperingStep> = {
 		range: info.ss.getRange(info.ranges["Body Tempering Progress"]),
-		filter: chapterFilter(info.chapterLimit, "started"),
 		fields: [
 			{ key: "stage", source: { type: "exact", name: "Stage" }, parse: "string" },
 			{ key: "category", source: { type: "exact", name: "Step" }, parse: "string" },
@@ -75,7 +71,7 @@ function getTemperingSteps(info: SpreadsheetInfo) {
 			{ key: "note", source: { type: "exact", name: "Update" }, parse: "rich" },
 		],
 	};
-	return mapTable(info, definition);
+	return mapTable(info, definition).filter(chapterFilter(info.chapterLimit, "started"));
 }
 
 export function getBloodlines(info: SpreadsheetInfo) {
@@ -83,7 +79,6 @@ export function getBloodlines(info: SpreadsheetInfo) {
 
 	const definition: Table<Bloodline> = {
 		range: info.ss.getRange(info.ranges.Bloodlines),
-		filter: (x) => x.updates.length > 0,
 		fields: [
 			{ key: "name", source: { type: "exact", name: "Bloodline" }, parse: "string" },
 			{ key: "lore", source: { type: "exact", name: "Lore Key" }, parse: "string" },
@@ -92,13 +87,12 @@ export function getBloodlines(info: SpreadsheetInfo) {
 			{ key: "updates", parse: ({ rowSoFar }) => updates.filter((x) => x.name === rowSoFar.name) },
 		],
 	};
-	return mapTable(info, definition);
+	return mapTable(info, definition).filter((x) => x.updates.length > 0);
 }
 
 function getBloodlineUpdates(info: SpreadsheetInfo) {
 	const definition: Table<BloodlineStatus> = {
 		range: info.ss.getRange(info.ranges["Bloodline Updates"]),
-		filter: chapterFilter(info.chapterLimit, "chapter"),
 		fields: [
 			{ key: "name", source: { type: "exact", name: "Race" }, parse: "string" },
 			{ key: "chapter", source: { type: "exact", name: "Chapter" }, parse: "number" },
@@ -108,5 +102,5 @@ function getBloodlineUpdates(info: SpreadsheetInfo) {
 			{ key: "title", source: { type: "exact", name: "Title" }, parse: "tiered_id", optional: true },
 		],
 	};
-	return mapTable(info, definition);
+	return mapTable(info, definition).filter(chapterFilter(info.chapterLimit, "chapter"));
 }

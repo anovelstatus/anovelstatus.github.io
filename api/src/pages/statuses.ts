@@ -7,7 +7,6 @@ export function getOfficialStatuses(info: SpreadsheetInfo) {
 	const range = sheet.getRange(2, 1, numberOfRows - 1, info.attributeNames.length + 1);
 	const definition: Table<Status> = {
 		range,
-		filter: (x: Status): boolean => x.chapter <= info.chapterLimit && x[info.attributeNames[0]!]! > 0,
 		fields: [{ key: "chapter", source: { type: "exact", name: "Chapter" }, parse: "number" }],
 	};
 	for (const attribute of info.attributeNames) {
@@ -19,5 +18,5 @@ export function getOfficialStatuses(info: SpreadsheetInfo) {
 		});
 	}
 
-	return mapTable(info, definition);
+	return mapTable(info, definition).filter((x) => x.chapter <= info.chapterLimit && x[info.attributeNames[0]!]! > 0);
 }

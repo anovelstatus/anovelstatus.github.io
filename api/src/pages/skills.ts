@@ -7,7 +7,6 @@ export function getSkills(info: SpreadsheetInfo) {
 
 	const definition: Table<Skill> = {
 		range: info.ss.getSheetByName("Skill List")!.getDataRange(),
-		filter: (x) => !!x.name && x.gains.length > 0,
 		fields: [
 			{ key: "tier", source: { type: "exact", name: "Tier" }, parse: "string" },
 			{ key: "previous", source: { type: "contains", contains: "Previous" }, parse: "split_tiered_id" },
@@ -55,13 +54,12 @@ export function getSkills(info: SpreadsheetInfo) {
 		});
 	}
 
-	return mapTable(info, definition);
+	return mapTable(info, definition).filter((x) => !!x.name && x.gains.length > 0);
 }
 
 function getLevels(info: SpreadsheetInfo) {
 	const definition: Table<InternalSkillGain> = {
 		range: info.ss.getRange(info.ranges["Skill Levels"]),
-		filter: chapterFilter(info.chapterLimit, "chapter"),
 		fields: [
 			{ key: "chapter", source: { type: "exact", name: "Chapter" }, parse: "number" },
 			{ key: "id", source: { type: "exact", name: "Skill - Tier" }, parse: "string" },
@@ -69,5 +67,5 @@ function getLevels(info: SpreadsheetInfo) {
 			{ key: "note", source: { type: "contains", contains: "Levels gained" }, parse: "string" },
 		],
 	};
-	return mapTable(info, definition);
+	return mapTable(info, definition).filter(chapterFilter(info.chapterLimit, "chapter"));
 }

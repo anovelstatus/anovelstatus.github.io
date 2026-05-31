@@ -99,17 +99,12 @@ export function mapTable<T>(info: SpreadsheetInfo, table: Table<T>) {
 
 	const headers = findColumns(values[0], table);
 
-	if (!table.filter) table.filter = (_) => true;
-
 	const data: T[] = [];
 	for (let i = 1; i < values.length; i++) {
 		// Make sure there's data in the row.
 		// Don't just check the first cell because some have Chapter 0 entries that would be skipped.
 		if (!values[i]![0] && !values[i]![1]) continue;
-		const entry = mapRow(values[i]!, richValues[hasRichValues ? i : 0], headers, info.chapterLimit, table);
-		if (table.filter(entry)) {
-			data.push(entry);
-		}
+		data.push(mapRow(values[i]!, richValues[hasRichValues ? i : 0], headers, info.chapterLimit, table));
 	}
 	return data;
 }

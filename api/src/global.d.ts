@@ -74,7 +74,6 @@ type Field<T, TKey extends keyof T & string> = {
 declare type Table<T> = {
 	fields: Field<T, keyof T & string>[];
 	range: Range;
-	filter?: (item: T) => boolean;
 };
 
 /**

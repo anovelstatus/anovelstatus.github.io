@@ -6,7 +6,6 @@ type InternalTitle = Omit<Title, keyof TieredId> & { title: string };
 export function getTitles(info: SpreadsheetInfo) {
 	const definition: Table<InternalTitle> = {
 		range: info.ss.getRange(info.ranges.Titles),
-		filter: chapterFilter(info.chapterLimit, "chapter"),
 		fields: [
 			{ key: "title", source: { type: "exact", name: "Title" }, parse: "string" },
 			{ key: "note", source: { type: "exact", name: "Description" }, parse: "rich" },
@@ -22,8 +21,10 @@ export function getTitles(info: SpreadsheetInfo) {
 		],
 	};
 
-	return mapTable(info, definition).map((x): Title => {
-		const id = parseId(x.title);
-		return { ...id, note: x.note, chapter: x.chapter, previous: x.previous, replaced: x.replaced };
-	});
+	return mapTable(info, definition)
+		.filter(chapterFilter(info.chapterLimit, "chapter"))
+		.map((x): Title => {
+			const id = parseId(x.title);
+			return { ...id, note: x.note, chapter: x.chapter, previous: x.previous, replaced: x.replaced };
+		});
 }
