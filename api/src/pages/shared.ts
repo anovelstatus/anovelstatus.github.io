@@ -105,7 +105,7 @@ export function mapTable<T>(info: SpreadsheetInfo, range: Range, fields: Fields<
 	const richValues = hasRichValues ? range.getRichTextValues() : [[]];
 
 	const usesNotes = fields.some((x) => x.parse === "note");
-	const notes = hasRichValues ? range.getNotes() : [[]];
+	const notes = usesNotes ? range.getNotes() : [[]];
 
 	const headers = findColumns(values[0], fields);
 
