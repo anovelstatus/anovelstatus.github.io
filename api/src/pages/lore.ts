@@ -1,19 +1,14 @@
 import { chapterFilter, getEntireSheet, mapTable } from "./shared";
 
-export function getLore(info: SpreadsheetInfo) {
-	const filter = chapterFilter(info.chapterLimit, "chapter");
+export function getLore(info: SpreadsheetInfo): LoreEntry[] {
+	const range = getEntireSheet(info, "Lore");
 
 	const fields: Fields<LoreEntry> = [
 		{ key: "chapter", source: { type: "exact", name: "Chapter" }, parse: "number" },
 		{ key: "key", source: { type: "exact", name: "Key" }, parse: "string" },
 		{ key: "note", source: { type: "exact", name: "Text" }, parse: "rich" },
+		{ key: "permanent", source: { type: "contains", contains: "Permanent" }, parse: "bool", optional: true },
 	];
 
-	const descRange = getEntireSheet(info, "Lore");
-	const descriptions = mapTable(info, descRange, fields).filter(filter);
-
-	const updateRange = getEntireSheet(info, "Updates");
-	const updates = mapTable(info, updateRange, fields).filter(filter);
-
-	return { descriptions, updates };
+	return mapTable(info, range, fields).filter(chapterFilter(info.chapterLimit, "chapter"));
 }
