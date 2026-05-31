@@ -1,13 +1,12 @@
 import { toIdString } from "@/data/helpers";
-import { Typography } from "@mui/material";
-import type { JSX } from "react";
+import { Typography, type SxProps, type Theme } from "@mui/material";
 
 type PrerequisiteListProps = {
 	skill: Skill;
-	header: JSX.Element;
+	headerSx?: SxProps<Theme>;
 };
 
-export function PrerequisiteList({ skill, header }: PrerequisiteListProps) {
+export function PrerequisiteList({ skill, headerSx }: PrerequisiteListProps) {
 	const list =
 		skill.prerequisites
 			?.split("\n")
@@ -19,7 +18,9 @@ export function PrerequisiteList({ skill, header }: PrerequisiteListProps) {
 	const elements = getList(skill, list);
 	return (
 		<>
-			{header}
+			<Typography variant="h6" sx={headerSx}>
+				Ideal Prerequisites:
+			</Typography>
 			{elements}
 		</>
 	);

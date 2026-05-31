@@ -44,14 +44,7 @@ export default function SkillCard({ id, sx }: SkillCardProps) {
 				<Stack>
 					<RichTextSpan data={skill.description} />
 					<AttributeSummary item={skill} />
-					<PrerequisiteList
-						skill={skill}
-						header={
-							<Typography variant="h6" sx={{ marginTop: "20px" }}>
-								Ideal Prerequisites:
-							</Typography>
-						}
-					/>
+					<PrerequisiteList skill={skill} headerSx={{ marginTop: "20px" }} />
 					{previousSkills.length > 0 ? (
 						<>
 							<Typography variant="h6" sx={{ marginTop: "20px" }}>

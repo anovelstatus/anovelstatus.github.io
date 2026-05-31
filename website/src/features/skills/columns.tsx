@@ -84,10 +84,7 @@ export const useColumns = () => {
 				return (
 					<Stack>
 						<RichTextSpan data={row.original.description} />
-						<PrerequisiteList
-							skill={row.original}
-							header={<Typography variant="h6">Ideal Prerequisites:</Typography>}
-						/>
+						<PrerequisiteList skill={row.original} />
 						{previousSkills.length > 0 && <Typography variant="h6">Previous/Merged Skill(s):</Typography>}
 						<Stack direction="row" spacing={1} sx={{ flexWrap: "wrap" }}>
 							{previousSkills.map((x, index) => (
