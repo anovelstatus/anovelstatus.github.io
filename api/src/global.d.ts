@@ -40,19 +40,11 @@ declare type SpreadsheetInfo = {
 type NamedSource = { type: "exact"; name: string };
 type ContainsSource = { type: "contains"; contains: string };
 
-type NoOptionParse = { type: "split_tiered_id" | "rich" | "split_string" | "string_number" };
-type OptionalParse = { type: "tiered_id" | "string" | "bool"; optional?: boolean };
-type NumberParse = { type: "number" | "split_number"; limited?: boolean; optional?: boolean };
-
 type CustomContext<T> = {
 	/** What has been parsed for this table row so far */
 	rowSoFar: Partial<T>;
 	/** Value in the current column, if a source was set */
 	value: SpreadsheetValue;
-};
-type CustomParse<T, TKey extends keyof T & string> = {
-	type: "custom";
-	parse: (context: CustomContext<T>) => T[TKey];
 };
 
 type Field<T, TKey extends keyof T & string> = {
@@ -62,7 +54,21 @@ type Field<T, TKey extends keyof T & string> = {
 	 * Or don't find a column at all for custom ones.
 	 */
 	source?: NamedSource | ContainsSource;
-	parse: NoOptionParse | OptionalParse | NumberParse | CustomParse<T, TKey>;
+	parse:
+		| "split_tiered_id"
+		| "rich"
+		| "split_string"
+		| "string_number"
+		| "tiered_id"
+		| "string"
+		| "bool"
+		| "number"
+		| "split_number"
+		| ((context: CustomContext<T>) => T[TKey]);
+	/** Only applies to tiered_id, string, bool, number, and split_number */
+	optional?: boolean;
+	/** Only applies to numbers */
+	limited?: boolean;
 };
 
 declare type Table<T> = {

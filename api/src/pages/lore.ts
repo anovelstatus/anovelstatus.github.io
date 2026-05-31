@@ -5,9 +5,9 @@ export function getLore(info: SpreadsheetInfo) {
 		range: info.ss.getSheetByName("Lore")!.getDataRange(),
 		filter: chapterFilter(info.chapterLimit, "chapter"),
 		fields: [
-			{ key: "chapter", source: { type: "exact", name: "Chapter" }, parse: { type: "number" } },
-			{ key: "key", source: { type: "exact", name: "Key" }, parse: { type: "string" } },
-			{ key: "note", source: { type: "exact", name: "Text" }, parse: { type: "rich" } },
+			{ key: "chapter", source: { type: "exact", name: "Chapter" }, parse: "number" },
+			{ key: "key", source: { type: "exact", name: "Key" }, parse: "string" },
+			{ key: "note", source: { type: "exact", name: "Text" }, parse: "rich" },
 		],
 	};
 	const descriptions = mapTable(info, descDef);

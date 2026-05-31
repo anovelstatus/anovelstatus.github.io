@@ -94,7 +94,7 @@ export function chapterFilter<T>(chapterLimit: number, key: keyof T): (entry: T)
 export function mapTable<T>(info: SpreadsheetInfo, table: Table<T>) {
 	const values = table.range.getValues();
 
-	const hasRichValues = table.fields.some((x) => x.parse.type === "rich");
+	const hasRichValues = table.fields.some((x) => x.parse === "rich");
 	const richValues = hasRichValues ? table.range.getRichTextValues() : [[]];
 
 	const headers = findColumns(values[0], table);
@@ -145,28 +145,28 @@ function mapRow<T>(
 	const item: Record<string, unknown> = {};
 
 	for (const field of fields) {
-		const { key, parse } = field;
+		const { key, parse, limited, optional } = field;
 		const value = headers[key] !== undefined ? values[headers[key]] : undefined;
 		try {
-			switch (parse.type) {
+			switch (parse) {
 				case "rich":
 					item[key] = parseRichText(richValues[headers[key]]);
 					break;
 				case "number":
-					item[key] = parse.limited
+					item[key] = limited
 						? parseOptionalNumberLessThanLimit(value, chapterLimit)
-						: parse.optional
+						: optional
 							? parseOptionalNumber(value)
 							: parseNumber(value);
 					break;
 				case "string":
-					item[key] = parse.optional ? parseOptionalString(value) : parseString(value);
+					item[key] = optional ? parseOptionalString(value) : parseString(value);
 					break;
 				case "bool":
-					item[key] = parse.optional ? parseOptionalBoolean(value) : parseBoolean(value);
+					item[key] = optional ? parseOptionalBoolean(value) : parseBoolean(value);
 					break;
 				case "tiered_id":
-					item[key] = parse.optional && !value ? undefined : parseId(value);
+					item[key] = optional && !value ? undefined : parseId(value);
 					break;
 				case "split_tiered_id":
 					item[key] = parseSplitString(value).map(parseId);
@@ -175,16 +175,14 @@ function mapRow<T>(
 					item[key] = parseSplitString(value);
 					break;
 				case "split_number":
-					item[key] = parse.limited ? parseNumbersLessThanLimit(value, chapterLimit) : parseNumbers(value);
-					break;
-				case "custom":
-					item[key] = parse.parse({ rowSoFar: item as Partial<T>, value });
+					item[key] = limited ? parseNumbersLessThanLimit(value, chapterLimit) : parseNumbers(value);
 					break;
 				case "string_number":
 					item[key] = value as string | number; // no great, but only used by one column
 					break;
 				default:
-					throw new Error(`Invalid parse for '${key}': ${parse}`);
+					if (typeof parse === "function") item[key] = parse({ rowSoFar: item as Partial<T>, value });
+					else throw new Error(`Invalid parse for '${key}': ${parse}`);
 					break;
 			}
 		} catch (e) {

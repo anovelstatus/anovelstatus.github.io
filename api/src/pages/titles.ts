@@ -8,14 +8,16 @@ export function getTitles(info: SpreadsheetInfo) {
 		range: info.ss.getRange(info.ranges.Titles),
 		filter: chapterFilter(info.chapterLimit, "chapter"),
 		fields: [
-			{ key: "title", source: { type: "exact", name: "Title" }, parse: { type: "string" } },
-			{ key: "note", source: { type: "exact", name: "Description" }, parse: { type: "rich" } },
-			{ key: "chapter", source: { type: "exact", name: "Chapter" }, parse: { type: "number" } },
-			{ key: "previous", source: { type: "exact", name: "Previous" }, parse: { type: "tiered_id", optional: true } },
+			{ key: "title", source: { type: "exact", name: "Title" }, parse: "string" },
+			{ key: "note", source: { type: "exact", name: "Description" }, parse: "rich" },
+			{ key: "chapter", source: { type: "exact", name: "Chapter" }, parse: "number" },
+			{ key: "previous", source: { type: "exact", name: "Previous" }, parse: "tiered_id", optional: true },
 			{
 				key: "replaced",
 				source: { type: "exact", name: "Chapter Replaced" },
-				parse: { type: "number", limited: true, optional: true },
+				parse: "number",
+				limited: true,
+				optional: true,
 			},
 		],
 	};
