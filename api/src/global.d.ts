@@ -71,10 +71,7 @@ type Field<T, TKey extends keyof T & string> = {
 	limited?: boolean;
 };
 
-declare type Table<T> = {
-	fields: Field<T, keyof T & string>[];
-	range: Range;
-};
+type Fields<T> = Field<T, keyof T & string>[];
 
 /**
  * Randomly-generated string that users should paste into the website

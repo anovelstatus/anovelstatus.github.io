@@ -1,3 +1,10 @@
+export function getRange(info: SpreadsheetInfo, name: RangeKey): Range {
+	return info.ss.getRange(info.ranges[name]);
+}
+export function getEntireSheet(info: SpreadsheetInfo, sheetName: string): Range {
+	return info.ss.getSheetByName(sheetName)!.getDataRange();
+}
+
 /** Parse a value that might be a single number or a comma-separated list of numbers into a number array */
 function parseNumbersLessThanLimit(value: SpreadsheetValue, chapterLimit: number): number[] {
 	return parseNumbers(value).filter((x) => x <= chapterLimit);
@@ -91,26 +98,25 @@ export function chapterFilter<T>(chapterLimit: number, key: keyof T): (entry: T)
 	return (entry: T) => (entry[key] as unknown as number) <= chapterLimit;
 }
 
-export function mapTable<T>(info: SpreadsheetInfo, table: Table<T>) {
-	const values = table.range.getValues();
+export function mapTable<T>(info: SpreadsheetInfo, range: Range, fields: Fields<T>) {
+	const values = range.getValues();
 
-	const hasRichValues = table.fields.some((x) => x.parse === "rich");
-	const richValues = hasRichValues ? table.range.getRichTextValues() : [[]];
+	const hasRichValues = fields.some((x) => x.parse === "rich");
+	const richValues = hasRichValues ? range.getRichTextValues() : [[]];
 
-	const headers = findColumns(values[0], table);
+	const headers = findColumns(values[0], fields);
 
 	const data: T[] = [];
 	for (let i = 1; i < values.length; i++) {
 		// Make sure there's data in the row.
 		// Don't just check the first cell because some have Chapter 0 entries that would be skipped.
 		if (!values[i]![0] && !values[i]![1]) continue;
-		data.push(mapRow(values[i]!, richValues[hasRichValues ? i : 0], headers, info.chapterLimit, table));
+		data.push(mapRow(values[i]!, richValues[hasRichValues ? i : 0], headers, info.chapterLimit, fields));
 	}
 	return data;
 }
 
-function findColumns<T>(headers: SpreadsheetValue[], definition: Table<T>) {
-	const { fields } = definition;
+function findColumns<T>(headers: SpreadsheetValue[], fields: Fields<T>) {
 	const columns = {} as Record<keyof T, number>;
 	for (const { key, source } of fields) {
 		if (!source) continue;
@@ -123,7 +129,6 @@ function findColumns<T>(headers: SpreadsheetValue[], definition: Table<T>) {
 				break;
 			default:
 				throw new Error(`Invalid source for '${key}': ${source}`);
-				break;
 		}
 	}
 	return columns;
@@ -134,9 +139,8 @@ function mapRow<T>(
 	richValues: RichValue[],
 	headers: Record<string, number>,
 	chapterLimit: number,
-	definition: Table<T>,
+	fields: Fields<T>,
 ) {
-	const { fields } = definition;
 	const item: Record<string, unknown> = {};
 
 	for (const field of fields) {
