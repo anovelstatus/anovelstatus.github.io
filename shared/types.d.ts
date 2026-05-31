@@ -171,6 +171,7 @@ declare type LoreEntry = {
 	chapter: number;
 	key: string;
 	note: RichText[];
+	permanent?: boolean;
 };
 
 /** Something that has a tier */
