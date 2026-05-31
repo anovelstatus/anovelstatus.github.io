@@ -135,6 +135,7 @@ declare type HasSomeAttributes = Record<string, number>;
 // todo: replace with slimmer array model
 declare type Status = HasSomeAttributes & {
 	chapter: number;
+	note?: string;
 };
 
 declare type BasicInfo = {
