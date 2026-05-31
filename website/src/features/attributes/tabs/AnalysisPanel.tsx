@@ -1,11 +1,23 @@
 import AppTable, { useAppTable } from "@/components/AppTable";
 import { useAttributes, useChapter, useSkills, useStatusDictionary } from "@/data/api";
-import { Box, Grid, Stack, Tooltip, Typography, type SxProps, type Theme } from "@mui/material";
+import {
+	Box,
+	Card,
+	CardContent,
+	CardHeader,
+	Grid,
+	Stack,
+	Tooltip,
+	Typography,
+	type SxProps,
+	type Theme,
+} from "@mui/material";
 import { calculateBaseAttributeValue, getCurrentBoost } from "../helpers";
 import { useMemo } from "react";
 import { createColumnHelper, type Cell, type ColumnDef } from "@tanstack/react-table";
 import { formatNumber } from "@/data/helpers";
 import LoadingPlaceholder from "@/components/LoadingPlaceholder";
+import { ChaptersChip } from "@/components/chips";
 
 type AttributeAnalysis = {
 	baseValue: number;
@@ -75,6 +87,7 @@ export function AnalysisPanel() {
 		columns: columns,
 		getRowId: (row) => row.chapter.toString(),
 		initialState: { sorting: [{ id: "chapter", desc: true }] },
+		renderNarrowRow: (row) => <AnalysisCard data={row.original} />,
 	});
 
 	const isLoading = !attributes.length || !Object.keys(statuses).length || !skills.length;
@@ -106,18 +119,68 @@ function createAttributeColumn(attribute: Attribute.Details) {
 		header: attribute.name,
 		enableSorting: false,
 		meta: {
-			bodyClassName: (cell) => {
-				const analysis = cell.row.original.attributes[attribute.name]!;
-				if (analysis.lastOfficialValue < analysis.previousValue) return "error";
-				const diff = analysis.calculatedValue - analysis.lastOfficialValue;
-				return diff > 0.5 ? "higher" : diff < -0.5 ? "lower" : "";
-			},
+			bodyClassName: (cell) => getAttributeClass(cell.row.original.attributes[attribute.name]!),
 		},
 		cell: ({ row }) => {
 			const analysis = row.original.attributes[attribute.name]!;
 			return <AnalysisStack analysis={analysis} />;
 		},
 	});
+}
+
+function getAttributeClass(analysis: AttributeAnalysis) {
+	if (analysis.lastOfficialValue < analysis.previousValue) return "error";
+	const diff = analysis.calculatedValue - analysis.lastOfficialValue;
+	return diff > 0.5 ? "higher" : diff < -0.5 ? "lower" : "";
+}
+
+function AnalysisCard({ data }: { data: AttributeAnalysisRow }) {
+	const { data: attributes } = useAttributes();
+
+	return (
+		<Card>
+			<CardHeader
+				title={
+					<Grid container spacing={1} sx={{ alignItems: "center" }}>
+						<ChaptersChip chapters={data.chapter} />
+						<span>Analysis</span>
+					</Grid>
+				}
+			/>
+			<CardContent>
+				<Stack>
+					{data.note && <Typography variant="body2">{data.note}</Typography>}
+					<Stack spacing={0}>
+						{attributes.map((x) => (
+							<AnalysisRow key={x.name} attribute={x} analysis={data.attributes[x.name]!} />
+						))}
+					</Stack>
+				</Stack>
+			</CardContent>
+		</Card>
+	);
+}
+
+function AnalysisRow({ attribute, analysis }: { attribute: Attribute.Details; analysis: AttributeAnalysis }) {
+	const diff = analysis.calculatedValue - analysis.lastOfficialValue;
+	const diffDisplay = diff === 0 ? "--" : diff > 0 ? `+${formatNumber(diff)}` : formatNumber(diff);
+
+	return (
+		<Stack direction="row" className={getAttributeClass(analysis)} sx={{ padding: 1 }}>
+			<span>{attribute.abbreviation}:</span>
+			<span>{analysis.officialValue} |</span>
+			<span>{diffDisplay} |</span>
+			<Tooltip
+				title={<CalculationText analysis={analysis} />}
+				arrow
+				slotProps={{
+					popper: { modifiers: [{ name: "offset", options: { offset: [0, -14] } }] },
+				}}
+			>
+				<span>{formatNumber(analysis.calculatedValue)}</span>
+			</Tooltip>
+		</Stack>
+	);
 }
 
 function AnalysisStack({ analysis }: { analysis: AttributeAnalysis }) {
