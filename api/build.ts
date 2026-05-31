@@ -18,6 +18,7 @@ await build({
 	transform: {
 		define: {
 			PATREON_KEY: `"${process.env["PATREON_KEY"] || "testing"}"`,
+			PATREON_SHEET: `"${process.env["PATREON_SHEET"] || "testing"}"`,
 			SS_LINK: `"${process.env["SS_LINK"] || "testing"}"`,
 			RR_FOLDER: `"${process.env["RR_FOLDER"] || "testing"}"`,
 			PATREON_FOLDER: `"${process.env["PATREON_FOLDER"] || "testing"}"`,

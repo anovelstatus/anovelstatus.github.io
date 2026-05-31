@@ -1,4 +1,4 @@
-import { chapterFilter, parseDynamicTable } from "./shared";
+import { chapterFilter, mapTable } from "./shared";
 
 export function getLore(info: SpreadsheetInfo) {
 	const descDef: Table<LoreEntry> = {
@@ -10,13 +10,13 @@ export function getLore(info: SpreadsheetInfo) {
 			{ key: "note", source: { type: "exact", name: "Text" }, parse: { type: "rich" } },
 		],
 	};
-	const descriptions = parseDynamicTable(info, descDef);
+	const descriptions = mapTable(info, descDef);
 
 	const updateDef: Table<LoreEntry> = {
 		...descDef,
 		range: info.ss.getSheetByName("Updates")!.getDataRange(),
 	};
-	const updates = parseDynamicTable(info, updateDef);
+	const updates = mapTable(info, updateDef);
 
 	return { descriptions, updates };
 }

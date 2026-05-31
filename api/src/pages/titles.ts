@@ -1,4 +1,4 @@
-import { chapterFilter, parseDynamicTable, parseId } from "./shared";
+import { chapterFilter, mapTable, parseId } from "./shared";
 
 type InternalTitle = Omit<Title, keyof TieredId> & { title: string };
 
@@ -20,7 +20,7 @@ export function getTitles(info: SpreadsheetInfo) {
 		],
 	};
 
-	return parseDynamicTable(info, definition).map((x): Title => {
+	return mapTable(info, definition).map((x): Title => {
 		const id = parseId(x.title);
 		return { ...id, note: x.note, chapter: x.chapter, previous: x.previous, replaced: x.replaced };
 	});

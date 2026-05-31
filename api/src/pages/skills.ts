@@ -1,4 +1,4 @@
-import { chapterFilter, parseDynamicTable, parseString } from "./shared";
+import { chapterFilter, mapTable, parseString } from "./shared";
 
 type InternalSkillGain = SkillGain & { id: string };
 
@@ -64,7 +64,7 @@ export function getSkills(info: SpreadsheetInfo) {
 		});
 	}
 
-	return parseDynamicTable(info, definition);
+	return mapTable(info, definition);
 }
 
 function getLevels(info: SpreadsheetInfo) {
@@ -78,5 +78,5 @@ function getLevels(info: SpreadsheetInfo) {
 			{ key: "note", source: { type: "contains", contains: "Levels gained" }, parse: { type: "string" } },
 		],
 	};
-	return parseDynamicTable(info, definition);
+	return mapTable(info, definition);
 }

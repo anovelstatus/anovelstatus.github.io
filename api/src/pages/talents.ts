@@ -1,4 +1,4 @@
-import { chapterFilter, parseDynamicTable } from "./shared";
+import { chapterFilter, mapTable } from "./shared";
 
 export function getTalents(info: SpreadsheetInfo) {
 	const definition: Table<Talent> = {
@@ -25,5 +25,5 @@ export function getTalents(info: SpreadsheetInfo) {
 			{ key: "temporary", source: { type: "exact", name: "Temporary" }, parse: { type: "bool", optional: true } },
 		],
 	};
-	return parseDynamicTable(info, definition);
+	return mapTable(info, definition);
 }

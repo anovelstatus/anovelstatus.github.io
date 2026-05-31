@@ -1,4 +1,4 @@
-import { chapterFilter, parseDynamicTable } from "./shared";
+import { chapterFilter, mapTable } from "./shared";
 
 export function getAchievements(info: SpreadsheetInfo) {
 	const definition: Table<Achievement> = {
@@ -18,5 +18,5 @@ export function getAchievements(info: SpreadsheetInfo) {
 			{ key: "note", source: { type: "exact", name: "Other Notes" }, parse: { type: "rich" } },
 		],
 	};
-	return parseDynamicTable(info, definition);
+	return mapTable(info, definition);
 }

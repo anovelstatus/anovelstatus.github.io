@@ -1,15 +1,15 @@
 /** Parse a value that might be a single number or a comma-separated list of numbers into a number array */
-function getNumbersLessThanLimit(value: SpreadsheetValue, chapterLimit: number): number[] {
-	return parseNumberArray(value).filter((x) => x <= chapterLimit);
+function parseNumbersLessThanLimit(value: SpreadsheetValue, chapterLimit: number): number[] {
+	return parseNumbers(value).filter((x) => x <= chapterLimit);
 }
 
-function parseNumberArray(value: SpreadsheetValue): number[] {
+function parseNumbers(value: SpreadsheetValue): number[] {
 	if (typeof value === "number") return [value];
-	if (typeof value === "string") return parseSplitString(value, ",").map((x) => parseInt(x));
+	if (typeof value === "string") return parseSplitString(value).map((x) => parseInt(x));
 	return [];
 }
 
-function getNumberIfLessThanLimit(value: SpreadsheetValue, chapterLimit: number) {
+function parseOptionalNumberLessThanLimit(value: SpreadsheetValue, chapterLimit: number) {
 	if (typeof value === "number" && value <= chapterLimit) return value;
 	return undefined;
 }
@@ -36,10 +36,10 @@ function parseOptionalString(value: SpreadsheetValue): string | undefined {
 	return parseString(value);
 }
 
-function parseSplitString(value: SpreadsheetValue, split: string): string[] {
+function parseSplitString(value: SpreadsheetValue): string[] {
 	if (!value) return [];
 	if (typeof value !== "string") throw new Error("expected string");
-	return value.split(split).map((x) => x.trim());
+	return value.split(",").map((x) => x.trim());
 }
 
 export function parseNumber(value: SpreadsheetValue): number {
@@ -50,10 +50,6 @@ export function parseNumber(value: SpreadsheetValue): number {
 function parseOptionalNumber(value: SpreadsheetValue): number | undefined {
 	if (value === "") return undefined;
 	return parseNumber(value);
-}
-
-function parseIds(value: SpreadsheetValue): TieredId[] {
-	return parseSplitString(value, ",").map(parseId);
 }
 
 /** Parse something like `Name - Tier` into a name and tier */
@@ -67,7 +63,7 @@ export function parseId(fullName: SpreadsheetValue): TieredId {
 }
 
 /** Get all text formatting details from a cell value */
-function parseRichText(value: RichValue | undefined): RichText[] {
+function parseRichText(value: RichValue): RichText[] {
 	if (!value) return [];
 	return value.getRuns().map((run) => {
 		const style = run.getTextStyle();
@@ -91,42 +87,36 @@ function parseRichText(value: RichValue | undefined): RichText[] {
 }
 
 // todo: better types to remove unknown
-export function hasEntriesFilter<T>(key: keyof T): (entry: T) => boolean {
-	return (entry: T) => (entry[key] as unknown as []).length > 0;
-}
-
-// todo: better types to remove unknown
 export function chapterFilter<T>(chapterLimit: number, key: keyof T): (entry: T) => boolean {
 	return (entry: T) => (entry[key] as unknown as number) <= chapterLimit;
 }
 
-export function parseDynamicTable<T>(info: SpreadsheetInfo, definition: Table<T>) {
-	const range = definition.range;
+export function mapTable<T>(info: SpreadsheetInfo, table: Table<T>) {
+	const values = table.range.getValues();
 
-	const values = range.getValues();
-	const hasRichValues = definition.fields.some((x) => x.parse.type === "rich");
-	const richValues = hasRichValues ? range.getRichTextValues() : [[]];
+	const hasRichValues = table.fields.some((x) => x.parse.type === "rich");
+	const richValues = hasRichValues ? table.range.getRichTextValues() : [[]];
 
-	const headers = mapDynamicColumns(values[0]!, definition);
+	const headers = findColumns(values[0], table);
 
-	if (!definition.filter) definition.filter = (_) => true;
+	if (!table.filter) table.filter = (_) => true;
 
 	const data: T[] = [];
 	for (let i = 1; i < values.length; i++) {
 		// Make sure there's data in the row.
 		// Don't just check the first cell because some have Chapter 0 entries that would be skipped.
 		if (!values[i]![0] && !values[i]![1]) continue;
-		const entry = mapDynamicRow(values[i]!, richValues[hasRichValues ? i : 0], headers, info.chapterLimit, definition);
-		if (definition.filter(entry)) {
+		const entry = mapRow(values[i]!, richValues[hasRichValues ? i : 0], headers, info.chapterLimit, table);
+		if (table.filter(entry)) {
 			data.push(entry);
 		}
 	}
 	return data;
 }
 
-function mapDynamicColumns<T>(headers: string[], definition: Table<T>) {
+function findColumns<T>(headers: SpreadsheetValue[], definition: Table<T>) {
 	const { fields } = definition;
-	const columns = {} as Record<string, number>;
+	const columns = {} as Record<keyof T, number>;
 	for (const { key, source } of fields) {
 		if (!source) continue;
 		switch (source.type) {
@@ -144,7 +134,7 @@ function mapDynamicColumns<T>(headers: string[], definition: Table<T>) {
 	return columns;
 }
 
-function mapDynamicRow<T>(
+function mapRow<T>(
 	values: SpreadsheetValue[],
 	richValues: RichValue[],
 	headers: Record<string, number>,
@@ -164,7 +154,7 @@ function mapDynamicRow<T>(
 					break;
 				case "number":
 					item[key] = parse.limited
-						? getNumberIfLessThanLimit(value, chapterLimit)
+						? parseOptionalNumberLessThanLimit(value, chapterLimit)
 						: parse.optional
 							? parseOptionalNumber(value)
 							: parseNumber(value);
@@ -179,13 +169,13 @@ function mapDynamicRow<T>(
 					item[key] = parse.optional && !value ? undefined : parseId(value);
 					break;
 				case "split_tiered_id":
-					item[key] = parseIds(value);
+					item[key] = parseSplitString(value).map(parseId);
 					break;
 				case "split_string":
-					item[key] = parseSplitString(value, ",");
+					item[key] = parseSplitString(value);
 					break;
 				case "split_number":
-					item[key] = parse.limited ? getNumbersLessThanLimit(value, chapterLimit) : parseNumberArray(value);
+					item[key] = parse.limited ? parseNumbersLessThanLimit(value, chapterLimit) : parseNumbers(value);
 					break;
 				case "custom":
 					item[key] = parse.parse({ rowSoFar: item as Partial<T>, value });

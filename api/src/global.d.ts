@@ -28,8 +28,6 @@ declare type RangeKey =
 /** Range references for various things */
 declare type RangeLookup = Record<RangeKey, string>;
 
-declare type StandardParser<T> = (info: SpreadsheetInfo) => T;
-
 declare type SpreadsheetInfo = {
 	ss: Spreadsheet;
 	chapterLimit: number;
@@ -46,7 +44,12 @@ type NoOptionParse = { type: "split_tiered_id" | "rich" | "split_string" | "stri
 type OptionalParse = { type: "tiered_id" | "string" | "bool"; optional?: boolean };
 type NumberParse = { type: "number" | "split_number"; limited?: boolean; optional?: boolean };
 
-type CustomContext<T> = { rowSoFar: Partial<T>; value?: SpreadsheetValue };
+type CustomContext<T> = {
+	/** What has been parsed for this table row so far */
+	rowSoFar: Partial<T>;
+	/** Value in the current column, if a source was set */
+	value: SpreadsheetValue;
+};
 type CustomParse<T, TKey extends keyof T & string> = {
 	type: "custom";
 	parse: (context: CustomContext<T>) => T[TKey];
@@ -54,6 +57,10 @@ type CustomParse<T, TKey extends keyof T & string> = {
 
 type Field<T, TKey extends keyof T & string> = {
 	key: TKey;
+	/**
+	 * Find table column by exact name, or containing a specific phrase.
+	 * Or don't find a column at all for custom ones.
+	 */
 	source?: NamedSource | ContainsSource;
 	parse: NoOptionParse | OptionalParse | NumberParse | CustomParse<T, TKey>;
 };
@@ -70,8 +77,14 @@ declare type Table<T> = {
  */
 declare const PATREON_KEY: string;
 
+/** Link to main Patreon Character Sheet */
+declare const PATREON_SHEET: string;
+
+/** Link to detail Spreadsheet with all the data for the website */
 declare const SS_LINK: string;
 
-// ID of Google Drive folders where JSON files are stored
+/** ID of Google Drive folder with data files for public readers */
 declare const RR_FOLDER: string;
+
+/** ID of Google Drive folder with data files for Patreon readers */
 declare const PATREON_FOLDER: string;

@@ -40,7 +40,7 @@ function getSpreadsheetInfo(ss: Spreadsheet, ranges: RangeLookup, includePatreon
 	return { ss, chapterLimit, ranges, attributes, attributeNames, includePatreon };
 }
 
-function getPageParser(page: ApiPage): StandardParser<unknown> {
+function getPageParser(page: ApiPage): (info: SpreadsheetInfo) => unknown {
 	switch (page) {
 		case "achievements":
 			return parsers.getAchievements;

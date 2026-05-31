@@ -1,4 +1,4 @@
-import { parseDynamicTable } from "./shared";
+import { mapTable } from "./shared";
 
 export function getOfficialStatuses(info: SpreadsheetInfo) {
 	const sheet = info.ss.getSheetByName("Statuses")!;
@@ -18,5 +18,5 @@ export function getOfficialStatuses(info: SpreadsheetInfo) {
 		});
 	}
 
-	return parseDynamicTable(info, definition);
+	return mapTable(info, definition);
 }

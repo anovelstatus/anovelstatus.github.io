@@ -1,4 +1,4 @@
-import { chapterFilter, parseDynamicTable } from "./shared";
+import { chapterFilter, mapTable } from "./shared";
 
 type InternalBoost = Attribute.Boost & { attribute: string };
 type InternalEvolution = Attribute.Evolution & { attribute: string };
@@ -39,7 +39,7 @@ export function getAttributes(info: SpreadsheetInfo) {
 			},
 		],
 	};
-	return parseDynamicTable(info, definition);
+	return mapTable(info, definition);
 }
 
 function filterAndMap<T>(attribute: string, data: (T & { attribute: string })[]): T[] {
@@ -58,7 +58,7 @@ function getBoosts(info: SpreadsheetInfo) {
 			{ key: "note", source: { type: "exact", name: "Note" }, parse: { type: "rich" } },
 		],
 	};
-	return parseDynamicTable(info, definition);
+	return mapTable(info, definition);
 }
 
 function getEvolutions(info: SpreadsheetInfo) {
@@ -72,7 +72,7 @@ function getEvolutions(info: SpreadsheetInfo) {
 			{ key: "note", source: { type: "exact", name: "Description" }, parse: { type: "rich" } },
 		],
 	};
-	return parseDynamicTable(info, definition);
+	return mapTable(info, definition);
 }
 
 function getGains(info: SpreadsheetInfo) {
@@ -86,7 +86,7 @@ function getGains(info: SpreadsheetInfo) {
 			{ key: "note", source: { type: "exact", name: "How / Why" }, parse: { type: "rich" } },
 		],
 	};
-	return parseDynamicTable(info, definition);
+	return mapTable(info, definition);
 }
 
 function getMilestones(info: SpreadsheetInfo) {
@@ -99,5 +99,5 @@ function getMilestones(info: SpreadsheetInfo) {
 			{ key: "note", source: { type: "exact", name: "Description" }, parse: { type: "rich" } },
 		],
 	};
-	return parseDynamicTable(info, definition);
+	return mapTable(info, definition);
 }

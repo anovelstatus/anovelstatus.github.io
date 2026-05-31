@@ -1,18 +1,18 @@
-import { chapterFilter, hasEntriesFilter, parseDynamicTable } from "./shared";
+import { chapterFilter, mapTable } from "./shared";
 
-export const getBody: StandardParser<Body.Details> = (info) => {
+export function getBody(info: SpreadsheetInfo): Body.Details {
 	return {
 		mutations: getMutations(info),
 		races: getRaces(info),
 		bloodlines: getBloodlines(info),
 		tempering: getTempering(info),
 	};
-};
+}
 
 function getMutations(info: SpreadsheetInfo) {
 	const definition: Table<Body.Modification> = {
 		range: info.ss.getRange(info.ranges.Mutations),
-		filter: hasEntriesFilter("chapters"),
+		filter: (x) => x.chapters.length > 0,
 		fields: [
 			{ key: "name", source: { type: "exact", name: "Mutation" }, parse: { type: "string" } },
 			{ key: "chapters", source: { type: "exact", name: "Chapters" }, parse: { type: "split_number", limited: true } },
@@ -22,7 +22,7 @@ function getMutations(info: SpreadsheetInfo) {
 			{ key: "source", source: { type: "exact", name: "Source" }, parse: { type: "rich" } },
 		],
 	};
-	return parseDynamicTable(info, definition);
+	return mapTable(info, definition);
 }
 
 function getRaces(info: SpreadsheetInfo) {
@@ -38,7 +38,7 @@ function getRaces(info: SpreadsheetInfo) {
 			{ key: "note", source: { type: "exact", name: "Description" }, parse: { type: "rich" } },
 		],
 	};
-	return parseDynamicTable(info, definition);
+	return mapTable(info, definition);
 }
 
 export function getTempering(info: SpreadsheetInfo) {
@@ -46,7 +46,7 @@ export function getTempering(info: SpreadsheetInfo) {
 
 	const definition: Table<TemperingStage> = {
 		range: info.ss.getRange(info.ranges["Body Tempering Stages"]),
-		filter: hasEntriesFilter("updates"),
+		filter: (x) => x.updates.length > 0,
 		fields: [
 			{ key: "name", source: { type: "exact", name: "Stage" }, parse: { type: "string" } },
 			{ key: "tier", source: { type: "exact", name: "Quality" }, parse: { type: "string" } },
@@ -60,7 +60,7 @@ export function getTempering(info: SpreadsheetInfo) {
 			},
 		],
 	};
-	return parseDynamicTable(info, definition);
+	return mapTable(info, definition);
 }
 
 function getTemperingSteps(info: SpreadsheetInfo) {
@@ -78,7 +78,7 @@ function getTemperingSteps(info: SpreadsheetInfo) {
 			{ key: "note", source: { type: "exact", name: "Update" }, parse: { type: "rich" } },
 		],
 	};
-	return parseDynamicTable(info, definition);
+	return mapTable(info, definition);
 }
 
 export function getBloodlines(info: SpreadsheetInfo) {
@@ -86,7 +86,7 @@ export function getBloodlines(info: SpreadsheetInfo) {
 
 	const definition: Table<Bloodline> = {
 		range: info.ss.getRange(info.ranges.Bloodlines),
-		filter: hasEntriesFilter("updates"),
+		filter: (x) => x.updates.length > 0,
 		fields: [
 			{ key: "name", source: { type: "exact", name: "Bloodline" }, parse: { type: "string" } },
 			{ key: "lore", source: { type: "exact", name: "Lore Key" }, parse: { type: "string" } },
@@ -98,7 +98,7 @@ export function getBloodlines(info: SpreadsheetInfo) {
 			},
 		],
 	};
-	return parseDynamicTable(info, definition);
+	return mapTable(info, definition);
 }
 
 function getBloodlineUpdates(info: SpreadsheetInfo) {
@@ -114,5 +114,5 @@ function getBloodlineUpdates(info: SpreadsheetInfo) {
 			{ key: "title", source: { type: "exact", name: "Title" }, parse: { type: "tiered_id", optional: true } },
 		],
 	};
-	return parseDynamicTable(info, definition);
+	return mapTable(info, definition);
 }

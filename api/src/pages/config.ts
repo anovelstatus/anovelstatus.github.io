@@ -1,15 +1,11 @@
-import { chapterFilter, parseDynamicTable, parseString } from "./shared";
-
-function getPatreonSheetLink(ss: Spreadsheet) {
-	return parseString(ss.getRangeByName("PatreonSheetLink")!.getValue());
-}
+import { chapterFilter, mapTable } from "./shared";
 
 export function getConfiguration(info: SpreadsheetInfo): BasicInfo {
 	return {
 		latest: info.chapterLimit,
 		tiers: getTiers(info),
 		unlocked: info.includePatreon,
-		patreonSheetLink: info.includePatreon ? getPatreonSheetLink(info.ss) : undefined,
+		patreonSheetLink: info.includePatreon ? PATREON_SHEET : undefined,
 		shortcuts: getTimelineShortcuts(info),
 		attributes: info.attributes.map((x) => ({
 			name: x.name,
@@ -31,7 +27,7 @@ function getTimelineShortcuts(info: SpreadsheetInfo) {
 			{ key: "menu", source: { type: "exact", name: "Menu" }, parse: { type: "string", optional: true } },
 		],
 	};
-	return parseDynamicTable(info, definition);
+	return mapTable(info, definition);
 }
 
 function getTiers(info: SpreadsheetInfo) {
@@ -50,7 +46,7 @@ function getTiers(info: SpreadsheetInfo) {
 			{ key: "bgColor", source: { type: "exact", name: "Background" }, parse: { type: "string" } },
 		],
 	};
-	const table = parseDynamicTable(info, definition);
+	const table = mapTable(info, definition);
 	// Suppress future knowledge
 	for (const row of table) {
 		if (row.chapterRevealed && row.chapterRevealed > info.chapterLimit) {
