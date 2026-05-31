@@ -6,7 +6,10 @@ export function getOfficialStatuses(info: SpreadsheetInfo) {
 	const numberOfRows = sheet.getLastRow();
 	const range = sheet.getRange(2, 1, numberOfRows - 1, info.attributeNames.length + 1);
 
-	const fields: Fields<Status> = [{ key: "chapter", source: { type: "exact", name: "Chapter" }, parse: "number" }];
+	const fields: Fields<Status> = [
+		{ key: "chapter", source: { type: "exact", name: "Chapter" }, parse: "number" },
+		{ key: "note", source: { type: "exact", name: "Chapter" }, parse: "note" },
+	];
 
 	for (const attribute of info.attributeNames) {
 		fields.push({
@@ -17,5 +20,5 @@ export function getOfficialStatuses(info: SpreadsheetInfo) {
 		});
 	}
 
-	return mapTable(info, range, fields).filter((x) => x.chapter <= info.chapterLimit && x[info.attributeNames[0]!]! > 0);
+	return mapTable(info, range, fields).filter((x) => x.chapter <= info.chapterLimit && x[info.attributeNames[0]] > 0);
 }

@@ -7,11 +7,11 @@ import { useMemo, useState } from "react";
 import { RichTextSpan } from "@/components/RichTextSpan";
 import { maxBy } from "es-toolkit";
 import { AttributeGroupCard } from "../AttributeGroupCard";
+import LoadingPlaceholder from "@/components/LoadingPlaceholder";
 
 export function TribulationPanel() {
 	const chapter = useChapter();
 	const status = useCalculatedStatus(chapter);
-	if (!status) return <></>;
 
 	const lore = useLoreTopic("Tribulations", chapter);
 
@@ -21,6 +21,7 @@ export function TribulationPanel() {
 	const [tempChanges, setTempChanges] = useState({} as HasSomeAttributes);
 
 	const tempStatus = useMemo(() => {
+		if (!status) return undefined;
 		const temp = { ...status };
 		for (const attribute of attributes || []) {
 			if (!temp[attribute.name]) temp[attribute.name] = 0;
@@ -31,6 +32,9 @@ export function TribulationPanel() {
 		}
 		return temp;
 	}, [status, attributes, tempChanges]);
+
+	if (race.name === "Unknown" || !status || !tempStatus)
+		return <LoadingPlaceholder text="Loading race tier, skill levels, and titles..." />;
 
 	const thresholds = getTresholds(tempStatus, race, attributes);
 

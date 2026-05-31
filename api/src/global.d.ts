@@ -57,6 +57,7 @@ type Field<T, TKey extends keyof T & string> = {
 	parse:
 		| "split_tiered_id"
 		| "rich"
+		| "note"
 		| "split_string"
 		| "string_number"
 		| "tiered_id"

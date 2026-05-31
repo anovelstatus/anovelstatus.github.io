@@ -54,11 +54,12 @@ export function getCurrentBoost(chapter: number, attribute?: Attribute.Details):
 }
 
 export function useCalculatedStatus(chapter: number): Status | undefined {
-	const { data: skills } = useSkills();
-	const { data: attributes } = useAttributes();
-	if (!skills || !attributes) return undefined;
-
-	return useMemo(() => calculateStatus(chapter, skills, attributes), [chapter, skills, attributes]);
+	const skills = useSkills();
+	const attributes = useAttributes();
+	return useMemo(() => {
+		if (skills.isFetching || attributes.isFetching) return undefined;
+		return calculateStatus(chapter, skills.data, attributes.data);
+	}, [chapter, skills, attributes]);
 }
 
 export function calculateStatus(chapter: number, skills: Skill[], attributes: Attribute.Details[]): Status | undefined {
@@ -84,7 +85,7 @@ export function calculateBaseAttributeValue(skills: Skill[], attribute: Attribut
 	return baseValue;
 }
 
-export function getChapterGains(chapter: number): React.ReactNode[] {
+export function useChapterGains(chapter: number): React.ReactNode[] {
 	const { data: skills } = useSkills();
 	const { data: attributes } = useAttributes();
 	const notes: React.ReactNode[] = [];

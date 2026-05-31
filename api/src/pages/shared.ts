@@ -104,14 +104,26 @@ export function mapTable<T>(info: SpreadsheetInfo, range: Range, fields: Fields<
 	const hasRichValues = fields.some((x) => x.parse === "rich");
 	const richValues = hasRichValues ? range.getRichTextValues() : [[]];
 
+	const usesNotes = fields.some((x) => x.parse === "note");
+	const notes = usesNotes ? range.getNotes() : [[]];
+
 	const headers = findColumns(values[0], fields);
 
 	const data: T[] = [];
 	for (let i = 1; i < values.length; i++) {
 		// Make sure there's data in the row.
 		// Don't just check the first cell because some have Chapter 0 entries that would be skipped.
-		if (!values[i]![0] && !values[i]![1]) continue;
-		data.push(mapRow(values[i]!, richValues[hasRichValues ? i : 0], headers, info.chapterLimit, fields));
+		if (!values[i][0] && !values[i][1]) continue;
+		data.push(
+			mapRow(
+				values[i],
+				richValues[hasRichValues ? i : 0],
+				notes[usesNotes ? i : 0],
+				headers,
+				info.chapterLimit,
+				fields,
+			),
+		);
 	}
 	return data;
 }
@@ -137,6 +149,7 @@ function findColumns<T>(headers: SpreadsheetValue[], fields: Fields<T>) {
 function mapRow<T>(
 	values: SpreadsheetValue[],
 	richValues: RichValue[],
+	notes: string[],
 	headers: Record<string, number>,
 	chapterLimit: number,
 	fields: Fields<T>,
@@ -150,6 +163,9 @@ function mapRow<T>(
 			switch (parse) {
 				case "rich":
 					item[key] = parseRichText(richValues[headers[key]]);
+					break;
+				case "note":
+					item[key] = notes[headers[key]];
 					break;
 				case "number":
 					item[key] = limited

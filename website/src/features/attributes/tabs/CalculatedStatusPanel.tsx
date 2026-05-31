@@ -1,18 +1,19 @@
 import { useChapter } from "@/data/api";
 import { Stack, Typography } from "@mui/material";
 import { AttributeStatus } from "../AttributeStatus";
-import { getChapterGains, useCalculatedStatus } from "../helpers";
+import { useChapterGains, useCalculatedStatus } from "../helpers";
 import ChaptersChip from "@/components/chips/ChaptersChip";
+import LoadingPlaceholder from "@/components/LoadingPlaceholder";
 
 export function CalculatedStatusPanel() {
 	const chapter = useChapter();
 	const status = useCalculatedStatus(chapter);
-	if (!status) return <></>;
+	const previousStatus = useCalculatedStatus(chapter - 1);
 
-	const gains = getChapterGains(chapter);
+	const gains = useChapterGains(chapter);
 	if (!gains.length) gains.push("No skill or title gains recorded for this chapter.");
 
-	const previousStatus = useCalculatedStatus(chapter - 1);
+	if (!status) return <LoadingPlaceholder text="Loading skills and titles..." />;
 
 	return (
 		<Stack spacing={2}>

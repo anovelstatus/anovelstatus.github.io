@@ -5,6 +5,7 @@ import { calculateBaseAttributeValue, getCurrentBoost } from "../helpers";
 import { useMemo, useState } from "react";
 import { createColumnHelper, type ColumnDef } from "@tanstack/react-table";
 import { formatNumber } from "@/data/helpers";
+import LoadingPlaceholder from "@/components/LoadingPlaceholder";
 
 type AttributeAnalysisRow = {
 	chapter: number;
@@ -62,6 +63,7 @@ export function AnalysisPanel() {
 	});
 
 	const isLoading = !attributes.length || !Object.keys(statuses).length || !skills.length;
+	if (isLoading) return <LoadingPlaceholder text="Loading statuses, skill levels, and titles..." />;
 
 	return (
 		<Stack spacing={2}>
