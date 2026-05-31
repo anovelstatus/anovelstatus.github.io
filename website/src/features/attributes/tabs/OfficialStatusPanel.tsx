@@ -5,13 +5,16 @@ import { AttributeDescriptions } from "../AttributeDescriptions";
 import { AttributeStatus } from "../AttributeStatus";
 import { getPastMilestones, getPastEvolutions } from "../helpers";
 import { RichTextSpan } from "@/components/RichTextSpan";
+import LoadingPlaceholder from "@/components/LoadingPlaceholder";
 
 export function OfficialStatusPanel() {
 	const chapter = useChapter();
 	const statuses = useStatusDictionary();
-	const status = getLatestStatus(statuses, chapter);
-	if (!status) return <></>;
-	const previousStatus = getLatestStatus(statuses, chapter - 1);
+	const status = getStatus(statuses, chapter);
+	const previousStatus = getStatus(statuses, chapter - 1);
+
+	if (!status) return <LoadingPlaceholder text="Loading status..." />;
+
 	return (
 		<Stack spacing={2}>
 			<Typography variant="body2" component="div">
@@ -50,7 +53,7 @@ export function OfficialStatusPanel() {
 }
 
 /** Find the latest status for a given chapter or earlier */
-function getLatestStatus(statuses: Record<number, Status>, chapter: number): Status | undefined {
+function getStatus(statuses: Record<number, Status>, chapter: number): Status | undefined {
 	while (chapter >= 1) {
 		const status = statuses[chapter];
 		if (status) return status;
