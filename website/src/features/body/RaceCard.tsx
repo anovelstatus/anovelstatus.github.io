@@ -38,10 +38,11 @@ export function RaceCard({ race, sx }: RaceCardProps) {
 				<Typography variant="h6" gutterBottom>
 					Talent{talents.length > 1 ? "s" : ""}:
 				</Typography>
-				<Stack direction="row" spacing={1} sx={{ flexWrap: "wrap" }}>
+				<Stack direction="row" spacing={1} sx={{ flexWrap: "wrap", alignItems: "center" }}>
 					{talents.map((id, index) => (
 						<TalentButton key={index} item={id} />
 					))}
+					{`+ ${race.freeSlots} free slots (see Talents page for current talents)`}
 				</Stack>
 			</CardContent>
 			{previousRace && (

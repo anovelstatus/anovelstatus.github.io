@@ -1,5 +1,5 @@
 import { Card, CardHeader, CardContent, Stack, Typography } from "@mui/material";
-import { ChaptersChip } from "@/components/chips";
+import { ChaptersChip, RarityChip } from "@/components/chips";
 import { useChapter } from "@/data/api";
 import { RichTextSpan } from "@/components/RichTextSpan";
 
@@ -16,6 +16,7 @@ export function BodyModificationCard({ mutation }: BodyModificationCardProps) {
 					<Stack direction="row" sx={{ alignItems: "center" }}>
 						{mutation.name}
 						<ChaptersChip chapters={mutation.chapters} />
+						{mutation.tier && <RarityChip name={mutation.tier} />}
 					</Stack>
 				}
 			/>
