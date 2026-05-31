@@ -36,18 +36,6 @@ export function findByIds<T extends TieredId>(list: T[], previous?: TieredId[]):
 	);
 }
 
-export function mapMapValues<TKey, TValue, TNewValue>(
-	original: Map<TKey, TValue>,
-	convertValue: (obj: TValue) => TNewValue,
-) {
-	const map = new Map<TKey, TNewValue>();
-	for (const [key, value] of original) {
-		const newValue = convertValue(value);
-		map.set(key, newValue);
-	}
-	return map;
-}
-
 /** Parse something like `Name - Tier` into a name and tier */
 export function parseId(fullName: string): TieredId {
 	const parts = fullName.split(" - ");
