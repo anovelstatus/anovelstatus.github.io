@@ -1,5 +1,4 @@
-import { getTierRank, toIdString } from "@/data/helpers";
-import { Typography } from "@mui/material";
+import { getTierRank } from "@/data/helpers";
 import { sumBy } from "es-toolkit";
 
 export const IDEAL_QUALITY = "Ideal";
