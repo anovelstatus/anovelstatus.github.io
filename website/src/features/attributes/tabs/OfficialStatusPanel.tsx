@@ -10,8 +10,8 @@ import LoadingPlaceholder from "@/components/LoadingPlaceholder";
 export function OfficialStatusPanel() {
 	const chapter = useChapter();
 	const statuses = useStatusDictionary();
-	const status = getStatus(statuses, chapter);
-	const previousStatus = getStatus(statuses, chapter - 1);
+	const status = getLatestStatus(statuses, chapter);
+	const previousStatus = getLatestStatus(statuses, chapter - 1);
 
 	if (!status) return <LoadingPlaceholder text="Loading status..." />;
 
@@ -53,7 +53,7 @@ export function OfficialStatusPanel() {
 }
 
 /** Find the latest status for a given chapter or earlier */
-function getStatus(statuses: Record<number, Status>, chapter: number): Status | undefined {
+function getLatestStatus(statuses: Record<number, Status>, chapter: number): Status | undefined {
 	while (chapter >= 1) {
 		const status = statuses[chapter];
 		if (status) return status;
