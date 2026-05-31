@@ -1,14 +1,13 @@
 import { Card, CardHeader, CardContent, Stack, Typography, Chip, Grid } from "@mui/material";
 import { ChaptersChip, RarityChip } from "@/components/chips";
-import { useChapter, useLoreTopic } from "@/data/api";
+import { useChapter } from "@/data/api";
 import { RichTextSpan } from "@/components/RichTextSpan";
-import { SkillButton } from "../skills";
-import { TitleButton } from "../titles";
+import { SkillButton } from "@/features/skills";
+import { TitleButton } from "@/features/titles";
+import { LoreSection } from "@/components/LoreSection";
 
 export function TemperingStageCard({ stage }: { stage: TemperingStage }) {
 	const chapter = useChapter();
-
-	const lore = useLoreTopic("Tempering - " + stage.name, chapter);
 
 	const completedSteps = stage.updates.filter((x) => x.completed && x.completed <= chapter);
 	const startedSteps = stage.updates.filter((x) => x.started <= chapter);
@@ -27,12 +26,7 @@ export function TemperingStageCard({ stage }: { stage: TemperingStage }) {
 			<CardContent>
 				<Stack>
 					<RichTextSpan data={stage.description} />
-					{lore.description && <RichTextSpan data={lore.description} />}
-					{lore.updates.map((update, index) => (
-						<Stack direction="row" key={index}>
-							<RichTextSpan data={update.note} />
-						</Stack>
-					))}
+					<LoreSection topic="Tempering" subtopic={stage.name} />
 					<Typography variant="h6">Steps</Typography>
 					<Grid container spacing={2}>
 						{startedSteps.map((x, index) => {

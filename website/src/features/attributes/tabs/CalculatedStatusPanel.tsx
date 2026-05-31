@@ -1,7 +1,7 @@
 import { useChapter } from "@/data/api";
 import { Stack, Typography } from "@mui/material";
-import { AttributeStatus } from "../AttributeStatus";
-import { useChapterGains, useCalculatedStatus } from "../helpers";
+import { AttributeStatus } from "@/features/attributes/AttributeStatus";
+import { useChapterGains, useCalculatedStatus } from "@/features/attributes/helpers";
 import ChaptersChip from "@/components/chips/ChaptersChip";
 import LoadingPlaceholder from "@/components/LoadingPlaceholder";
 

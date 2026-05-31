@@ -5,7 +5,7 @@ import LoadingCard from "@/components/LoadingCard";
 import { popupCardStyles } from "@/styles";
 import { useRaces } from "@/data/api";
 import { RichTextSpan } from "@/components/RichTextSpan";
-import TalentButton from "../talents/TalentButton";
+import TalentButton from "@/features/talents/TalentButton";
 
 export type RaceCardProps = {
 	race?: Race;

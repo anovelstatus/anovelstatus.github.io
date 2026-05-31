@@ -1,19 +1,17 @@
-import { useAttributes, useChapter, useGroupedAttributes, useLoreTopic, useRaceOnChapter } from "@/data/api";
+import { useAttributes, useChapter, useGroupedAttributes, useRaceOnChapter } from "@/data/api";
 import { Box, Grid, Input, Stack, Typography } from "@mui/material";
-import { AttributeStatus } from "../AttributeStatus";
-import { getCurrentBoost, useCalculatedStatus } from "../helpers";
+import { AttributeStatus } from "@/features/attributes/AttributeStatus";
+import { getCurrentBoost, useCalculatedStatus } from "@/features/attributes/helpers";
 import ChaptersChip from "@/components/chips/ChaptersChip";
 import { useMemo, useState } from "react";
-import { RichTextSpan } from "@/components/RichTextSpan";
 import { maxBy } from "es-toolkit";
-import { AttributeGroupCard } from "../AttributeGroupCard";
+import { AttributeGroupCard } from "@/features/attributes/AttributeGroupCard";
 import LoadingPlaceholder from "@/components/LoadingPlaceholder";
+import { LoreSection } from "@/components/LoreSection";
 
 export function TribulationPanel() {
 	const chapter = useChapter();
 	const status = useCalculatedStatus(chapter);
-
-	const lore = useLoreTopic("Tribulations", chapter);
 
 	const { data: attributes } = useAttributes();
 	const race = useRaceOnChapter(chapter);
@@ -44,7 +42,7 @@ export function TribulationPanel() {
 				This displays a calculated status for <ChaptersChip chapters={[chapter]} /> based on total skill levels and
 				title boosts. Then you can add any hypothetical gains to see if Priam would reach new Tribulation thresholds.
 			</Typography>
-			<RichTextSpan data={lore.description} />
+			<LoreSection topic="Tribulations" />
 			<AttributeStatus status={tempStatus} previousStatus={status} />
 			<Typography variant="h4">Additions</Typography>
 			<Typography variant="body2" component="div" sx={{ fontStyle: "italic" }}>

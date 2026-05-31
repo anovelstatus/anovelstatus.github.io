@@ -8,6 +8,7 @@ import { useColumns } from "./columns";
 import { getFilteredRowModel } from "@tanstack/react-table";
 import SkillFilters from "./SkillFilters";
 import { showSkill, type SkillFiltersOptions } from "./helpers";
+import { LoreSection } from "@/components/LoreSection";
 
 export default function SkillTable() {
 	const chapter = useChapter();
@@ -56,6 +57,7 @@ export default function SkillTable() {
 			<Typography variant="h4" gutterBottom>
 				Priam's Skills
 			</Typography>
+			<LoreSection topic="Skills" />
 			<SkillFilters onChange={setFilters} />
 			<Grid container spacing={2}>
 				<FormGroup>

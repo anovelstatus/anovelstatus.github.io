@@ -17,7 +17,7 @@ import { useState } from "react";
 import ChapterTimeline from "./ChapterTimeline";
 import { Link, useLocation, type RegisteredRouter, type ValidateToPath } from "@tanstack/react-router";
 import PopupState, { bindMenu, bindTrigger } from "material-ui-popup-state";
-import { UnlockButton } from "../UnlockButton";
+import { UnlockButton } from "@/components/UnlockButton";
 import { useIsUnlocked } from "@/data/api";
 
 type NavLink = {

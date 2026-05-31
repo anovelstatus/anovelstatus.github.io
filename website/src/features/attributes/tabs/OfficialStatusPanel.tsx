@@ -1,9 +1,9 @@
 import { ChaptersChip } from "@/components/chips";
 import { useChapter, useStatusDictionary } from "@/data/api";
 import { Stack, Typography } from "@mui/material";
-import { AttributeDescriptions } from "../AttributeDescriptions";
-import { AttributeStatus } from "../AttributeStatus";
-import { getPastMilestones, getPastEvolutions } from "../helpers";
+import { AttributeDescriptions } from "@/features/attributes/AttributeDescriptions";
+import { AttributeStatus } from "@/features/attributes/AttributeStatus";
+import { getPastMilestones, getPastEvolutions } from "@/features/attributes/helpers";
 import { RichTextSpan } from "@/components/RichTextSpan";
 import LoadingPlaceholder from "@/components/LoadingPlaceholder";
 

@@ -5,6 +5,7 @@ import {
 	OfficialStatusPanel,
 	TribulationPanel,
 } from "@/features/attributes/tabs";
+import { LoreSection } from "@/components/LoreSection";
 import { Stack, Typography } from "@mui/material";
 
 export function AttributePage() {
@@ -21,6 +22,7 @@ export function AttributePage() {
 			<Typography variant="h3" gutterBottom>
 				Priam's Attributes
 			</Typography>
+			<LoreSection topic="Attributes" />
 			<AppTabs labels={tabLabels} panels={tabPanels} title="Attribute Totals" />
 		</Stack>
 	);

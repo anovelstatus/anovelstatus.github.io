@@ -2,11 +2,11 @@ import { useAttributes, useSkills } from "@/data/api";
 import { toIdString } from "@/data/helpers";
 import { Box } from "@mui/material";
 import { useMemo } from "react";
-import { SkillButton } from "../skills";
-import { TitleButton } from "../titles";
+import { SkillButton } from "@/features/skills";
+import { TitleButton } from "@/features/titles";
 import { hasNote, RichTextSpan } from "@/components/RichTextSpan";
 import { sumBy } from "es-toolkit";
-import { getLevelOnChapter } from "../skills/helpers";
+import { getLevelOnChapter } from "@/features/skills/helpers";
 
 export function getEvolvedName(attribute: Attribute.Details, status: Status): string {
 	const evolution = getCurrentEvolution(status, attribute);

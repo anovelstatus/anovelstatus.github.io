@@ -1,15 +1,15 @@
 import AppTable, { useAppTable } from "@/components/AppTable";
 import { useAttributes, useChapter, useLatestChapter, useSkills, useStatusDictionary } from "@/data/api";
 import { Box, Grid, Stack, Typography } from "@mui/material";
-import { calculateBaseAttributeValue, getCurrentBoost } from "../helpers";
+import { calculateBaseAttributeValue, getCurrentBoost } from "@/features/attributes/helpers";
 import { useEffect, useMemo, useState } from "react";
 import { createColumnHelper, getFilteredRowModel, type Cell, type ColumnDef } from "@tanstack/react-table";
 import { formatNumber } from "@/data/helpers";
 import LoadingPlaceholder from "@/components/LoadingPlaceholder";
-import type { AttributeAnalysis, AttributeAnalysisRow } from "../analysis/types";
-import { styles, getClass } from "../analysis/styles";
-import { AnalysisStack } from "../analysis/AnalysisStack";
-import { AnalysisCard } from "../analysis/AnalysisCard";
+import type { AttributeAnalysis, AttributeAnalysisRow } from "@/features/attributes/analysis/types";
+import { styles, getClass } from "@/features/attributes/analysis/styles";
+import { AnalysisStack } from "@/features/attributes/analysis/AnalysisStack";
+import { AnalysisCard } from "@/features/attributes/analysis/AnalysisCard";
 
 const notes = [
 	{ class: "ch-note", note: "Hover this chapter cell for a note" },

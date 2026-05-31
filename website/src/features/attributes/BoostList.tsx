@@ -1,8 +1,8 @@
 import { Typography, Box } from "@mui/material";
-import { ChaptersChip } from "../../components/chips";
+import { ChaptersChip } from "@/components/chips";
 import { useChapter } from "@/data/api";
 import { getPastBoosts } from "./helpers";
-import { TitleButton } from "../titles";
+import { TitleButton } from "@/features/titles";
 import { hasNote, RichTextSpan } from "@/components/RichTextSpan";
 
 export type AttributeDetailsProps = {

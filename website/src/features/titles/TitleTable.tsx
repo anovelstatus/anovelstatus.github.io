@@ -8,6 +8,7 @@ import { useColumns, columnstyles } from "./columns";
 import { getExpandedRowModel, getFilteredRowModel } from "@tanstack/react-table";
 import { getPreviousTitleChain } from "./helpers";
 import { RarityButtonChip } from "@/components/chips";
+import { LoreSection } from "@/components/LoreSection";
 
 export default function TitleTable() {
 	const chapter = useChapter();
@@ -66,6 +67,7 @@ export default function TitleTable() {
 			<Typography variant="h4" gutterBottom>
 				Priam's Titles <Chip label={currentTitles.length} sx={{ fontWeight: "bold" }} />
 			</Typography>
+			<LoreSection topic="Titles" />
 			<Grid container spacing={2}>
 				{metalTiers
 					.filter((x) => totals[x])
