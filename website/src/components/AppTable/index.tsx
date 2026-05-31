@@ -29,6 +29,7 @@ import { HoverTitleFeature } from "./HoverTitleFeature";
 type TableProps<T> = {
 	table: Table<T>;
 	isLoading?: boolean;
+	size?: "small" | "medium";
 } & PropsWithStyle;
 
 export function useAppTable<T>(options: Partial<TableOptions<T>>) {
@@ -49,7 +50,7 @@ export function useAppTable<T>(options: Partial<TableOptions<T>>) {
 	} as TableOptions<T>);
 }
 
-export default function AppTable<T>({ sx, table, isLoading }: TableProps<T>): ReactElement {
+export default function AppTable<T>({ sx, table, isLoading, size = "medium" }: TableProps<T>): ReactElement {
 	const theme = useTheme();
 
 	const isNarrow = useMediaQuery(theme.breakpoints.down(table.getNarrowBreakpoint()));
@@ -74,7 +75,7 @@ export default function AppTable<T>({ sx, table, isLoading }: TableProps<T>): Re
 
 	return (
 		<TableContainer sx={sx} component={Paper}>
-			<TableComponent className="w-full ">
+			<TableComponent className="w-full " size={size}>
 				<TableHead>
 					{table.getHeaderGroups().map((headerGroup) => (
 						<TableRow key={headerGroup.id}>
