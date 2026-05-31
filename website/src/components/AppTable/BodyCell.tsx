@@ -28,6 +28,7 @@ export default function BodyCell<T>({ cell }: BodyCellProps<T>) {
 				width: size > 0 ? size * colSpan + "px" : undefined,
 				...cell.getSx(),
 			}}
+			title={cell.getTitle()}
 		>
 			{flexRender(column.columnDef.cell, getContext())}
 		</TableCell>

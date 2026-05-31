@@ -24,6 +24,7 @@ import HeaderCell from "./HeaderCell";
 import BodyCell from "./BodyCell";
 import { ClassNameFeature } from "./ClassNameFeature";
 import { SxFeature } from "./SxFeature";
+import { HoverTitleFeature } from "./HoverTitleFeature";
 
 type TableProps<T> = {
 	table: Table<T>;
@@ -31,7 +32,14 @@ type TableProps<T> = {
 } & PropsWithStyle;
 
 export function useAppTable<T>(options: Partial<TableOptions<T>>) {
-	const features = [NarrowFeature, ColSpanFeature, ClassNameFeature, SxFeature, ...(options._features ?? [])];
+	const features = [
+		NarrowFeature,
+		ColSpanFeature,
+		ClassNameFeature,
+		HoverTitleFeature,
+		SxFeature,
+		...(options._features ?? []),
+	];
 	return useReactTable({
 		debugTable: true,
 		getCoreRowModel: getCoreRowModel(),

@@ -1,46 +1,24 @@
 import AppTable, { useAppTable } from "@/components/AppTable";
 import { useAttributes, useChapter, useSkills, useStatusDictionary } from "@/data/api";
-import { Autocomplete, FormControl, FormGroup, Stack, TextField, Typography } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 import { calculateBaseAttributeValue, getCurrentBoost } from "../helpers";
-import { useMemo, useState } from "react";
-import { createColumnHelper, type ColumnDef } from "@tanstack/react-table";
+import { useMemo } from "react";
+import { createColumnHelper, type Cell, type ColumnDef } from "@tanstack/react-table";
 import { formatNumber } from "@/data/helpers";
 import LoadingPlaceholder from "@/components/LoadingPlaceholder";
 
-type AttributeAnalysisRow = {
-	chapter: number;
+type AttributeAnalysis = {
 	baseValue: number;
 	titleBoost: number;
 	calculatedValue: number;
 	officialValue: string;
 	lastOfficialValue: number;
 };
-
-const columns = [
-	createColumnHelper<AttributeAnalysisRow>().accessor("chapter", { header: "Chapter" }),
-	createColumnHelper<AttributeAnalysisRow>().accessor("officialValue", { header: "Official", enableSorting: false }),
-	createColumnHelper<AttributeAnalysisRow>().display({
-		id: "calculation",
-		header: "Calculated",
-		enableSorting: false,
-		cell: ({ row }) => {
-			const base = formatNumber(row.original.baseValue);
-			const boost = Math.round(row.original.titleBoost * 100) + "%";
-			const total = formatNumber(row.original.calculatedValue);
-			return `${total} (${base} + ${boost})`;
-		},
-	}),
-	createColumnHelper<AttributeAnalysisRow>().display({
-		id: "difference",
-		header: "Difference",
-		enableSorting: false,
-		cell: ({ row }) => {
-			const diff = row.original.calculatedValue - row.original.lastOfficialValue;
-			return diff === 0 ? "--" : diff > 0 ? `+${formatNumber(diff)}` : formatNumber(diff);
-		},
-	}),
-	// todo: bring in note that is currently in comments on the Sheet
-] as ColumnDef<AttributeAnalysisRow>[];
+type AttributeAnalysisRow = {
+	chapter: number;
+	note: string;
+	attributes: Record<string, AttributeAnalysis>;
+};
 
 export function AnalysisPanel() {
 	const chapter = useChapter();
@@ -48,11 +26,24 @@ export function AnalysisPanel() {
 	const statuses = useStatusDictionary();
 	const { data: skills } = useSkills();
 
-	const [selectedAttribute, setSelectedAttribute] = useState<Attribute.Details | null>(null);
+	const columns: ColumnDef<AttributeAnalysisRow>[] = [
+		createColumnHelper<AttributeAnalysisRow>().accessor("chapter", {
+			header: "Chapter",
+			enableSorting: true,
+			meta: {
+				bodySx: (cell: Cell<AttributeAnalysisRow, unknown>) => ({
+					background: cell.row.original.note ? "#582b00" : "inherit",
+					textAlign: "center",
+				}),
+				title: (cell: Cell<AttributeAnalysisRow, unknown>) => cell.row.original.note,
+			},
+		}),
+		...attributes.map(createAttributeColumn),
+	] as ColumnDef<AttributeAnalysisRow>[];
 
 	const tableData = useMemo(
-		() => getTableData(chapter, selectedAttribute, statuses, skills),
-		[chapter, selectedAttribute, statuses, skills],
+		() => getTableData(chapter, attributes, statuses, skills),
+		[chapter, attributes, statuses, skills],
 	);
 
 	const table = useAppTable<AttributeAnalysisRow>({
@@ -68,64 +59,94 @@ export function AnalysisPanel() {
 	return (
 		<Stack spacing={2}>
 			<Typography variant="body2">Under Construction 🚧</Typography>
-			<Typography variant="body2">
-				Pick an attribute to view its growth since the beginning, and compare the calculated numbers to the official
-				numbers.
-			</Typography>
-			<FormGroup>
-				<FormControl sx={{ m: 1, width: 300 }}>
-					<Autocomplete
-						multiple={false}
-						aria-description="Pick attribute to analyse"
-						id="attributes-filter"
-						value={selectedAttribute}
-						onChange={(_evt, value) => setSelectedAttribute(value)}
-						renderInput={(params) => <TextField {...params} label="Attribute:" />}
-						options={attributes}
-						groupBy={(x) => x.category}
-						getOptionLabel={(x) => x.name}
-						getOptionKey={(x) => x.name}
-					/>
-				</FormControl>
-			</FormGroup>
-			{selectedAttribute && <AppTable isLoading={isLoading} table={table} />}
+			<Typography variant="body2">Each attribute is shown as: [Official, Difference, Calculated]</Typography>
+			<AppTable isLoading={isLoading} table={table} />
 		</Stack>
 	);
 }
 
+function createAttributeColumn(attribute: Attribute.Details) {
+	return createColumnHelper<AttributeAnalysisRow>().display({
+		id: attribute.name,
+		header: attribute.name,
+		enableSorting: false,
+		cell: ({ row }) => {
+			const analysis = row.original.attributes[attribute.name]!;
+			const official = analysis.officialValue;
+
+			const base = formatNumber(analysis.baseValue);
+			const boost = Math.round(analysis.titleBoost * 100) + "%";
+			const total = formatNumber(analysis.calculatedValue);
+
+			const diff = analysis.calculatedValue - analysis.lastOfficialValue;
+			const diffDisplay = diff === 0 ? "--" : diff > 0 ? `+${formatNumber(diff)}` : formatNumber(diff);
+
+			return (
+				<Stack direction="column" sx={{ textAlign: "center" }}>
+					<span>{official}</span>
+					<span>{diffDisplay}</span>
+					<span title={`(${base} + ${boost})`}>{total}</span>
+				</Stack>
+			);
+		},
+	});
+}
+
 function getTableData(
 	chapterLimit: number,
-	attribute: Attribute.Details | null,
+	attributes: Attribute.Details[],
 	statuses: Record<number, Status>,
 	skills: Skill[],
 ): AttributeAnalysisRow[] {
 	const data: AttributeAnalysisRow[] = [];
 
-	if (!attribute || !statuses[1]) {
+	if (!attributes.length || !statuses[1]) {
 		return data;
 	}
 
 	let previousStatus = statuses[1]!;
 	for (let chapter = 1; chapter <= chapterLimit; chapter++) {
-		const baseValue = calculateBaseAttributeValue(skills, attribute, chapter);
-		const boost = getCurrentBoost(chapter, attribute);
-		const calculatedValue = Math.round(baseValue * (1 + boost));
 		const status = statuses[chapter];
-		let officialValue = "?";
 		if (status) {
 			previousStatus = status;
-			officialValue = formatNumber(status[attribute.name] || 0);
 		}
-		const lastOfficialValue = (status ?? previousStatus)[attribute.name] || 0;
-		data.push({
+
+		const row: AttributeAnalysisRow = {
 			chapter: chapter,
-			lastOfficialValue: lastOfficialValue,
-			officialValue: officialValue,
-			baseValue: baseValue,
-			titleBoost: boost,
-			calculatedValue: calculatedValue,
-		});
+			note: status?.note ?? "",
+			attributes: {},
+		};
+
+		for (const attribute of attributes) {
+			row.attributes[attribute.name] = calculateAttribute(previousStatus, status, chapter, attribute, skills);
+		}
+		data.push(row);
 	}
 
 	return data;
+}
+
+function calculateAttribute(
+	previousStatus: Status,
+	status: Status | undefined,
+	chapter: number,
+	attribute: Attribute.Details,
+	skills: Skill[],
+) {
+	const baseValue = calculateBaseAttributeValue(skills, attribute, chapter);
+	const boost = getCurrentBoost(chapter, attribute);
+	const calculatedValue = Math.round(baseValue * (1 + boost));
+	let officialValue = "?";
+	if (status) {
+		officialValue = formatNumber(status[attribute.name] || 0);
+	}
+	const lastOfficialValue = (status ?? previousStatus)[attribute.name] || 0;
+
+	return {
+		lastOfficialValue: lastOfficialValue,
+		officialValue: officialValue,
+		baseValue: baseValue,
+		titleBoost: boost,
+		calculatedValue: calculatedValue,
+	};
 }
