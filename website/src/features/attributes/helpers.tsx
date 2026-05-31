@@ -1,5 +1,5 @@
 import { useAttributes, useSkills } from "@/data/api";
-import { getCurrentLevel, sum, toIdString } from "@/data/helpers";
+import { getCurrentLevel, toIdString } from "@/data/helpers";
 import { Box } from "@mui/material";
 import { useMemo } from "react";
 import { SkillButton } from "../skills";
@@ -49,7 +49,7 @@ export function getCurrentEvolution(status?: Status, attribute?: Attribute.Detai
 
 export function getCurrentBoost(chapter: number, attribute?: Attribute.Details): number {
 	const boosts = getPastBoosts(chapter, attribute);
-	const total = sum(boosts, (x) => x.boost);
+	const total = sumBy(boosts, (x) => x.boost);
 	return Math.round(total * 100) / 100;
 }
 
@@ -75,7 +75,7 @@ export function calculateStatus(chapter: number, skills: Skill[], attributes: At
 
 export function calculateBaseAttributeValue(skills: Skill[], attribute: Attribute.Details, chapter: number) {
 	const attributeSkills = skills.filter((skill) => skill[attribute.name] && skill[attribute.name]! > 0);
-	let baseValue = sum(
+	let baseValue = sumBy(
 		attribute.gains.filter((x) => x.chapter <= chapter),
 		(x) => x.gain,
 	);

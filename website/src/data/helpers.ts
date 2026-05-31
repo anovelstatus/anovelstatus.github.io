@@ -1,9 +1,11 @@
+import { sumBy } from "es-toolkit";
+
 export function formatNumber(num: number | undefined) {
 	return num?.toLocaleString() ?? "";
 }
 
 export function getCurrentLevel(skill: Skill, chapter: number) {
-	return sum(
+	return sumBy(
 		skill.gains.filter((x) => x.chapter <= chapter),
 		(x) => x.count,
 	);
@@ -44,11 +46,6 @@ export function mapMapValues<TKey, TValue, TNewValue>(
 		map.set(key, newValue);
 	}
 	return map;
-}
-
-export function sum<T>(arr: T[], getField?: (obj: T) => number): number {
-	if (!getField) getField = (obj) => obj as number;
-	return arr.reduce((prev, curr) => getField(curr) + prev, 0);
 }
 
 /** Parse something like `Name - Tier` into a name and tier */

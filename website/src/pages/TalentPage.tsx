@@ -3,7 +3,7 @@ import { sameId } from "@/data/helpers";
 import { useTalents, useChapter, useRaceOnChapter, useLoreTopic } from "@/data/api";
 import { Stack, Typography, Chip } from "@mui/material";
 import { useMemo } from "react";
-import { groupBy } from "es-toolkit";
+import { groupBy, sumBy } from "es-toolkit";
 import { RichTextSpan } from "@/components/RichTextSpan";
 
 export function TalentPage() {
@@ -17,6 +17,8 @@ export function TalentPage() {
 	const generalTalents = grouped["General"] ?? [];
 	const freeTalents = grouped["Racial Slot"] ?? [];
 
+	const total = sumBy(Object.values(grouped), (x) => x.length);
+
 	const otherTypes = Object.keys(grouped)
 		.filter((x) => x != "General" && x != "Racial Slot")
 		.toSorted();
@@ -24,7 +26,7 @@ export function TalentPage() {
 	return (
 		<Stack spacing={2}>
 			<Typography variant="h4" gutterBottom>
-				Priam's Talents
+				Priam's Talents <Chip label={total} sx={{ fontWeight: "bold" }} />
 			</Typography>
 			<RichTextSpan data={talentLore.description} />
 			<Typography variant="h5" gutterBottom>
