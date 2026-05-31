@@ -33,7 +33,7 @@ export function TribulationPanel() {
 		return temp;
 	}, [status, attributes, tempChanges]);
 
-	if (race.name === "Unknown" || !status || !tempStatus)
+	if (!race || !status || !tempStatus)
 		return <LoadingPlaceholder text="Loading race tier, skill levels, and titles..." />;
 
 	const thresholds = getTresholds(tempStatus, race, attributes);

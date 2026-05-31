@@ -21,9 +21,6 @@ export function TalentPage() {
 		.filter((x) => x != "General" && x != "Racial Slot")
 		.toSorted();
 
-	const slots = currentRace?.freeSlots ?? 1;
-	const slotsText = `${freeTalents.length}/${slots} slots used`;
-
 	return (
 		<Stack spacing={2}>
 			<Typography variant="h4" gutterBottom>
@@ -31,7 +28,10 @@ export function TalentPage() {
 			</Typography>
 			<RichTextSpan data={talentLore.description} />
 			<Typography variant="h5" gutterBottom>
-				Free Racial Slots <Chip label={slotsText} sx={{ fontWeight: "bold" }} />
+				Free Racial Slots{" "}
+				{currentRace && (
+					<Chip label={`${freeTalents.length}/${currentRace?.freeSlots} slots used`} sx={{ fontWeight: "bold" }} />
+				)}
 			</Typography>
 			<TalentTable data={freeTalents} />
 			{otherTypes.map((type) => (
