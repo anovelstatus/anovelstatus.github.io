@@ -6,6 +6,7 @@ import { Chip, Grid, Typography } from "@mui/material";
 import { useState, useEffect } from "react";
 import { useColumns } from "./columns";
 import AchievementCard from "./AchievementCard";
+import { LoreSection } from "@/components/LoreSection";
 
 export default function AchievementTable() {
 	const chapter = useChapter();
@@ -57,6 +58,7 @@ export default function AchievementTable() {
 			<Typography variant="h4" gutterBottom>
 				Priam's Achievements <Chip label={currentAchievements.length} sx={{ fontWeight: "bold" }} />
 			</Typography>
+			<LoreSection topic="Achievements" />
 			<Grid container spacing={2}>
 				{metalTiers
 					.filter((x) => totals[x])

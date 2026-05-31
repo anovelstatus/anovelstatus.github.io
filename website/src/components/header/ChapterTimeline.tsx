@@ -3,7 +3,7 @@ import { useContext, useMemo } from "react";
 import { ChapterContext } from "@/providers/ChapterContext";
 import { useBasicInfo } from "@/data/api";
 import { ShortcutMenu } from "./ShortcutMenu";
-import { mapMapValues } from "@/data/helpers";
+import { mapValues as mapMapValues } from "es-toolkit/map";
 
 export default function ChapterTimeline() {
 	const { chapter, setChapter } = useContext(ChapterContext);

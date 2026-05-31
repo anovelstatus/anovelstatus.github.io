@@ -4,17 +4,15 @@ import {
 	useBodyMutationsOnChapter,
 	useBodyTemperingForChapter,
 	useChapter,
-	useLoreTopic,
 	useRaceOnChapter,
 } from "@/data/api";
 import { Stack, Typography, Grid } from "@mui/material";
-import { RichTextSpan } from "@/components/RichTextSpan";
 import Section from "@/components/Section";
+import { LoreSection } from "@/components/LoreSection";
 
 export function BodyPage() {
 	const chapter = useChapter();
 
-	const bodyLore = useLoreTopic("Body", chapter);
 	const race = useRaceOnChapter(chapter);
 	const bloodlines = useBloodlinesOnChapter(chapter);
 	const mutations = useBodyMutationsOnChapter(chapter);
@@ -22,6 +20,7 @@ export function BodyPage() {
 
 	const temperingContents = (
 		<Stack direction="column" spacing={2}>
+			<LoreSection topic="Tempering" />
 			{stages.map((x, index) => {
 				return <TemperingStageCard key={index} stage={x} />;
 			})}
@@ -29,24 +28,30 @@ export function BodyPage() {
 	);
 
 	const bloodlineContents = (
-		<Grid container spacing={2}>
-			{bloodlines.map((bloodline, index) => (
-				<Grid key={index} size={{ xs: 12, md: 6 }}>
-					<BloodlineCard bloodline={bloodline} />
-				</Grid>
-			))}
-		</Grid>
+		<Stack direction="column" spacing={2}>
+			<LoreSection topic="Bloodlines" />
+			<Grid container spacing={2}>
+				{bloodlines.map((bloodline, index) => (
+					<Grid key={index} size={{ xs: 12, md: 6 }}>
+						<BloodlineCard bloodline={bloodline} />
+					</Grid>
+				))}
+			</Grid>
+		</Stack>
 	);
 	const mutationContents = (
-		<Grid container spacing={2}>
-			{mutations.map((x, index) => {
-				return (
-					<Grid key={index} size={{ xs: 12, sm: 6, md: 4 }}>
-						<BodyModificationCard mutation={x} />
-					</Grid>
-				);
-			})}
-		</Grid>
+		<Stack direction="column" spacing={2}>
+			<LoreSection topic="Mutations" />
+			<Grid container spacing={2}>
+				{mutations.map((x, index) => {
+					return (
+						<Grid key={index} size={{ xs: 12, sm: 6, md: 4 }}>
+							<BodyModificationCard mutation={x} />
+						</Grid>
+					);
+				})}
+			</Grid>
+		</Stack>
 	);
 
 	return (
@@ -54,8 +59,16 @@ export function BodyPage() {
 			<Typography variant="h3" gutterBottom>
 				Priam's Body
 			</Typography>
-			<RichTextSpan data={bodyLore.description} />
-			<Section title="Race" contents={<RaceCard race={race} />} />
+			<LoreSection topic="Body" />
+			<Section
+				title="Race"
+				contents={
+					<Stack direction="column" spacing={2}>
+						<LoreSection topic="Race" />
+						<RaceCard race={race} />
+					</Stack>
+				}
+			/>
 			{bloodlines.length > 0 && <Section title="Bloodlines" contents={bloodlineContents} />}
 			{mutations.length > 0 && <Section title="Modifications & Mutations" contents={mutationContents} />}
 			{stages.length > 0 && <Section title="Tempering" contents={temperingContents} />}

@@ -2,13 +2,6 @@ export function formatNumber(num: number | undefined) {
 	return num?.toLocaleString() ?? "";
 }
 
-export function getCurrentLevel(skill: Skill, chapter: number) {
-	return sum(
-		skill.gains.filter((x) => x.chapter <= chapter),
-		(x) => x.count,
-	);
-}
-
 export function getTierRank(tiers: string[], tier: string): number {
 	return tiers.findIndex((x) => tier.startsWith(x));
 }
@@ -32,23 +25,6 @@ export function findByIds<T extends TieredId>(list: T[], previous?: TieredId[]):
 			// Filter out any that we couldn't find because the chapter is too low for all linked items
 			.filter((x): x is T => !!x)
 	);
-}
-
-export function mapMapValues<TKey, TValue, TNewValue>(
-	original: Map<TKey, TValue>,
-	convertValue: (obj: TValue) => TNewValue,
-) {
-	const map = new Map<TKey, TNewValue>();
-	for (const [key, value] of original) {
-		const newValue = convertValue(value);
-		map.set(key, newValue);
-	}
-	return map;
-}
-
-export function sum<T>(arr: T[], getField?: (obj: T) => number): number {
-	if (!getField) getField = (obj) => obj as number;
-	return arr.reduce((prev, curr) => getField(curr) + prev, 0);
 }
 
 /** Parse something like `Name - Tier` into a name and tier */

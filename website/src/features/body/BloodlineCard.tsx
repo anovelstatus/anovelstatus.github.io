@@ -1,15 +1,15 @@
 import { Card, CardHeader, CardContent, CardActions, Stack, Typography, Chip } from "@mui/material";
 import { ChaptersChip } from "@/components/chips";
-import { TitleButton } from "../titles";
+import { TitleButton } from "@/features/titles";
 import { orderBy } from "es-toolkit";
-import { useChapter, useLoreTopic } from "@/data/api";
+import { useChapter } from "@/data/api";
 import { RichTextSpan } from "@/components/RichTextSpan";
+import { LoreSection } from "@/components/LoreSection";
 
 export type BloodlineProps = { bloodline: Bloodline };
 
 export function BloodlineCard({ bloodline }: BloodlineProps) {
 	const chapter = useChapter();
-	const lore = useLoreTopic(bloodline.lore, chapter);
 	// In case there are multiple gains in the same chapter, display the one with the highest purity first
 	const updates = orderBy(
 		bloodline.updates.filter((x) => x.chapter <= chapter),
@@ -50,20 +50,9 @@ export function BloodlineCard({ bloodline }: BloodlineProps) {
 					))}
 				</Stack>
 			</CardContent>
-			{lore.updates.length > 0 && (
-				<CardContent>
-					<Stack>
-						<Typography variant="h6">Lore</Typography>
-						<RichTextSpan data={lore.description} />
-						{lore.updates.map((update, index) => (
-							<Stack direction="row" key={index}>
-								<ChaptersChip chapters={[update.chapter]} />
-								<RichTextSpan data={update.note} />
-							</Stack>
-						))}
-					</Stack>
-				</CardContent>
-			)}
+			<CardContent>
+				<LoreSection topic={bloodline.lore} includeHeader />
+			</CardContent>
 		</Card>
 	);
 }

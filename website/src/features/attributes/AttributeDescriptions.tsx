@@ -2,6 +2,7 @@ import { Typography, Stack, Grid, Box } from "@mui/material";
 import { useGroupedAttributes } from "@/data/api";
 import { AttributeGroupCard } from "./AttributeGroupCard";
 import type React from "react";
+import { LoreSection } from "@/components/LoreSection";
 
 export type AttributeDescriptionsProps = {
 	name: string;
@@ -16,6 +17,7 @@ export function AttributeDescriptions({ name, getNotes }: AttributeDescriptionsP
 			<Typography variant="h4" gutterBottom>
 				{name}
 			</Typography>
+			<LoreSection topic="Attributes" subtopic={name} />
 			<Grid container spacing={1}>
 				{groups.map(([groupName, groupAttributes]) => (
 					<Grid key={groupName} size={{ xs: 12, md: 6, lg: 4 }}>

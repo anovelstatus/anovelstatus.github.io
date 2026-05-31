@@ -1,6 +1,6 @@
 import { ChapterContext } from "@/providers";
 import { useQuery, type UseQueryResult } from "@tanstack/react-query";
-import { maxBy, orderBy } from "es-toolkit";
+import { orderBy } from "es-toolkit";
 import { useContext, useMemo } from "react";
 
 /** Make data not optional because we can guarantee a placeholder */
@@ -103,11 +103,10 @@ export function useRaces() {
 	return orderBy(races, [(x) => x.chapter, (x) => x.tier], ["desc", "desc"]);
 }
 
-export function useRaceOnChapter(chapter: number): Race {
+export function useRaceOnChapter(chapter: number): Race | undefined {
 	const races = useRaces();
 	chapter = chapter || 0;
-	const race = races.filter((x) => x.chapter <= chapter)[0];
-	return race || { name: "Unknown", tier: 0, chapter: 0, talents: [], freeSlots: 0, note: [] };
+	return races.filter((x) => x.chapter <= chapter)[0];
 }
 
 export function useTalents() {
@@ -147,23 +146,8 @@ export function useStatusDictionary() {
 	}, [statuses]);
 }
 
-function useLore() {
+export function useLore() {
 	return useSpreadsheet<LoreEntry[]>("lore", []);
-}
-
-export function useLoreTopic(key: string, chapter: number) {
-	const { data: lore } = useLore();
-	const latestDescription =
-		maxBy(
-			lore.filter((x) => x.key === key && x.chapter <= chapter && !x.permanent),
-			(x) => x.chapter,
-		)?.note || [];
-	const updates = orderBy(
-		lore.filter((x) => x.key === key && x.chapter <= chapter && x.permanent),
-		[(x) => x.chapter],
-		["desc"],
-	);
-	return { description: latestDescription, updates };
 }
 
 // Copying type constraint from Tanstack's NonFunctionGuard type
