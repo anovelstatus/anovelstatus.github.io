@@ -40,8 +40,8 @@ export function getPrerequisiteList(skill: Skill) {
 	if (list.length === 0) return [];
 
 	if (list.length < 6) {
-		return list.map((x) => (
-			<Typography variant="body2" key={x}>
+		return list.map((x, index) => (
+			<Typography variant="body2" key={`${keyPrefix}-${index}`}>
 				{x}
 			</Typography>
 		));

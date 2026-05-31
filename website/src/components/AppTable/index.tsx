@@ -24,14 +24,23 @@ import HeaderCell from "./HeaderCell";
 import BodyCell from "./BodyCell";
 import { ClassNameFeature } from "./ClassNameFeature";
 import { SxFeature } from "./SxFeature";
+import { HoverTitleFeature } from "./HoverTitleFeature";
 
 type TableProps<T> = {
 	table: Table<T>;
 	isLoading?: boolean;
+	size?: "small" | "medium";
 } & PropsWithStyle;
 
 export function useAppTable<T>(options: Partial<TableOptions<T>>) {
-	const features = [NarrowFeature, ColSpanFeature, ClassNameFeature, SxFeature, ...(options._features ?? [])];
+	const features = [
+		NarrowFeature,
+		ColSpanFeature,
+		ClassNameFeature,
+		HoverTitleFeature,
+		SxFeature,
+		...(options._features ?? []),
+	];
 	return useReactTable({
 		debugTable: true,
 		getCoreRowModel: getCoreRowModel(),
@@ -41,7 +50,7 @@ export function useAppTable<T>(options: Partial<TableOptions<T>>) {
 	} as TableOptions<T>);
 }
 
-export default function AppTable<T>({ sx, table, isLoading }: TableProps<T>): ReactElement {
+export default function AppTable<T>({ sx, table, isLoading, size = "medium" }: TableProps<T>): ReactElement {
 	const theme = useTheme();
 
 	const isNarrow = useMediaQuery(theme.breakpoints.down(table.getNarrowBreakpoint()));
@@ -66,7 +75,7 @@ export default function AppTable<T>({ sx, table, isLoading }: TableProps<T>): Re
 
 	return (
 		<TableContainer sx={sx} component={Paper}>
-			<TableComponent className="w-full ">
+			<TableComponent className="w-full " size={size}>
 				<TableHead>
 					{table.getHeaderGroups().map((headerGroup) => (
 						<TableRow key={headerGroup.id}>

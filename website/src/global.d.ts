@@ -2,6 +2,7 @@
 /// <reference path="../../shared/types.d.ts" />
 
 declare type PropsWithStyle = {
+	// todo: fix so this doesn't compile as any
 	sx?: SxProps<Theme>;
 };
 
