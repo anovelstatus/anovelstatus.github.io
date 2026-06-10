@@ -33,7 +33,7 @@
 		"@tanstack/react-router-devtools": "^1.167.0",
 		"@tanstack/react-table": "^8.21.3",
 		"@tanstack/router-plugin": "^1.168.18",
-		"@types/google-apps-script": "2.0.9",
+		"@types/google-apps-script": "2.0.11",
 		"@types/node": "^24.12.4",
 		"@types/react": "^19.2.15",
 		"@types/react-dom": "^19.2.3",
