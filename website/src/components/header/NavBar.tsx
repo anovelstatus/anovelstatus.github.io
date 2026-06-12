@@ -28,8 +28,9 @@ type NavLink = {
 const links: NavLink[] = [
 	{ key: "home", to: "/", title: "Home" },
 	{ key: "attributes", to: "/attributes", title: "Attributes" },
-	{ key: "overview", to: "/cultivation", title: "Cultivation" },
+	{ key: "soul", to: "/soul", title: "Soul" },
 	{ key: "body", to: "/body", title: "Body" },
+	{ key: "mind", to: "/mind", title: "Mind" },
 	{ key: "skills", to: "/skills", title: "Skills" },
 	{ key: "talents", to: "/talents", title: "Talents" },
 	{ key: "titles", to: "/titles", title: "Titles" },

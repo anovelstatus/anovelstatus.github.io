@@ -109,6 +109,10 @@ export function useRaceOnChapter(chapter: number): Race | undefined {
 	return races.filter((x) => x.chapter <= chapter)[0];
 }
 
+export function useSoul() {
+	return useSpreadsheet<SoulDetails>("soul", { supremacies: {} });
+}
+
 export function useTalents() {
 	return useSpreadsheet<Talent[]>("talents", []);
 }

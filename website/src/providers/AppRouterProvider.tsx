@@ -8,13 +8,14 @@ const rootRoute = createRootRoute({
 
 const routes = [
 	createRoute({ getParentRoute: () => rootRoute, path: "/", component: Pages.IndexPage }),
+	createRoute({ getParentRoute: () => rootRoute, path: "/achievements", component: Pages.AchievementPage }),
 	createRoute({ getParentRoute: () => rootRoute, path: "/attributes", component: Pages.AttributePage }),
-	createRoute({ getParentRoute: () => rootRoute, path: "/cultivation", component: Pages.CultivationPage }),
 	createRoute({ getParentRoute: () => rootRoute, path: "/body", component: Pages.BodyPage }),
+	createRoute({ getParentRoute: () => rootRoute, path: "/mind", component: Pages.MindPage }),
 	createRoute({ getParentRoute: () => rootRoute, path: "/skills", component: Pages.SkillPage }),
+	createRoute({ getParentRoute: () => rootRoute, path: "/soul", component: Pages.SoulPage }),
 	createRoute({ getParentRoute: () => rootRoute, path: "/talents", component: Pages.TalentPage }),
 	createRoute({ getParentRoute: () => rootRoute, path: "/titles", component: Pages.TitlePage }),
-	createRoute({ getParentRoute: () => rootRoute, path: "/achievements", component: Pages.AchievementPage }),
 ];
 
 const routeTree = rootRoute.addChildren(routes);

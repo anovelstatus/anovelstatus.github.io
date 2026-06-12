@@ -1,17 +1,15 @@
-import { TalentTable } from "@/features/talents";
-import { sameId } from "@/data/helpers";
-import { useTalents, useChapter, useRaceOnChapter } from "@/data/api";
+import { TalentTable, useTalentGroups } from "@/features/talents";
+import { useChapter, useRaceOnChapter } from "@/data/api";
 import { Stack, Typography, Chip } from "@mui/material";
-import { useMemo } from "react";
-import { groupBy, sumBy } from "es-toolkit";
+import { sumBy } from "es-toolkit";
 import { LoreSection } from "@/components/LoreSection";
+import { Fragment } from "react/jsx-runtime";
 
 export function TalentPage() {
 	const chapter = useChapter();
-	const { data: talents } = useTalents();
 	const currentRace = useRaceOnChapter(chapter);
 
-	const grouped = useMemo(() => getTalentGroups(talents, chapter), [chapter, talents]);
+	const grouped = useTalentGroups();
 
 	const generalTalents = grouped["General"] ?? [];
 	const freeTalents = grouped["Racial Slot"] ?? [];
@@ -37,7 +35,7 @@ export function TalentPage() {
 			<LoreSection topic="Talents" subtopic="Free Racial Slots" />
 			<TalentTable data={freeTalents} />
 			{otherTypes.map((type) => (
-				<>
+				<Fragment key={"talent-group-" + type}>
 					<Typography variant="h5" gutterBottom>
 						{type || "Uncategorized"} Talent{grouped[type]!.length !== 1 ? "s" : ""}{" "}
 						<Chip label={grouped[type]!.length} sx={{ fontWeight: "bold" }} />
@@ -45,7 +43,7 @@ export function TalentPage() {
 
 					<LoreSection topic="Talents" subtopic={type} />
 					<TalentTable data={grouped[type]!} />
-				</>
+				</Fragment>
 			))}
 			<Typography variant="h5" gutterBottom>
 				General Talent{generalTalents.length !== 1 ? "s" : ""}{" "}
@@ -55,19 +53,4 @@ export function TalentPage() {
 			<TalentTable data={generalTalents} />
 		</Stack>
 	);
-}
-
-function getTalentGroups(talents: Talent[], chapter: number) {
-	let filtered = talents
-		// Remove "temporary" ones, like those that went into a Race talent
-		.filter((x) => !x.temporary)
-		// Remove ones that haven't been gained yet
-		.filter((x) => x.chapterGained <= chapter)
-		// Remove ones that have been undone
-		.filter((x) => !x.chapterUndone || x.chapterUndone <= chapter);
-
-	// Now remove ones that are replaced by another one in the remaining list
-	filtered = filtered.filter((x) => !filtered.some((some) => some.previous?.some((prev) => sameId(prev, x))));
-
-	return groupBy(filtered, (x) => x.type);
 }

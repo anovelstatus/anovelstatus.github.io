@@ -46,7 +46,7 @@ export function IndexPage() {
 				<li>Tool to simulate Tribulation thresholds with different Race Tiers, title boosts, and attribute totals</li>
 				<li>Character and Faction listings, with POV chapter details</li>
 				<li>Details about everyone's favorite tree and its surroundings</li>
-				<li>Finish the Cultivation page, especially Concepts</li>
+				<li>Finish the Soul and Mind pages, especially Concepts</li>
 				<li>Quests</li>
 				<li>Probably Reunion, Colosseum, and other Event-specific tabs</li>
 				<li>More search options on Skills, Talents, and Titles</li>

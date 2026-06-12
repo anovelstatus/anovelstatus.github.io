@@ -1,16 +1,16 @@
 import { Typography } from "@mui/material";
+import type { PropsWithChildren } from "react";
 
-export type SectionProps = {
+export type SectionProps = PropsWithChildren & {
 	title: React.ReactNode;
-	contents: React.ReactNode;
 };
 
 /** Basic wrapper for content in a card */
-export default function Section({ title, contents }: SectionProps) {
+export default function Section({ title, children }: SectionProps) {
 	return (
 		<>
 			<Typography variant="h4">{title}</Typography>
-			{contents}
+			{children}
 		</>
 	);
 }
