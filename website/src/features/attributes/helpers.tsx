@@ -50,8 +50,7 @@ export function useCalculatedStatus(chapter: number): Status | undefined {
 }
 
 export function calculateStatus(chapter: number, skills: Skill[], attributes: Attribute.Details[]): Status | undefined {
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	const status: Status = { chapter: chapter, attributes: [] as any };
+	const status: Status = { chapter: chapter, attributes: [] };
 
 	for (const attribute of attributes) {
 		const baseValue = calculateBaseAttributeValue(skills, attribute, chapter);
@@ -62,9 +61,7 @@ export function calculateStatus(chapter: number, skills: Skill[], attributes: At
 }
 
 export function calculateBaseAttributeValue(skills: Skill[], attribute: Attribute.Details, chapter: number) {
-	const attributeSkills = skills.filter(
-		(skill) => skill.attributes[attribute.index] && skill.attributes[attribute.index]! > 0,
-	);
+	const attributeSkills = skills.filter((skill) => skill.attributes[attribute.index]! > 0);
 	let baseValue = sumBy(
 		attribute.gains.filter((x) => x.chapter <= chapter),
 		(x) => x.gain,
