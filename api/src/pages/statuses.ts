@@ -29,5 +29,5 @@ export function getOfficialStatuses(info: SpreadsheetInfo) {
 		parse: ({ temp }) => info.attributes.map((x) => temp[x.name] || 0) as any,
 	});
 
-	return mapTable(info, range, fields).filter((x) => x.chapter <= info.chapterLimit && x[info.attributes[0].name] > 0);
+	return mapTable(info, range, fields).filter((x) => x.chapter <= info.chapterLimit && x.attributes.some((x) => x > 0));
 }
