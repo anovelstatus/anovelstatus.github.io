@@ -39,10 +39,10 @@ export function getSkills(info: SpreadsheetInfo) {
 			},
 		},
 	];
-	for (const attribute of info.attributeNames) {
+	for (const attribute of info.attributes) {
 		fields.push({
-			key: attribute,
-			source: { type: "exact", name: attribute },
+			key: attribute.name,
+			source: { type: "exact", name: attribute.name },
 			parse: "number",
 			optional: true,
 		});

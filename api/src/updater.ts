@@ -5,9 +5,10 @@ export function updateSpecificFiles(ss: Spreadsheet, pages: ApiPage[]) {
 	const rrFolder = DriveApp.getFolderById(RR_FOLDER);
 	const patreonFolder = DriveApp.getFolderById(PATREON_FOLDER);
 
-	const tableRanges = getTableRanges(ss);
-	const rrInfo = getSpreadsheetInfo(ss, tableRanges, false);
-	const patreonInfo = getSpreadsheetInfo(ss, tableRanges, true);
+	const chapters = getChapters(ss);
+
+	const rrInfo = getSpreadsheetInfo(ss, chapters.rr, false);
+	const patreonInfo = getSpreadsheetInfo(ss, chapters.patreon, true);
 
 	const errors = [];
 
@@ -26,24 +27,21 @@ export function updateSpecificFiles(ss: Spreadsheet, pages: ApiPage[]) {
 	if (errors.length > 0) throw errors;
 }
 
-function getSpreadsheetInfo(ss: Spreadsheet, ranges: RangeLookup, includePatreon: boolean): SpreadsheetInfo {
-	const chapterLimit = includePatreon ? getPatreonChapter(ss) : getRoyalRoadChapter(ss);
+function getSpreadsheetInfo(ss: Spreadsheet, chapterLimit: number, includePatreon: boolean): SpreadsheetInfo {
 	const attributes = parsers.getAttributes({
 		ss,
-		ranges,
 		chapterLimit,
 		includePatreon,
-		attributeNames: [],
 		attributes: [],
 	});
-	const attributeNames = attributes.map((x) => x.name);
-	return { ss, chapterLimit, ranges, attributes, attributeNames, includePatreon };
+	return { ss, chapterLimit, attributes, includePatreon };
 }
 
 function getPageParser(page: ApiPage): (info: SpreadsheetInfo) => unknown {
 	switch (page) {
 		case "achievements":
 			return parsers.getAchievements;
+		// Don't re-fetch attributes, reuse them
 		case "attributes":
 			return (info) => info.attributes;
 		case "body":
@@ -78,21 +76,11 @@ function updatePageJson(folder: Folder, info: SpreadsheetInfo, page: ApiPage) {
 	else folder.createFile(fileName, json, MimeType.PLAIN_TEXT);
 }
 
-function getTableRanges(ss: Spreadsheet): RangeLookup {
-	const values = ss.getSheetByName("Tables")!.getDataRange().getValues();
-
-	return values.slice(2).reduce((ranges, row) => {
-		ranges[row[0] as RangeKey] = row[2];
-		return ranges;
-	}, {} as Partial<RangeLookup>) as RangeLookup;
-}
-
-/** Get latest chapter number released to the public */
-function getRoyalRoadChapter(ss: Spreadsheet) {
-	return parseNumber(ss.getRangeByName("RoyalRoadChapter")!.getValue());
-}
-
-/** Get latest chapter number released to patrons */
-function getPatreonChapter(ss: Spreadsheet) {
-	return parseNumber(ss.getRangeByName("PatreonChapter")!.getValue());
+/** Get latest chapters released to public and patrons */
+function getChapters(ss: Spreadsheet) {
+	// on START HERE sheet, near the bottom
+	const values = ss.getRangeByName("Chapters")!.getValues();
+	const patreonValue = values[0][0];
+	const rrValue = values[1][0];
+	return { patreon: parseNumber(patreonValue), rr: parseNumber(rrValue) };
 }
