@@ -54,19 +54,6 @@ export function SoulPage() {
 					</Grid>
 				</Grid>
 			</Section>
-			<Section title="Concepts">
-				<Stack direction="column" spacing={2}>
-					<LoreSection topic="Concept" />
-					<Grid container spacing={1}>
-						<Grid size={cardSize}>
-							<Card>
-								<CardHeader title="Concept 1" />
-								<CardContent>🚧 Under Construction</CardContent>
-							</Card>
-						</Grid>
-					</Grid>
-				</Stack>
-			</Section>
 			<Section title="Heart Supremacies">
 				<Stack direction="column" spacing={2}>
 					{isFetching && <LoadingPlaceholder />}
@@ -77,6 +64,19 @@ export function SoulPage() {
 								<SupremacyCard name={supremacy} stages={soul.supremacies[supremacy]!} />
 							</Grid>
 						))}
+					</Grid>
+				</Stack>
+			</Section>
+			<Section title="Concepts">
+				<Stack direction="column" spacing={2}>
+					<LoreSection topic="Concept" />
+					<Grid container spacing={1}>
+						<Grid size={cardSize}>
+							<Card>
+								<CardHeader title="Concept 1" />
+								<CardContent>🚧 Under Construction</CardContent>
+							</Card>
+						</Grid>
 					</Grid>
 				</Stack>
 			</Section>
