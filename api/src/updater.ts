@@ -5,6 +5,9 @@ export function updateSpecificFiles(ss: Spreadsheet, pages: ApiPage[]) {
 	const rrFolder = DriveApp.getFolderById(RR_FOLDER);
 	const patreonFolder = DriveApp.getFolderById(PATREON_FOLDER);
 
+	const rrFiles = getExistingFiles(rrFolder);
+	const patreonFiles = getExistingFiles(patreonFolder);
+
 	const chapters = getChapters(ss);
 
 	const rrInfo = getSpreadsheetInfo(ss, chapters.rr, false);
@@ -15,8 +18,8 @@ export function updateSpecificFiles(ss: Spreadsheet, pages: ApiPage[]) {
 	for (const page of pages) {
 		try {
 			console.log("Updating " + page);
-			updatePageJson(rrFolder, rrInfo, page);
-			updatePageJson(patreonFolder, patreonInfo, page);
+			updatePageJson(rrFolder, rrFiles[page], rrInfo, page);
+			updatePageJson(patreonFolder, patreonFiles[page], patreonInfo, page);
 		} catch (e) {
 			errors.push(e);
 			console.log("Failed to update " + page);
@@ -65,15 +68,18 @@ function getPageParser(page: ApiPage): (info: SpreadsheetInfo) => unknown {
 	}
 }
 
-function updatePageJson(folder: Folder, info: SpreadsheetInfo, page: ApiPage) {
-	const fileName = page + ".json";
+function updatePageJson(
+	folder: Folder,
+	existingFile: GoogleAppsScript.Drive.File | undefined,
+	info: SpreadsheetInfo,
+	page: ApiPage,
+) {
 	const parser = getPageParser(page);
 	const data = parser(info);
 	const json = JSON.stringify(data);
 
-	const fileResults = folder.getFilesByName(fileName);
-	if (fileResults.hasNext()) fileResults.next().setContent(json);
-	else folder.createFile(fileName, json, MimeType.PLAIN_TEXT);
+	if (existingFile) existingFile.setContent(json);
+	else folder.createFile(page + ".json", json, MimeType.PLAIN_TEXT);
 }
 
 /** Get latest chapters released to public and patrons */
@@ -83,4 +89,15 @@ function getChapters(ss: Spreadsheet) {
 	const patreonValue = values[0][0];
 	const rrValue = values[1][0];
 	return { patreon: parseNumber(patreonValue), rr: parseNumber(rrValue) };
+}
+
+function getExistingFiles(folder: GoogleAppsScript.Drive.Folder) {
+	const files: Record<string, GoogleAppsScript.Drive.File> = {};
+	const fileIterator = folder.getFiles();
+	while (fileIterator.hasNext()) {
+		const file = fileIterator.next();
+		const name = file.getName().replace(".json", "");
+		files[name] = file;
+	}
+	return files;
 }
