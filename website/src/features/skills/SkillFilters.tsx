@@ -1,6 +1,6 @@
 import { Autocomplete, Checkbox, FormControl, FormControlLabel, FormGroup, Grid, TextField } from "@mui/material";
 import { useState, useEffect, useMemo } from "react";
-import { useBasicAttributes, useChapter, useSkills, useSkillTiers } from "@/data/api";
+import { useAttributes, useChapter, useSkills, useSkillTiers } from "@/data/api";
 import { RarityButtonChip } from "@/components/chips";
 import { IDEAL_QUALITY, showSkill, type SkillFiltersOptions } from "./helpers";
 
@@ -12,7 +12,7 @@ export default function SkillFilters({ onChange }: SkillFiltersProps) {
 	const chapter = useChapter();
 	const { data: skills } = useSkills();
 	const skillTiers = useSkillTiers();
-	const { data: attributes } = useBasicAttributes();
+	const { data: attributes } = useAttributes();
 
 	const [filters, setFilters] = useState<SkillFiltersOptions>({
 		chapter,
@@ -34,7 +34,7 @@ export default function SkillFilters({ onChange }: SkillFiltersProps) {
 	const toggleFormerSkills = () => {
 		setFilters((filters) => ({ ...filters, showFormerSkills: !filters.showFormerSkills }));
 	};
-	const changeAttributesFilter = (attributes: Attribute.Basic[]) => {
+	const changeAttributesFilter = (attributes: Attribute.Details[]) => {
 		setFilters((filters) => ({ ...filters, providesAttributes: attributes }));
 	};
 

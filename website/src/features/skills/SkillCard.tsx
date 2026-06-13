@@ -43,7 +43,7 @@ export default function SkillCard({ id, sx }: SkillCardProps) {
 			<CardContent>
 				<Stack>
 					<RichTextSpan data={skill.description} />
-					<AttributeSummary item={skill} />
+					<AttributeSummary gains={skill.attributes} />
 					<PrerequisiteList skill={skill} headerSx={{ marginTop: "20px" }} />
 					{previousSkills.length > 0 ? (
 						<>

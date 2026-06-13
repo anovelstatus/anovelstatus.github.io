@@ -33,11 +33,6 @@ export function useMetalTiers() {
 	return data.tiers.map((x) => x.metalName);
 }
 
-export function useBasicAttributes() {
-	const { data, isFetching } = useBasicInfo();
-	return { data: data.attributes, isFetching };
-}
-
 export function useBasicInfo() {
 	return useSpreadsheet<BasicInfo>("chapters", {
 		latest: 1,
