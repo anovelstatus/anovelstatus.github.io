@@ -9,8 +9,6 @@ import { AttributeGroupCard } from "@/features/attributes/AttributeGroupCard";
 import LoadingPlaceholder from "@/components/LoadingPlaceholder";
 import { LoreSection } from "@/components/LoreSection";
 
-type AttributeChanges = Record<string, number>;
-
 export function TribulationPanel() {
 	const chapter = useChapter();
 	const status = useCalculatedStatus(chapter);
@@ -18,18 +16,18 @@ export function TribulationPanel() {
 	const { data: attributes } = useAttributes();
 	const race = useRaceOnChapter(chapter);
 
-	const [tempChanges, setTempChanges] = useState({} as AttributeChanges);
+	const [tempChanges, setTempChanges] = useState([] as number[]);
 
 	const tempStatus = useMemo(() => {
 		if (!status) return undefined;
-		const temp = { ...status, attributes: [...status.attributes] };
+		const adjusted: number[] = [];
 		for (const attribute of attributes) {
-			const newValue =
-				temp.attributes[attribute.index]! +
-				(tempChanges[attribute.name] || 0) * (1 + getCurrentBoost(chapter, attribute));
-			temp.attributes[attribute.index] = Math.round(newValue);
+			adjusted[attribute.index] = Math.round(
+				status.attributes[attribute.index]! +
+					(tempChanges[attribute.index] || 0) * (1 + getCurrentBoost(chapter, attribute)),
+			);
 		}
-		return temp;
+		return { ...status, attributes: adjusted };
 	}, [status, attributes, tempChanges]);
 
 	if (!race || !status || !tempStatus)
@@ -62,9 +60,9 @@ export function TribulationPanel() {
 	);
 }
 
-function AttributeInputs({ onChange }: { onChange: (changes: AttributeChanges) => void }) {
+function AttributeInputs({ onChange }: { onChange: (changes: number[]) => void }) {
 	const groups = useGroupedAttributes();
-	const [changes, setChanges] = useState({} as AttributeChanges);
+	const [changes, setChanges] = useState([] as number[]);
 
 	return (
 		<Grid container spacing={1}>
@@ -81,12 +79,13 @@ function AttributeInputs({ onChange }: { onChange: (changes: AttributeChanges) =
 											{attribute.name}:
 										</Typography>
 										<Input
-											value={changes[attribute.name] || 0}
+											value={changes[attribute.index] || 0}
 											size="small"
 											onChange={(e) => {
 												const newValue = Number(e.target.value);
 												setChanges((prev) => {
-													const newChanges = { ...prev, [attribute.name]: newValue };
+													const newChanges = [...prev];
+													newChanges[attribute.index] = newValue;
 													onChange(newChanges);
 													return newChanges;
 												});
