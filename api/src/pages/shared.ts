@@ -206,48 +206,51 @@ function mapRow<T>(
 	fields: Fields<T>,
 ) {
 	const item: Record<string, unknown> = {};
+	const temp: Record<string, unknown> = {};
 
 	for (const field of fields) {
-		const { key, parse, limited, optional } = field;
+		const { key, parse, limited, optional, temporary } = field;
 		const value = headers[key] !== undefined ? values[headers[key]] : undefined;
+		const destination = temporary ? temp : item;
 		try {
 			switch (parse) {
 				case "rich":
-					item[key] = parseRichText(richValues[headers[key]]);
+					destination[key] = parseRichText(richValues[headers[key]]);
 					break;
 				case "note":
-					item[key] = notes[headers[key]];
+					destination[key] = notes[headers[key]];
 					break;
 				case "number":
-					item[key] = limited
+					destination[key] = limited
 						? parseOptionalNumberLessThanLimit(value, chapterLimit)
 						: optional
 							? parseOptionalNumber(value)
 							: parseNumber(value);
 					break;
 				case "string":
-					item[key] = optional ? parseOptionalString(value) : parseString(value);
+					destination[key] = optional ? parseOptionalString(value) : parseString(value);
 					break;
 				case "bool":
-					item[key] = optional ? parseOptionalBoolean(value) : parseBoolean(value);
+					destination[key] = optional ? parseOptionalBoolean(value) : parseBoolean(value);
 					break;
 				case "tiered_id":
-					item[key] = optional && !value ? undefined : parseId(value);
+					destination[key] = optional && !value ? undefined : parseId(value);
 					break;
 				case "split_tiered_id":
-					item[key] = parseSplitString(value).map(parseId);
+					destination[key] = parseSplitString(value).map(parseId);
 					break;
 				case "split_string":
-					item[key] = parseSplitString(value);
+					destination[key] = parseSplitString(value);
 					break;
 				case "split_number":
-					item[key] = limited ? parseNumbersLessThanLimit(value, chapterLimit) : parseNumbers(value);
+					destination[key] = limited ? parseNumbersLessThanLimit(value, chapterLimit) : parseNumbers(value);
 					break;
 				case "string_number":
-					item[key] = value as string | number; // no great, but only used by one column
+					destination[key] = value as string | number; // no great, but only used by one column
 					break;
 				default:
-					if (typeof parse === "function") item[key] = parse({ rowSoFar: item as Partial<T>, value });
+					if (typeof parse === "function")
+						destination[key] = parse({ rowSoFar: item as Partial<T>, value, temp: temp as Partial<T> });
 					else throw new Error(`Invalid parse for '${key}': ${parse}`);
 					break;
 			}

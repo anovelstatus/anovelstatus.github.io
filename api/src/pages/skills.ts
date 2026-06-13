@@ -46,13 +46,14 @@ export function getSkills(info: SpreadsheetInfo) {
 			source: { type: "exact", name: attribute.name },
 			parse: "number",
 			optional: true,
+			temporary: true,
 		});
 	}
 	fields.push({
 		key: "attributes",
 		// Need to figure out how to get the generics working properly
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		parse: ({ rowSoFar }) => info.attributes.map((x) => rowSoFar[x.name] || 0) as any,
+		parse: ({ temp }) => info.attributes.map((x) => temp[x.name] || 0) as any,
 	});
 
 	return mapTable(info, range, fields).filter((x) => !!x.name && x.gains.length > 0);

@@ -18,6 +18,7 @@ export function getOfficialStatuses(info: SpreadsheetInfo) {
 			key: attribute.name,
 			source: { type: "exact", name: attribute.name },
 			parse: "number",
+			temporary: true,
 			optional: true,
 		});
 	}
@@ -25,7 +26,7 @@ export function getOfficialStatuses(info: SpreadsheetInfo) {
 		key: "attributes",
 		// Need to figure out how to get the generics working properly
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		parse: ({ rowSoFar }) => info.attributes.map((x) => rowSoFar[x.name] || 0) as any,
+		parse: ({ temp }) => info.attributes.map((x) => temp[x.name] || 0) as any,
 	});
 
 	return mapTable(info, range, fields).filter((x) => x.chapter <= info.chapterLimit && x[info.attributes[0].name] > 0);
