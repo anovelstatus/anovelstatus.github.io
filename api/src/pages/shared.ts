@@ -109,7 +109,7 @@ export function mapTableInPage<T>(info: SpreadsheetInfo, rangeData: RangeData, f
 	const usesNotes = needsNotes(fields);
 	const { values, richValues, notes } = rangeData;
 
-	const { columns, start, end } = findTable(values, fields);
+	const { columns, start, end } = findTable(values, fields, info.attributes);
 
 	const data: T[] = [];
 	for (let i = start + 1; i < end; i++) {
@@ -122,16 +122,17 @@ export function mapTableInPage<T>(info: SpreadsheetInfo, rangeData: RangeData, f
 				columns,
 				info.chapterLimit,
 				fields,
+				info.attributes,
 			),
 		);
 	}
 	return data;
 }
 
-function findTable<T>(values: SpreadsheetValue[][], fields: Fields<T>) {
+function findTable<T>(values: SpreadsheetValue[][], fields: Fields<T>, attributes: Attribute.Details[]) {
 	for (let i = 0; i < values.length; i++) {
 		const row = values[i];
-		const columns = findColumns(row, fields);
+		const columns = findColumns(row, fields, attributes);
 		if (Object.values(columns).some((x) => x === -1)) continue;
 		for (let j = i; j < values.length; j++) {
 			if (rowHasNoData(values[j])) return { columns, start: i, end: j };
@@ -147,7 +148,7 @@ export function mapTable<T>(info: SpreadsheetInfo, range: Range, fields: Fields<
 	const usesNotes = needsNotes(fields);
 	const { values, richValues, notes } = getRangeData(range, hasRichValues, usesNotes);
 
-	const headers = findColumns(values[skipRows], fields);
+	const headers = findColumns(values[skipRows], fields, info.attributes);
 
 	const data: T[] = [];
 	for (let i = skipRows + 1; i < values.length; i++) {
@@ -160,6 +161,7 @@ export function mapTable<T>(info: SpreadsheetInfo, range: Range, fields: Fields<
 				headers,
 				info.chapterLimit,
 				fields,
+				info.attributes,
 			),
 		);
 	}
@@ -179,8 +181,8 @@ function needsNotes<T>(fields: Fields<T>) {
 	return fields.some((x) => x.parse === "note");
 }
 
-function findColumns<T>(headers: SpreadsheetValue[], fields: Fields<T>) {
-	const columns = {} as Record<keyof T, number>;
+function findColumns<T>(headers: SpreadsheetValue[], fields: Fields<T>, attributes: Attribute.Details[]) {
+	const columns = {} as Record<string, number>;
 	for (const { key, source } of fields) {
 		if (!source) continue;
 		switch (source.type) {
@@ -194,6 +196,12 @@ function findColumns<T>(headers: SpreadsheetValue[], fields: Fields<T>) {
 				throw new Error(`Invalid source for '${key}': ${source}`);
 		}
 	}
+	// If any field is the attribute array, then look for each one in the headers
+	if (fields.some((x) => x.parse === "attributes")) {
+		for (const attribute of attributes) {
+			columns[attribute.name] = headers.indexOf(attribute.name);
+		}
+	}
 	return columns;
 }
 
@@ -204,53 +212,54 @@ function mapRow<T>(
 	headers: Record<string, number>,
 	chapterLimit: number,
 	fields: Fields<T>,
+	attributes: Attribute.Details[],
 ) {
 	const item: Record<string, unknown> = {};
-	const temp: Record<string, unknown> = {};
 
 	for (const field of fields) {
-		const { key, parse, limited, optional, temporary } = field;
+		const { key, parse, limited, optional } = field;
 		const value = headers[key] !== undefined ? values[headers[key]] : undefined;
-		const destination = temporary ? temp : item;
 		try {
 			switch (parse) {
+				case "attributes":
+					item[key] = attributes.map((attr) => parseNumber(values[headers[attr.name]]));
+					break;
 				case "rich":
-					destination[key] = parseRichText(richValues[headers[key]]);
+					item[key] = parseRichText(richValues[headers[key]]);
 					break;
 				case "note":
-					destination[key] = notes[headers[key]];
+					item[key] = notes[headers[key]];
 					break;
 				case "number":
-					destination[key] = limited
+					item[key] = limited
 						? parseOptionalNumberLessThanLimit(value, chapterLimit)
 						: optional
 							? parseOptionalNumber(value)
 							: parseNumber(value);
 					break;
 				case "string":
-					destination[key] = optional ? parseOptionalString(value) : parseString(value);
+					item[key] = optional ? parseOptionalString(value) : parseString(value);
 					break;
 				case "bool":
-					destination[key] = optional ? parseOptionalBoolean(value) : parseBoolean(value);
+					item[key] = optional ? parseOptionalBoolean(value) : parseBoolean(value);
 					break;
 				case "tiered_id":
-					destination[key] = optional && !value ? undefined : parseId(value);
+					item[key] = optional && !value ? undefined : parseId(value);
 					break;
 				case "split_tiered_id":
-					destination[key] = parseSplitString(value).map(parseId);
+					item[key] = parseSplitString(value).map(parseId);
 					break;
 				case "split_string":
-					destination[key] = parseSplitString(value);
+					item[key] = parseSplitString(value);
 					break;
 				case "split_number":
-					destination[key] = limited ? parseNumbersLessThanLimit(value, chapterLimit) : parseNumbers(value);
+					item[key] = limited ? parseNumbersLessThanLimit(value, chapterLimit) : parseNumbers(value);
 					break;
 				case "string_number":
-					destination[key] = value as string | number; // no great, but only used by one column
+					item[key] = value as string | number; // no great, but only used by one column
 					break;
 				default:
-					if (typeof parse === "function")
-						destination[key] = parse({ rowSoFar: item as Partial<T>, value, temp: temp as Partial<T> });
+					if (typeof parse === "function") item[key] = parse({ rowSoFar: item as Partial<T>, value });
 					else throw new Error(`Invalid parse for '${key}': ${parse}`);
 					break;
 			}
