@@ -4,6 +4,7 @@ export * from "./body";
 export * from "./config";
 export * from "./lore";
 export * from "./skills";
+export * from "./soul";
 export * from "./statuses";
 export * from "./talents";
 export * from "./titles";
