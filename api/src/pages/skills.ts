@@ -59,5 +59,5 @@ function getLevels(info: SpreadsheetInfo) {
 		{ key: "count", source: { type: "exact", name: "# of Levels" }, parse: "number" },
 		{ key: "note", source: { type: "contains", contains: "Levels gained" }, parse: "string" },
 	];
-	return mapTable(info, range, fields).filter(chapterFilter(info.chapterLimit, "chapter"));
+	return mapTable(info, range, fields, 1).filter(chapterFilter(info.chapterLimit, "chapter"));
 }

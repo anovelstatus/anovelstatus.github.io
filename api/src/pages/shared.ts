@@ -142,15 +142,15 @@ function findTable<T>(values: SpreadsheetValue[][], fields: Fields<T>) {
 }
 
 /** Map a table that occupies the entire given range */
-export function mapTable<T>(info: SpreadsheetInfo, range: Range, fields: Fields<T>) {
+export function mapTable<T>(info: SpreadsheetInfo, range: Range, fields: Fields<T>, skipRows: number = 0) {
 	const hasRichValues = needsRichText(fields);
 	const usesNotes = needsNotes(fields);
 	const { values, richValues, notes } = getRangeData(range, hasRichValues, usesNotes);
 
-	const headers = findColumns(values[0], fields);
+	const headers = findColumns(values[skipRows], fields);
 
 	const data: T[] = [];
-	for (let i = 1; i < values.length; i++) {
+	for (let i = skipRows + 1; i < values.length; i++) {
 		if (rowHasNoData(values[i])) continue;
 		data.push(
 			mapRow(
