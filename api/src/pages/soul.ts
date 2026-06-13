@@ -12,7 +12,7 @@ function getSupremacies(info: SpreadsheetInfo): Supremacies {
 	const range = getEntireSheet(info, "Supremacies");
 	const fields: Fields<InternalSupremacy> = [
 		{ key: "chapter", source: { type: "exact", name: "Chapter" }, parse: "number" },
-		{ key: "stage", source: { type: "exact", name: "Stage" }, parse: "string" },
+		{ key: "stage", source: { type: "exact", name: "Stage" }, parse: "number" },
 		{ key: "supremacy", source: { type: "exact", name: "Supremacy" }, parse: "string" },
 		{ key: "bonus", source: { type: "exact", name: "Bonus" }, parse: "string" },
 		{ key: "note", source: { type: "exact", name: "Note" }, parse: "rich" },
