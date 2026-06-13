@@ -75,27 +75,33 @@ export function parseId(fullName: SpreadsheetValue): TieredId {
 }
 
 /** Get all text formatting details from a cell value */
-function parseRichText(value: RichValue): RichText[] {
+function parseRichText(value: RichValue): RichTextSpans {
 	if (!value) return [];
-	return value.getRuns().map((run) => {
-		const style = run.getTextStyle();
-		const obj: RichText = { t: run.getText() };
+	const spans = value
+		.getRuns()
+		.map((run) => {
+			const style = run.getTextStyle();
+			const obj: RichText = { t: run.getText() };
 
-		const color = style.getForegroundColor();
-		const bold = style.isBold();
-		const italic = style.isItalic();
-		const strikethrough = style.isStrikethrough();
-		const underline = style.isUnderline();
+			const color = style.getForegroundColor();
+			const bold = style.isBold();
+			const italic = style.isItalic();
+			const strikethrough = style.isStrikethrough();
+			const underline = style.isUnderline();
 
-		// Only set non-default values, to keep the data smaller
-		if (color && color !== "#000000" && color !== "#FFFFFF" && color !== "#ffffff") obj.c = color;
-		if (bold) obj.b = bold;
-		if (italic) obj.i = italic;
-		if (strikethrough) obj.s = strikethrough;
-		if (underline) obj.u = underline;
+			// Only set non-default values, to keep the data smaller
+			if (color && color !== "#000000" && color !== "#FFFFFF" && color !== "#ffffff") obj.c = color;
+			if (bold) obj.b = bold;
+			if (italic) obj.i = italic;
+			if (strikethrough) obj.s = strikethrough;
+			if (underline) obj.u = underline;
 
-		return obj;
-	});
+			return obj;
+		})
+		// Skip outputting `[{"t":""}]`
+		.filter((x) => x.t);
+	if (!spans.length) return;
+	return spans;
 }
 
 // todo: better types to remove unknown
