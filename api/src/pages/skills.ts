@@ -1,4 +1,4 @@
-import { chapterFilter, getEntireSheet, getRange, mapTable, parseString } from "./shared";
+import { chapterFilter, getEntireSheet, mapTable, parseString } from "./shared";
 
 type InternalSkillGain = SkillGain & { id: string };
 
@@ -39,10 +39,10 @@ export function getSkills(info: SpreadsheetInfo) {
 			},
 		},
 	];
-	for (const attribute of info.attributeNames) {
+	for (const attribute of info.attributes) {
 		fields.push({
-			key: attribute,
-			source: { type: "exact", name: attribute },
+			key: attribute.name,
+			source: { type: "exact", name: attribute.name },
 			parse: "number",
 			optional: true,
 		});
@@ -52,12 +52,12 @@ export function getSkills(info: SpreadsheetInfo) {
 }
 
 function getLevels(info: SpreadsheetInfo) {
-	const range = getRange(info, "Skill Levels");
+	const range = getEntireSheet(info, "Skill Levels");
 	const fields: Fields<InternalSkillGain> = [
 		{ key: "chapter", source: { type: "exact", name: "Chapter" }, parse: "number" },
 		{ key: "id", source: { type: "exact", name: "Skill - Tier" }, parse: "string" },
 		{ key: "count", source: { type: "exact", name: "# of Levels" }, parse: "number" },
 		{ key: "note", source: { type: "contains", contains: "Levels gained" }, parse: "string" },
 	];
-	return mapTable(info, range, fields).filter(chapterFilter(info.chapterLimit, "chapter"));
+	return mapTable(info, range, fields, 1).filter(chapterFilter(info.chapterLimit, "chapter"));
 }

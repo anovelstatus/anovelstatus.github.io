@@ -1,4 +1,4 @@
-import { chapterFilter, getEntireSheet, getRange, mapTable } from "./shared";
+import { chapterFilter, getEntireSheet, getRangeData, mapTable, mapTableInPage } from "./shared";
 
 type HasAttribute = { attribute: string };
 type InternalBoost = Attribute.Boost & HasAttribute;
@@ -7,13 +7,28 @@ type InternalGain = Attribute.Gain & HasAttribute;
 type InternalMilestone = Attribute.Milestone & HasAttribute;
 
 export function getAttributes(info: SpreadsheetInfo): Attribute.Details[] {
-	const milestones = getMilestones(info);
-	const evolutions = getEvolutions(info);
+	const range = getEntireSheet(info, "Attributes");
+	const rangeData = getRangeData(range, true, false);
+
+	const evoFields: Fields<InternalEvolution> = [
+		{ key: "chapter", source: { type: "exact", name: "Chapter" }, parse: "number" },
+		{ key: "attribute", source: { type: "exact", name: "Attribute" }, parse: "string" },
+		{ key: "name", source: { type: "exact", name: "Evolution" }, parse: "string" },
+		{ key: "note", source: { type: "exact", name: "Description" }, parse: "rich" },
+	];
+	const evolutions = mapTableInPage(info, rangeData, evoFields);
+
+	const milestoneFields: Fields<InternalMilestone> = [
+		{ key: "attribute", source: { type: "exact", name: "Attribute" }, parse: "string" },
+		{ key: "milestone", source: { type: "exact", name: "Milestone" }, parse: "number" },
+		{ key: "note", source: { type: "exact", name: "Description" }, parse: "rich" },
+	];
+	const milestones = mapTableInPage(info, rangeData, milestoneFields);
+
 	const boosts = getBoosts(info);
 	const gains = getGains(info);
 
-	const range = getRange(info, "Attributes");
-	const fields: Fields<Attribute.Details> = [
+	const attrFields: Fields<Attribute.Details> = [
 		{ key: "name", source: { type: "exact", name: "Name" }, parse: "string" },
 		{ key: "abbreviation", source: { type: "exact", name: "Short" }, parse: "string" },
 		{ key: "category", source: { type: "exact", name: "Category" }, parse: "string" },
@@ -26,7 +41,7 @@ export function getAttributes(info: SpreadsheetInfo): Attribute.Details[] {
 		{ key: "gains", parse: ({ rowSoFar }) => filterAndMap(rowSoFar, gains) },
 		{ key: "boosts", parse: ({ rowSoFar }) => filterAndMap(rowSoFar, boosts) },
 	];
-	return mapTable(info, range, fields);
+	return mapTableInPage(info, rangeData, attrFields);
 }
 
 function filterAndMap<T>(attribute: Partial<Attribute.Details>, data: (T & HasAttribute)[]): T[] {
@@ -34,26 +49,15 @@ function filterAndMap<T>(attribute: Partial<Attribute.Details>, data: (T & HasAt
 }
 
 function getBoosts(info: SpreadsheetInfo) {
-	const range = getRange(info, "Attribute Boosts");
-	const fields: Fields<InternalBoost> = [
+	const range = getEntireSheet(info, "Title Boosts");
+	const boostFields: Fields<InternalBoost> = [
 		{ key: "chapter", source: { type: "exact", name: "Chapter" }, parse: "number" },
 		{ key: "attribute", source: { type: "exact", name: "Attribute" }, parse: "string" },
 		{ key: "boost", source: { type: "contains", contains: "Gain" }, parse: "number" },
 		{ key: "title", source: { type: "exact", name: "Title" }, parse: "tiered_id" },
 		{ key: "note", source: { type: "exact", name: "Note" }, parse: "rich" },
 	];
-	return mapTable(info, range, fields).filter(chapterFilter(info.chapterLimit, "chapter"));
-}
-
-function getEvolutions(info: SpreadsheetInfo) {
-	const range = getRange(info, "Attribute Evolutions");
-	const fields: Fields<InternalEvolution> = [
-		{ key: "chapter", source: { type: "exact", name: "Chapter" }, parse: "number" },
-		{ key: "attribute", source: { type: "exact", name: "Attribute" }, parse: "string" },
-		{ key: "name", source: { type: "exact", name: "Evolution" }, parse: "string" },
-		{ key: "note", source: { type: "exact", name: "Description" }, parse: "rich" },
-	];
-	return mapTable(info, range, fields).filter(chapterFilter(info.chapterLimit, "chapter"));
+	return mapTable(info, range, boostFields).filter(chapterFilter(info.chapterLimit, "chapter"));
 }
 
 function getGains(info: SpreadsheetInfo) {
@@ -65,14 +69,4 @@ function getGains(info: SpreadsheetInfo) {
 		{ key: "note", source: { type: "exact", name: "How / Why" }, parse: "rich" },
 	];
 	return mapTable(info, range, fields).filter(chapterFilter(info.chapterLimit, "chapter"));
-}
-
-function getMilestones(info: SpreadsheetInfo) {
-	const range = getRange(info, "Attribute Milestones");
-	const fields: Fields<InternalMilestone> = [
-		{ key: "attribute", source: { type: "exact", name: "Attribute" }, parse: "string" },
-		{ key: "milestone", source: { type: "exact", name: "Milestone" }, parse: "number" },
-		{ key: "note", source: { type: "exact", name: "Description" }, parse: "rich" },
-	];
-	return mapTable(info, range, fields).filter((x) => !!x);
 }

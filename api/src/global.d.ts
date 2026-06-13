@@ -5,35 +5,16 @@ declare type Range = GoogleAppsScript.Spreadsheet.Range;
 declare type SpreadsheetValue = string | number | boolean | undefined;
 declare type RichValue = GoogleAppsScript.Spreadsheet.RichTextValue | null;
 
-/** Names of links to specific ranges in the spreadsheet ("Tables" sheet) */
-declare type RangeKey =
-	| "Bloodline Updates"
-	| "Bloodlines"
-	| "Body Tempering Stages"
-	| "Body Tempering Progress"
-	| "Races"
-	| "Mutations"
-	| "Talents"
-	| "Skills"
-	| "Skill Levels"
-	| "Attributes"
-	| "Attribute Milestones"
-	| "Attribute Evolutions"
-	| "Attribute Boosts"
-	| "Attribute Gains"
-	| "Chapter Shortcuts"
-	| "Titles"
-	| "Tiers";
-
-/** Range references for various things */
-declare type RangeLookup = Record<RangeKey, string>;
+declare type RangeData = {
+	values: SpreadsheetValue[][];
+	richValues: RichValue[][];
+	notes: string[][];
+};
 
 declare type SpreadsheetInfo = {
 	ss: Spreadsheet;
 	chapterLimit: number;
-	ranges: RangeLookup;
 	attributes: Attribute.Details[];
-	attributeNames: string[];
 	includePatreon: boolean;
 };
 

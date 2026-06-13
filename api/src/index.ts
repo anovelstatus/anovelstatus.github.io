@@ -30,7 +30,7 @@ function debug() {
 /* @ts-expect-error no-unused-local */
 function debugUpdateFile() {
 	const ss = SpreadsheetApp.openByUrl(SS_LINK);
-	updateSpecificFiles(ss, ["attributes"]);
+	updateSpecificFiles(ss, ["skills"]);
 }
 
 /** Used in trigger to update pre-generated responses */
