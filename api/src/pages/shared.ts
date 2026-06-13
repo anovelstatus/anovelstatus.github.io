@@ -222,7 +222,7 @@ function mapRow<T>(
 		try {
 			switch (parse) {
 				case "attributes":
-					item[key] = attributes.map((attr) => parseNumber(values[headers[attr.name]]));
+					item[key] = attributes.map((attr) => parseOptionalNumber(values[headers[attr.name]]) || 0);
 					break;
 				case "rich":
 					item[key] = parseRichText(richValues[headers[key]]);
