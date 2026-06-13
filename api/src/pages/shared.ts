@@ -5,6 +5,14 @@ export function getEntireSheet(info: SpreadsheetInfo, sheetName: string): Range 
 	return info.ss.getSheetByName(sheetName)!.getDataRange();
 }
 
+export function getRangeData(range: Range, getRichValues: boolean, getNotes: boolean): RangeData {
+	const values = range.getValues();
+	const richValues = getRichValues ? range.getRichTextValues() : [[]];
+	const notes = getNotes ? range.getNotes() : [[]];
+
+	return { values, richValues, notes };
+}
+
 /** Parse a value that might be a single number or a comma-separated list of numbers into a number array */
 function parseNumbersLessThanLimit(value: SpreadsheetValue, chapterLimit: number): number[] {
 	return parseNumbers(value).filter((x) => x <= chapterLimit);
@@ -98,22 +106,56 @@ export function chapterFilter<T>(chapterLimit: number, key: keyof T): (entry: T)
 	return (entry: T) => (entry[key] as unknown as number) <= chapterLimit;
 }
 
+/** Map a table from a sheet that has multiple tables on it */
+export function mapTableInPage<T>(info: SpreadsheetInfo, rangeData: RangeData, fields: Fields<T>) {
+	const hasRichValues = needsRichText(fields);
+	const usesNotes = needsNotes(fields);
+	const { values, richValues, notes } = rangeData;
+
+	const { columns, start, end } = findTable(values, fields);
+
+	const data: T[] = [];
+	for (let i = start + 1; i < end; i++) {
+		if (rowHasNoData(values[i])) continue;
+		data.push(
+			mapRow(
+				values[i],
+				richValues[hasRichValues ? i : 0],
+				notes[usesNotes ? i : 0],
+				columns,
+				info.chapterLimit,
+				fields,
+			),
+		);
+	}
+	return data;
+}
+
+function findTable<T>(values: SpreadsheetValue[][], fields: Fields<T>) {
+	const expectedHeaders = fields.filter((x) => x.source !== undefined).length;
+	for (let i = 0; i < values.length; i++) {
+		const row = values[i];
+		const columns = findColumns(row, fields);
+		if (Object.keys(columns).length !== expectedHeaders) continue;
+		for (let j = i; i < values.length; j++) {
+			if (rowHasNoData(values[j])) return { columns, start: i, end: j };
+		}
+		return { columns, start: i, end: values.length };
+	}
+	throw new Error("Expected headers not found in range");
+}
+
+/** Map a table that occupies the entire given range */
 export function mapTable<T>(info: SpreadsheetInfo, range: Range, fields: Fields<T>) {
-	const values = range.getValues();
-
-	const hasRichValues = fields.some((x) => x.parse === "rich");
-	const richValues = hasRichValues ? range.getRichTextValues() : [[]];
-
-	const usesNotes = fields.some((x) => x.parse === "note");
-	const notes = usesNotes ? range.getNotes() : [[]];
+	const hasRichValues = needsRichText(fields);
+	const usesNotes = needsNotes(fields);
+	const { values, richValues, notes } = getRangeData(range, hasRichValues, usesNotes);
 
 	const headers = findColumns(values[0], fields);
 
 	const data: T[] = [];
 	for (let i = 1; i < values.length; i++) {
-		// Make sure there's data in the row.
-		// Don't just check the first cell because some have Chapter 0 entries that would be skipped.
-		if (!values[i][0] && !values[i][1]) continue;
+		if (rowHasNoData(values[i])) continue;
 		data.push(
 			mapRow(
 				values[i],
@@ -126,6 +168,19 @@ export function mapTable<T>(info: SpreadsheetInfo, range: Range, fields: Fields<
 		);
 	}
 	return data;
+}
+
+function rowHasNoData(row: SpreadsheetValue[]) {
+	// Don't just check the first cell because some have Chapter 0 entries that would be skipped.
+	return !row[0] && !row[1];
+}
+
+function needsRichText<T>(fields: Fields<T>) {
+	return fields.some((x) => x.parse === "rich");
+}
+
+function needsNotes<T>(fields: Fields<T>) {
+	return fields.some((x) => x.parse === "note");
 }
 
 function findColumns<T>(headers: SpreadsheetValue[], fields: Fields<T>) {

@@ -4,6 +4,11 @@ declare type Range = GoogleAppsScript.Spreadsheet.Range;
 /** The empty string is the default value, not undefined. But having it in here makes a lot of others simpler. */
 declare type SpreadsheetValue = string | number | boolean | undefined;
 declare type RichValue = GoogleAppsScript.Spreadsheet.RichTextValue | null;
+declare type RangeData = {
+	values: SpreadsheetValue[][];
+	richValues: RichValue[][];
+	notes: string[][];
+};
 
 /** Names of links to specific ranges in the spreadsheet ("Tables" sheet) */
 declare type RangeKey =
