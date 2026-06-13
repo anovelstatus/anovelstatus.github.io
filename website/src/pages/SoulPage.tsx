@@ -4,10 +4,11 @@ import { LoreSection } from "@/components/LoreSection";
 import Section from "@/components/Section";
 import { useSoul } from "@/data/api";
 import { SupremacyCard } from "@/features/soul/SupremacyCard";
+import LoadingPlaceholder from "@/components/LoadingPlaceholder";
 
 export function SoulPage() {
 	const cardSize = { xs: 12, md: 6 };
-	const { data: soul } = useSoul();
+	const { data: soul, isFetching } = useSoul();
 
 	// remove ? and || once API is up
 	const supremacies = Object.keys(soul?.supremacies || {}).toSorted();
@@ -68,11 +69,12 @@ export function SoulPage() {
 			</Section>
 			<Section title="Heart Supremacies">
 				<Stack direction="column" spacing={2}>
+					{isFetching && <LoadingPlaceholder />}
 					<LoreSection topic="Heart Supremacies" />
 					<Grid container spacing={1}>
 						{supremacies.map((supremacy) => (
 							<Grid size={cardSize} key={supremacy}>
-								<SupremacyCard name={supremacy} stages={soul.supremacies[supremacy]} />
+								<SupremacyCard name={supremacy} stages={soul.supremacies[supremacy]!} />
 							</Grid>
 						))}
 					</Grid>
