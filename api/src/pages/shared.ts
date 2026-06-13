@@ -132,12 +132,11 @@ export function mapTableInPage<T>(info: SpreadsheetInfo, rangeData: RangeData, f
 }
 
 function findTable<T>(values: SpreadsheetValue[][], fields: Fields<T>) {
-	const expectedHeaders = fields.filter((x) => x.source !== undefined).length;
 	for (let i = 0; i < values.length; i++) {
 		const row = values[i];
 		const columns = findColumns(row, fields);
-		if (Object.keys(columns).length !== expectedHeaders) continue;
-		for (let j = i; i < values.length; j++) {
+		if (Object.values(columns).some((x) => x === -1)) continue;
+		for (let j = i; j < values.length; j++) {
 			if (rowHasNoData(values[j])) return { columns, start: i, end: j };
 		}
 		return { columns, start: i, end: values.length };
