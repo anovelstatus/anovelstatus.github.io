@@ -1,13 +1,12 @@
 import { chapterFilter, getEntireSheet, mapTable, parseString } from "./shared";
 
 type InternalSkillGain = SkillGain & { id: string };
-type InternalSkill = Skill & Record<string, number>;
 
 export function getSkills(info: SpreadsheetInfo) {
 	const skillLevels = getLevels(info);
 
 	const range = getEntireSheet(info, "Skill List");
-	const fields: Fields<InternalSkill> = [
+	const fields: Fields<Skill> = [
 		{ key: "tier", source: { type: "exact", name: "Tier" }, parse: "string" },
 		{ key: "previous", source: { type: "contains", contains: "Previous" }, parse: "split_tiered_id" },
 		{ key: "replaced", source: { type: "contains", contains: "Replaced" }, parse: "bool", optional: true },
@@ -17,43 +16,24 @@ export function getSkills(info: SpreadsheetInfo) {
 		{ key: "bonuses", source: { type: "exact", name: "Bonus" }, parse: "rich" },
 		{ key: "notes", source: { type: "exact", name: "Note" }, parse: "rich" },
 		{ key: "tags", source: { type: "exact", name: "Tags" }, parse: "string", optional: true },
+		{ key: "attributes", parse: "attributes" },
 		// Must process after tier
 		{
 			key: "name",
 			source: { type: "exact", name: "Name" },
-			// Need to figure out how to get the generics working properly
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			parse: ({ rowSoFar, value }) => parseString(value).replace(" - " + rowSoFar.tier!, "") as any,
+			parse: ({ rowSoFar, value }) => parseString(value).replace(" - " + rowSoFar.tier!, ""),
 		},
 		// Must process after tier and name
 		{
 			key: "gains",
 			parse: ({ rowSoFar }) => {
 				const id = rowSoFar.name + " - " + rowSoFar.tier;
-				return (
-					skillLevels
-						.filter((x) => x.id === id)
-						// Need to figure out how to get the generics working properly
-						// eslint-disable-next-line @typescript-eslint/no-explicit-any
-						.map((x) => ({ note: x.note, chapter: x.chapter, count: x.count })) as any
-				);
+				return skillLevels
+					.filter((x) => x.id === id)
+					.map((x): SkillGain => ({ note: x.note, chapter: x.chapter, count: x.count }));
 			},
 		},
 	];
-	for (const attribute of info.attributes) {
-		fields.push({
-			key: attribute.name,
-			source: { type: "exact", name: attribute.name },
-			parse: "number",
-			optional: true,
-		});
-	}
-	fields.push({
-		key: "attributes",
-		// Need to figure out how to get the generics working properly
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		parse: ({ rowSoFar }) => info.attributes.map((x) => rowSoFar[x.name] || 0) as any,
-	});
 
 	return mapTable(info, range, fields).filter((x) => !!x.name && x.gains.length > 0);
 }

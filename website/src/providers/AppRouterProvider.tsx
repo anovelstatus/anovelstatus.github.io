@@ -1,4 +1,11 @@
-import { createHashHistory, createRootRoute, createRoute, createRouter, RouterProvider } from "@tanstack/react-router";
+import {
+	createHashHistory,
+	createRootRoute,
+	createRoute,
+	createRouter,
+	Navigate,
+	RouterProvider,
+} from "@tanstack/react-router";
 import * as Pages from "@/pages";
 import App from "@/App";
 
@@ -16,6 +23,8 @@ const routes = [
 	createRoute({ getParentRoute: () => rootRoute, path: "/soul", component: Pages.SoulPage }),
 	createRoute({ getParentRoute: () => rootRoute, path: "/talents", component: Pages.TalentPage }),
 	createRoute({ getParentRoute: () => rootRoute, path: "/titles", component: Pages.TitlePage }),
+	// Add fallback for old page, in case anyone gets stuck there
+	createRoute({ getParentRoute: () => rootRoute, path: "/cultivation", component: () => <Navigate to="/" /> }),
 ];
 
 const routeTree = rootRoute.addChildren(routes);

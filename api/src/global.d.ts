@@ -21,6 +21,8 @@ declare type SpreadsheetInfo = {
 type NamedSource = { type: "exact"; name: string };
 type ContainsSource = { type: "contains"; contains: string };
 
+type Source = NamedSource | ContainsSource;
+
 type CustomContext<T> = {
 	/** What has been parsed for this table row so far */
 	rowSoFar: Partial<T>;
@@ -34,8 +36,9 @@ type Field<T, TKey extends keyof T & string> = {
 	 * Find table column by exact name, or containing a specific phrase.
 	 * Or don't find a column at all for custom ones.
 	 */
-	source?: NamedSource | ContainsSource;
+	source?: Source;
 	parse:
+		| "attributes"
 		| "split_tiered_id"
 		| "rich"
 		| "note"

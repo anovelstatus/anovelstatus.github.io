@@ -1,13 +1,19 @@
 import { Typography, type TypographyProps } from "@mui/material";
 
 export type RichTextSpanProps = {
-	data: string | RichText[] | null | undefined;
+	data: string | RichTextSpans | null;
 } & TypographyProps;
 
 /** The cell often returns an array of 1 span with empty text, so check for non-empty text */
-export function hasNote(data: string | RichText[]): boolean {
+export function hasNote(data: string | RichTextSpans): boolean {
 	if (typeof data === "string") return data.length > 0;
 	return (data || []).some((x) => x.t.length > 0);
+}
+
+export function toPlainText(data: RichTextSpanProps["data"]) {
+	if (typeof data === "string") return data;
+	if (!data) return "";
+	return data.map((x) => x.t).join("");
 }
 
 export function RichTextSpan({ data, sx, ...props }: RichTextSpanProps) {

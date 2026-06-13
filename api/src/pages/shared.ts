@@ -75,27 +75,33 @@ export function parseId(fullName: SpreadsheetValue): TieredId {
 }
 
 /** Get all text formatting details from a cell value */
-function parseRichText(value: RichValue): RichText[] {
+function parseRichText(value: RichValue): RichTextSpans {
 	if (!value) return [];
-	return value.getRuns().map((run) => {
-		const style = run.getTextStyle();
-		const obj: RichText = { t: run.getText() };
+	const spans = value
+		.getRuns()
+		.map((run) => {
+			const style = run.getTextStyle();
+			const obj: RichText = { t: run.getText() };
 
-		const color = style.getForegroundColor();
-		const bold = style.isBold();
-		const italic = style.isItalic();
-		const strikethrough = style.isStrikethrough();
-		const underline = style.isUnderline();
+			const color = style.getForegroundColor();
+			const bold = style.isBold();
+			const italic = style.isItalic();
+			const strikethrough = style.isStrikethrough();
+			const underline = style.isUnderline();
 
-		// Only set non-default values, to keep the data smaller
-		if (color && color !== "#000000" && color !== "#FFFFFF" && color !== "#ffffff") obj.c = color;
-		if (bold) obj.b = bold;
-		if (italic) obj.i = italic;
-		if (strikethrough) obj.s = strikethrough;
-		if (underline) obj.u = underline;
+			// Only set non-default values, to keep the data smaller
+			if (color && color !== "#000000" && color !== "#FFFFFF" && color !== "#ffffff") obj.c = color;
+			if (bold) obj.b = bold;
+			if (italic) obj.i = italic;
+			if (strikethrough) obj.s = strikethrough;
+			if (underline) obj.u = underline;
 
-		return obj;
-	});
+			return obj;
+		})
+		// Skip outputting `[{"t":""}]`
+		.filter((x) => x.t);
+	if (!spans.length) return;
+	return spans;
 }
 
 // todo: better types to remove unknown
@@ -109,7 +115,7 @@ export function mapTableInPage<T>(info: SpreadsheetInfo, rangeData: RangeData, f
 	const usesNotes = needsNotes(fields);
 	const { values, richValues, notes } = rangeData;
 
-	const { columns, start, end } = findTable(values, fields);
+	const { columns, start, end } = findTable(values, fields, info.attributes);
 
 	const data: T[] = [];
 	for (let i = start + 1; i < end; i++) {
@@ -122,16 +128,17 @@ export function mapTableInPage<T>(info: SpreadsheetInfo, rangeData: RangeData, f
 				columns,
 				info.chapterLimit,
 				fields,
+				info.attributes,
 			),
 		);
 	}
 	return data;
 }
 
-function findTable<T>(values: SpreadsheetValue[][], fields: Fields<T>) {
+function findTable<T>(values: SpreadsheetValue[][], fields: Fields<T>, attributes: Attribute.Details[]) {
 	for (let i = 0; i < values.length; i++) {
 		const row = values[i];
-		const columns = findColumns(row, fields);
+		const columns = findColumns(row, fields, attributes);
 		if (Object.values(columns).some((x) => x === -1)) continue;
 		for (let j = i; j < values.length; j++) {
 			if (rowHasNoData(values[j])) return { columns, start: i, end: j };
@@ -147,7 +154,7 @@ export function mapTable<T>(info: SpreadsheetInfo, range: Range, fields: Fields<
 	const usesNotes = needsNotes(fields);
 	const { values, richValues, notes } = getRangeData(range, hasRichValues, usesNotes);
 
-	const headers = findColumns(values[skipRows], fields);
+	const headers = findColumns(values[skipRows], fields, info.attributes);
 
 	const data: T[] = [];
 	for (let i = skipRows + 1; i < values.length; i++) {
@@ -160,6 +167,7 @@ export function mapTable<T>(info: SpreadsheetInfo, range: Range, fields: Fields<
 				headers,
 				info.chapterLimit,
 				fields,
+				info.attributes,
 			),
 		);
 	}
@@ -179,8 +187,8 @@ function needsNotes<T>(fields: Fields<T>) {
 	return fields.some((x) => x.parse === "note");
 }
 
-function findColumns<T>(headers: SpreadsheetValue[], fields: Fields<T>) {
-	const columns = {} as Record<keyof T, number>;
+function findColumns<T>(headers: SpreadsheetValue[], fields: Fields<T>, attributes: Attribute.Details[]) {
+	const columns = {} as Record<string, number>;
 	for (const { key, source } of fields) {
 		if (!source) continue;
 		switch (source.type) {
@@ -194,6 +202,12 @@ function findColumns<T>(headers: SpreadsheetValue[], fields: Fields<T>) {
 				throw new Error(`Invalid source for '${key}': ${source}`);
 		}
 	}
+	// If any field is the attribute array, then look for each one in the headers
+	if (fields.some((x) => x.parse === "attributes")) {
+		for (const attribute of attributes) {
+			columns[attribute.name] = headers.indexOf(attribute.name);
+		}
+	}
 	return columns;
 }
 
@@ -204,6 +218,7 @@ function mapRow<T>(
 	headers: Record<string, number>,
 	chapterLimit: number,
 	fields: Fields<T>,
+	attributes: Attribute.Details[],
 ) {
 	const item: Record<string, unknown> = {};
 
@@ -212,6 +227,9 @@ function mapRow<T>(
 		const value = headers[key] !== undefined ? values[headers[key]] : undefined;
 		try {
 			switch (parse) {
+				case "attributes":
+					item[key] = attributes.map((attr) => parseOptionalNumber(values[headers[attr.name]]) || 0);
+					break;
 				case "rich":
 					item[key] = parseRichText(richValues[headers[key]]);
 					break;

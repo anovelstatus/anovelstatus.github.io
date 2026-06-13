@@ -26,29 +26,31 @@ declare type RichText = {
 	u?: boolean;
 };
 
+declare type RichTextSpans = RichText[] | undefined;
+
 declare namespace Attribute {
 	type Evolution = {
 		chapter: number;
 		name: string;
-		note: RichText[];
+		note: RichTextSpans;
 	};
 
 	type Milestone = {
 		milestone: number;
-		note: RichText[];
+		note: RichTextSpans;
 	};
 
 	type Boost = {
 		chapter: number;
 		boost: number;
-		note: RichText[];
+		note: RichTextSpans;
 		title: TieredId;
 	};
 
 	type Gain = {
 		chapter: number;
 		gain: number;
-		note: RichText[];
+		note: RichTextSpans;
 	};
 
 	type Basic = {
@@ -61,7 +63,7 @@ declare namespace Attribute {
 	type Details = Basic & {
 		index: number;
 		color: string;
-		note: RichText[];
+		note: RichTextSpans;
 		milestones: Milestone[];
 		evolutions: Evolution[];
 		boosts: Boost[];
@@ -75,7 +77,7 @@ declare type Race = {
 	chapter: number;
 	talents: TieredId[];
 	freeSlots: number;
-	note: RichText[];
+	note: RichTextSpans;
 };
 
 type BloodlineStatus = {
@@ -83,7 +85,7 @@ type BloodlineStatus = {
 	chapter: number;
 	purity: string | number;
 	status: string;
-	note?: RichText[];
+	note?: RichTextSpans;
 	title?: TieredId;
 };
 
@@ -98,7 +100,7 @@ declare type TemperingStage = {
 	name: string;
 	tier: string;
 	chapter: number;
-	description: RichText[];
+	description: RichTextSpans;
 	expectedSteps: number;
 	updates: TemperingStep[];
 };
@@ -108,7 +110,7 @@ declare type TemperingStep = {
 	category: string;
 	started: number;
 	completed: number | undefined;
-	note: RichText[];
+	note: RichTextSpans;
 	linkType?: string;
 	link?: TieredId;
 };
@@ -117,9 +119,9 @@ declare namespace Body {
 	type Modification = {
 		name: string;
 		tier?: string;
-		note?: string; // todo: RichText[]
+		note?: string; // todo: RichTextSpans
 		type: string;
-		source: RichText[];
+		source: RichTextSpans;
 		chapters: number[];
 	};
 
@@ -140,7 +142,7 @@ declare type Supremacies = Record<string, SupremacyStage[]>;
 declare type SupremacyStage = {
 	chapter: number;
 	stage: number;
-	note: RichText[];
+	note: RichTextSpans;
 	bonus: string;
 };
 
@@ -183,7 +185,7 @@ declare type Lore = {
 declare type LoreEntry = {
 	chapter: number;
 	key: string;
-	note: RichText[];
+	note: RichTextSpans;
 	permanent?: boolean;
 };
 
@@ -204,7 +206,7 @@ declare type HasPrevious = {
 
 declare type Talent = TieredId &
 	HasPrevious & {
-		note: RichText[];
+		note: RichTextSpans;
 		chapterGained: number;
 		chapterUndone?: number;
 		chapterReplaced?: number[];
@@ -218,11 +220,11 @@ declare type SkillDetails = {
 	attributes: number[];
 	replaced: boolean;
 	gains: SkillGain[];
-	description: RichText[];
+	description: RichTextSpans;
 	prerequisites: string | undefined;
 	quality: string;
-	bonuses: RichText[];
-	notes: RichText[];
+	bonuses: RichTextSpans;
+	notes: RichTextSpans;
 	tags: string;
 };
 declare type Skill = TieredId & SkillDetails & HasPrevious;
@@ -237,15 +239,15 @@ declare type Title = TieredId & {
 	chapter: number;
 	replaced?: number;
 	previous?: TieredId;
-	note: RichText[];
+	note: RichTextSpans;
 };
 
 declare type Achievement = {
 	chapter: number;
 	tier: string;
-	description: RichText[];
-	message: RichText[];
+	description: RichTextSpans;
+	message: RichTextSpans;
 	messageRecipients: string[];
-	rewards: RichText[];
-	note: RichText[];
+	rewards: RichTextSpans;
+	note: RichTextSpans;
 };
