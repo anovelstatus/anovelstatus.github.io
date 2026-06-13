@@ -2,21 +2,20 @@ import { useBasicAttributes } from "@/data/api";
 import { CircularProgress, Typography } from "@mui/material";
 
 type AttributeSummaryProps = {
-	item: HasSomeAttributes;
+	gains: number[];
 };
 
 /** Write out list of attributes provided by something */
-export function AttributeSummary({ item }: AttributeSummaryProps) {
+export function AttributeSummary({ gains }: AttributeSummaryProps) {
 	const { data: allAttributes, isFetching } = useBasicAttributes();
 
 	if (isFetching) return <CircularProgress size="16px" color="inherit" />;
 
-	const attributes = allAttributes.filter((x) => item[x.name]);
 	return (
 		<>
-			{attributes.map((x, index) => (
+			{gains.map((x, index) => (
 				<Typography variant="body2" key={index}>
-					{`+${item[x.name]} ${x.name}`}
+					{`+${x} ${allAttributes[index]!.name}`}
 				</Typography>
 			))}
 		</>

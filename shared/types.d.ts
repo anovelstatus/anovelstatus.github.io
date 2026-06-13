@@ -150,7 +150,7 @@ declare type SupremacyStage = {
  */
 declare type HasSomeAttributes = Record<string, number>;
 
-declare type Status = HasSomeAttributes & {
+declare type Status = {
 	chapter: number;
 	note?: string;
 	attributes: number[];
@@ -231,7 +231,7 @@ declare type SkillDetails = {
 	notes: RichText[];
 	tags: string;
 };
-declare type Skill = TieredId & SkillDetails & HasSomeAttributes & HasPrevious;
+declare type Skill = TieredId & SkillDetails & HasPrevious;
 
 declare type SkillGain = {
 	chapter: number;

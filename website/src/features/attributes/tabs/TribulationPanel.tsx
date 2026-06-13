@@ -9,6 +9,8 @@ import { AttributeGroupCard } from "@/features/attributes/AttributeGroupCard";
 import LoadingPlaceholder from "@/components/LoadingPlaceholder";
 import { LoreSection } from "@/components/LoreSection";
 
+type AttributeChanges = Record<string, number>;
+
 export function TribulationPanel() {
 	const chapter = useChapter();
 	const status = useCalculatedStatus(chapter);
@@ -16,17 +18,16 @@ export function TribulationPanel() {
 	const { data: attributes } = useAttributes();
 	const race = useRaceOnChapter(chapter);
 
-	const [tempChanges, setTempChanges] = useState({} as HasSomeAttributes);
+	const [tempChanges, setTempChanges] = useState({} as AttributeChanges);
 
 	const tempStatus = useMemo(() => {
 		if (!status) return undefined;
-		const temp = { ...status };
-		for (const attribute of attributes || []) {
-			if (!temp[attribute.name]) temp[attribute.name] = 0;
-
+		const temp = { ...status, attributes: [...status.attributes] };
+		for (const attribute of attributes) {
 			const newValue =
-				(temp[attribute.name] || 0) + (tempChanges[attribute.name] || 0) * (1 + getCurrentBoost(chapter, attribute));
-			temp[attribute.name] = Math.round(newValue);
+				temp.attributes[attribute.index]! +
+				(tempChanges[attribute.name] || 0) * (1 + getCurrentBoost(chapter, attribute));
+			temp.attributes[attribute.index] = Math.round(newValue);
 		}
 		return temp;
 	}, [status, attributes, tempChanges]);
@@ -34,7 +35,7 @@ export function TribulationPanel() {
 	if (!race || !status || !tempStatus)
 		return <LoadingPlaceholder text="Loading race tier, skill levels, and titles..." />;
 
-	const thresholds = getTresholds(tempStatus, race, attributes);
+	const thresholds = getTresholds(tempStatus, race);
 
 	return (
 		<Stack spacing={2}>
@@ -61,9 +62,9 @@ export function TribulationPanel() {
 	);
 }
 
-function AttributeInputs({ onChange }: { onChange: (changes: HasSomeAttributes) => void }) {
+function AttributeInputs({ onChange }: { onChange: (changes: AttributeChanges) => void }) {
 	const groups = useGroupedAttributes();
-	const [changes, setChanges] = useState({} as HasSomeAttributes);
+	const [changes, setChanges] = useState({} as AttributeChanges);
 
 	return (
 		<Grid container spacing={1}>
@@ -110,10 +111,10 @@ function AttributeInputs({ onChange }: { onChange: (changes: HasSomeAttributes) 
 	);
 }
 
-function getTresholds(status: Status, race: Race, attributes: Attribute.Details[]) {
+function getTresholds(status: Status, race: Race) {
 	// Assuming thresholds of 100 * race tier, when 1/3/6/12 attributes cross that threshold
 	const relevantCounts = [1, 3, 6, 12];
-	const stats = attributes.map((attribute) => status[attribute.name] || 0);
+	const stats = status.attributes;
 	const max = maxBy(stats, (x) => x) ?? 0;
 	const tier = 100 * (race.tier + 1);
 	const data = [];

@@ -14,23 +14,9 @@ export function getEvolvedName(attribute: Attribute.Details, status: Status): st
 	return attribute.name + suffix;
 }
 
-export function getImprovementsFromPreviousStatus(
-	attributes: Attribute.Details[],
-	status: Status,
-	previousStatus?: Status,
-): HasSomeAttributes {
-	const difference = {} as HasSomeAttributes;
-	if (previousStatus) {
-		for (const { name } of attributes) {
-			difference[name] = status[name]! - previousStatus[name]!;
-		}
-	}
-	return difference;
-}
-
 export function getPastMilestones(status?: Status, attribute?: Attribute.Details): Attribute.Milestone[] {
 	if (!status || !attribute) return [];
-	return attribute.milestones?.filter((x) => x.milestone <= status[attribute.name]!) ?? [];
+	return attribute.milestones?.filter((x) => x.milestone <= status.attributes[attribute.index]!) ?? [];
 }
 
 export function getPastEvolutions(status?: Status, attribute?: Attribute.Details): Attribute.Evolution[] {
@@ -70,19 +56,21 @@ export function calculateStatus(chapter: number, skills: Skill[], attributes: At
 	for (const attribute of attributes) {
 		const baseValue = calculateBaseAttributeValue(skills, attribute, chapter);
 		const boost = getCurrentBoost(chapter, attribute);
-		status[attribute.name] = Math.round(baseValue * (1 + boost));
+		status.attributes[attribute.index] = Math.round(baseValue * (1 + boost));
 	}
 	return status;
 }
 
 export function calculateBaseAttributeValue(skills: Skill[], attribute: Attribute.Details, chapter: number) {
-	const attributeSkills = skills.filter((skill) => skill[attribute.name] && skill[attribute.name]! > 0);
+	const attributeSkills = skills.filter(
+		(skill) => skill.attributes[attribute.index] && skill.attributes[attribute.index]! > 0,
+	);
 	let baseValue = sumBy(
 		attribute.gains.filter((x) => x.chapter <= chapter),
 		(x) => x.gain,
 	);
 	for (const skill of attributeSkills) {
-		baseValue += getLevelOnChapter(skill, chapter) * skill[attribute.name]!;
+		baseValue += getLevelOnChapter(skill, chapter) * skill.attributes[attribute.index]!;
 	}
 	return baseValue;
 }
@@ -119,8 +107,8 @@ export function useChapterGains(chapter: number): React.ReactNode[] {
 		const skillLevels = skill.gains.filter((x) => x.chapter === chapter);
 		if (skillLevels.length > 0) {
 			const skillAttributes = attributes
-				.filter((x) => skill[x.name])
-				.map((x) => `${skill[x.name]! * sumBy(skillLevels, (x) => x.count)} ${x.abbreviation}`);
+				.filter((x) => skill.attributes[x.index])
+				.map((x) => `${skill.attributes[x.index]! * sumBy(skillLevels, (x) => x.count)} ${x.abbreviation}`);
 			if (skillAttributes.length === 0) continue;
 			notes.push(
 				<Box key={`${skill.name}-levels`}>

@@ -1,12 +1,13 @@
 import { chapterFilter, getEntireSheet, mapTable, parseString } from "./shared";
 
 type InternalSkillGain = SkillGain & { id: string };
+type InternalSkill = Skill & Record<string, number>;
 
 export function getSkills(info: SpreadsheetInfo) {
 	const skillLevels = getLevels(info);
 
 	const range = getEntireSheet(info, "Skill List");
-	const fields: Fields<Skill> = [
+	const fields: Fields<InternalSkill> = [
 		{ key: "tier", source: { type: "exact", name: "Tier" }, parse: "string" },
 		{ key: "previous", source: { type: "contains", contains: "Previous" }, parse: "split_tiered_id" },
 		{ key: "replaced", source: { type: "contains", contains: "Replaced" }, parse: "bool", optional: true },
