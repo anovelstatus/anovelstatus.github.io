@@ -144,12 +144,6 @@ declare type SupremacyStage = {
 	bonus: string;
 };
 
-/**
- * An object that has properties related to the Attributes
- * @deprecated
- */
-declare type HasSomeAttributes = Record<string, number>;
-
 declare type Status = {
 	chapter: number;
 	note?: string;
