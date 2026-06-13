@@ -1,12 +1,13 @@
 import { chapterFilter, getEntireSheet, mapTable, parseString } from "./shared";
 
 type InternalSkillGain = SkillGain & { id: string };
+type InternalSkill = Skill & Record<string, number>;
 
 export function getSkills(info: SpreadsheetInfo) {
 	const skillLevels = getLevels(info);
 
 	const range = getEntireSheet(info, "Skill List");
-	const fields: Fields<Skill> = [
+	const fields: Fields<InternalSkill> = [
 		{ key: "tier", source: { type: "exact", name: "Tier" }, parse: "string" },
 		{ key: "previous", source: { type: "contains", contains: "Previous" }, parse: "split_tiered_id" },
 		{ key: "replaced", source: { type: "contains", contains: "Replaced" }, parse: "bool", optional: true },
@@ -47,6 +48,12 @@ export function getSkills(info: SpreadsheetInfo) {
 			optional: true,
 		});
 	}
+	fields.push({
+		key: "attributes",
+		// Need to figure out how to get the generics working properly
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		parse: ({ rowSoFar }) => info.attributes.map((x) => rowSoFar[x.name] || 0) as any,
+	});
 
 	return mapTable(info, range, fields).filter((x) => !!x.name && x.gains.length > 0);
 }

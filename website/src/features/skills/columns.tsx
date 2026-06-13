@@ -63,13 +63,13 @@ export const useColumns = () => {
 			},
 		},
 		{
-			accessorKey: "Attributes",
+			accessorKey: "attributes",
 			header: "Attributes",
 			size: 40,
 			enableSorting: false,
 			cell: ({ row }) => (
 				<Box sx={{ fontSize: "0.9em" }}>
-					<AttributeSummary item={row.original} />
+					<AttributeSummary gains={row.original.attributes} />
 				</Box>
 			),
 		},

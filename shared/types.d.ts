@@ -59,6 +59,7 @@ declare namespace Attribute {
 	};
 
 	type Details = Basic & {
+		index: number;
 		color: string;
 		note: RichText[];
 		milestones: Milestone[];
@@ -143,13 +144,10 @@ declare type SupremacyStage = {
 	bonus: string;
 };
 
-/** An object that has properties related to the Attributes */
-declare type HasSomeAttributes = Record<string, number>;
-
-// todo: replace with slimmer array model
-declare type Status = HasSomeAttributes & {
+declare type Status = {
 	chapter: number;
 	note?: string;
+	attributes: number[];
 };
 
 declare type BasicInfo = {
@@ -217,6 +215,7 @@ declare type Talent = TieredId &
 
 /** Skill metadata */
 declare type SkillDetails = {
+	attributes: number[];
 	replaced: boolean;
 	gains: SkillGain[];
 	description: RichText[];
@@ -226,7 +225,7 @@ declare type SkillDetails = {
 	notes: RichText[];
 	tags: string;
 };
-declare type Skill = TieredId & SkillDetails & HasSomeAttributes & HasPrevious;
+declare type Skill = TieredId & SkillDetails & HasPrevious;
 
 declare type SkillGain = {
 	chapter: number;

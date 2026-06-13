@@ -160,15 +160,15 @@ function calculateAttribute(
 	attribute: Attribute.Details,
 	skills: Skill[],
 ): AttributeAnalysis {
-	const previousValue = previousStatus[attribute.name]!;
+	const previousValue = previousStatus.attributes[attribute.index]!;
 	const baseValue = calculateBaseAttributeValue(skills, attribute, chapter);
 	const boost = getCurrentBoost(chapter, attribute);
 	const calculatedValue = Math.round(baseValue * (1 + boost));
 	let officialValue = "?";
 	if (status) {
-		officialValue = formatNumber(status[attribute.name] || 0);
+		officialValue = formatNumber(status.attributes[attribute.index] || 0);
 	}
-	const lastOfficialValue = (status ?? lastOfficialStatus)[attribute.name] || 0;
+	const lastOfficialValue = (status ?? lastOfficialStatus).attributes[attribute.index] || 0;
 
 	return {
 		previousValue,

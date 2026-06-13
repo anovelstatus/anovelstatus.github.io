@@ -6,7 +6,7 @@ export const IDEAL_QUALITY = "Ideal";
 export type SkillFiltersOptions = {
 	chapter: number;
 	showFormerSkills?: boolean;
-	providesAttributes: Attribute.Basic[];
+	providesAttributes: Attribute.Details[];
 	tier?: string;
 	idealOnly: boolean;
 };
@@ -19,8 +19,8 @@ export function showSkill(x: Skill, filters: SkillFiltersOptions) {
 	if (!filters.showFormerSkills && x.replaced) return false;
 
 	if (filters.providesAttributes.length) {
-		for (const attr of filters.providesAttributes) {
-			if (!x[attr.name]) return false;
+		for (const { index } of filters.providesAttributes) {
+			if (!x.attributes[index]) return false;
 		}
 	}
 
