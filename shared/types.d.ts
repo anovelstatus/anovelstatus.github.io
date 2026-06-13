@@ -143,13 +143,16 @@ declare type SupremacyStage = {
 	bonus: string;
 };
 
-/** An object that has properties related to the Attributes */
+/**
+ * An object that has properties related to the Attributes
+ * @deprecated
+ */
 declare type HasSomeAttributes = Record<string, number>;
 
-// todo: replace with slimmer array model
 declare type Status = HasSomeAttributes & {
 	chapter: number;
 	note?: string;
+	attributes: number[];
 };
 
 declare type BasicInfo = {
@@ -217,6 +220,7 @@ declare type Talent = TieredId &
 
 /** Skill metadata */
 declare type SkillDetails = {
+	attributes: number[];
 	replaced: boolean;
 	gains: SkillGain[];
 	description: RichText[];

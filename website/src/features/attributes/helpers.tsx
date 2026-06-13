@@ -64,7 +64,8 @@ export function useCalculatedStatus(chapter: number): Status | undefined {
 }
 
 export function calculateStatus(chapter: number, skills: Skill[], attributes: Attribute.Details[]): Status | undefined {
-	const status: Status = { chapter: chapter };
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const status: Status = { chapter: chapter, attributes: [] as any };
 
 	for (const attribute of attributes) {
 		const baseValue = calculateBaseAttributeValue(skills, attribute, chapter);
