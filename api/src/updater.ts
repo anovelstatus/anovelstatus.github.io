@@ -54,6 +54,8 @@ function getPageParser(page: ApiPage): (info: SpreadsheetInfo) => unknown {
 			return parsers.getLore;
 		case "skills":
 			return parsers.getSkills;
+		case "soul":
+			return parsers.getSoul;
 		case "statuses":
 			return parsers.getOfficialStatuses;
 		case "talents":

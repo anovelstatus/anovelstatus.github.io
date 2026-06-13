@@ -57,21 +57,18 @@ export function BodyPage() {
 	return (
 		<Stack spacing={2}>
 			<Typography variant="h3" gutterBottom>
-				Priam's Body
+				Priam's Body & Spirit
 			</Typography>
 			<LoreSection topic="Body" />
-			<Section
-				title="Race"
-				contents={
-					<Stack direction="column" spacing={2}>
-						<LoreSection topic="Race" />
-						<RaceCard race={race} />
-					</Stack>
-				}
-			/>
-			{bloodlines.length > 0 && <Section title="Bloodlines" contents={bloodlineContents} />}
-			{mutations.length > 0 && <Section title="Modifications & Mutations" contents={mutationContents} />}
-			{stages.length > 0 && <Section title="Tempering" contents={temperingContents} />}
+			<Section title="Race">
+				<Stack direction="column" spacing={2}>
+					<LoreSection topic="Race" />
+					<RaceCard race={race} />
+				</Stack>
+			</Section>
+			{bloodlines.length > 0 && <Section title="Bloodlines">{bloodlineContents}</Section>}
+			{mutations.length > 0 && <Section title="Modifications & Mutations">{mutationContents}</Section>}
+			{stages.length > 0 && <Section title="Tempering">{temperingContents}</Section>}
 		</Stack>
 	);
 }

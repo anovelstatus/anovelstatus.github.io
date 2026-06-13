@@ -7,6 +7,7 @@ declare type ApiPage =
 	| "body"
 	| "skills"
 	| "statuses"
+	| "soul"
 	| "achievements"
 	| "lore";
 
@@ -128,6 +129,19 @@ declare namespace Body {
 		tempering: TemperingStage[];
 	};
 }
+
+declare type SoulDetails = {
+	supremacies: Supremacies;
+};
+
+declare type Supremacies = Record<string, SupremacyStage[]>;
+
+declare type SupremacyStage = {
+	chapter: number;
+	stage: number;
+	note: RichText[];
+	bonus: string;
+};
 
 /** An object that has properties related to the Attributes */
 declare type HasSomeAttributes = Record<string, number>;
