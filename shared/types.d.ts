@@ -59,6 +59,7 @@ declare namespace Attribute {
 	};
 
 	type Details = Basic & {
+		index: number;
 		color: string;
 		note: RichText[];
 		milestones: Milestone[];

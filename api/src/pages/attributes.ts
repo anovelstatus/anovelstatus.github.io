@@ -41,7 +41,11 @@ export function getAttributes(info: SpreadsheetInfo): Attribute.Details[] {
 		{ key: "gains", parse: ({ rowSoFar }) => filterAndMap(rowSoFar, gains) },
 		{ key: "boosts", parse: ({ rowSoFar }) => filterAndMap(rowSoFar, boosts) },
 	];
-	return mapTableInPage(info, rangeData, attrFields);
+	const attributes = mapTableInPage(info, rangeData, attrFields);
+	for (let i = 0; i < attributes.length; i++) {
+		attributes[i].index = i;
+	}
+	return attributes;
 }
 
 function filterAndMap<T>(attribute: Partial<Attribute.Details>, data: (T & HasAttribute)[]): T[] {
