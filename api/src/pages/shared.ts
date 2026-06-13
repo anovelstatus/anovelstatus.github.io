@@ -1,6 +1,3 @@
-export function getRange(info: SpreadsheetInfo, name: RangeKey): Range {
-	return info.ss.getRange(info.ranges[name]);
-}
 export function getEntireSheet(info: SpreadsheetInfo, sheetName: string): Range {
 	return info.ss.getSheetByName(sheetName)!.getDataRange();
 }

@@ -1,4 +1,4 @@
-import { chapterFilter, getEntireSheet, getRange, mapTable } from "./shared";
+import { chapterFilter, getEntireSheet, mapTable } from "./shared";
 
 export function getConfiguration(info: SpreadsheetInfo): BasicInfo {
 	return {
@@ -17,7 +17,7 @@ export function getConfiguration(info: SpreadsheetInfo): BasicInfo {
 }
 
 function getTimelineShortcuts(info: SpreadsheetInfo) {
-	const range = getRange(info, "Chapter Shortcuts");
+	const range = getEntireSheet(info, "Timeline");
 	const fields: Fields<Shortcut> = [
 		{ key: "chapter", source: { type: "exact", name: "Chapter" }, parse: "number" },
 		{ key: "label", source: { type: "exact", name: "Label" }, parse: "string" },

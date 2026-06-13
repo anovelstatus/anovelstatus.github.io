@@ -1,4 +1,4 @@
-import { chapterFilter, getEntireSheet, getRange, mapTable, parseString } from "./shared";
+import { chapterFilter, getEntireSheet, mapTable, parseString } from "./shared";
 
 type InternalSkillGain = SkillGain & { id: string };
 
@@ -52,7 +52,7 @@ export function getSkills(info: SpreadsheetInfo) {
 }
 
 function getLevels(info: SpreadsheetInfo) {
-	const range = getRange(info, "Skill Levels");
+	const range = getEntireSheet(info, "Skill Levels");
 	const fields: Fields<InternalSkillGain> = [
 		{ key: "chapter", source: { type: "exact", name: "Chapter" }, parse: "number" },
 		{ key: "id", source: { type: "exact", name: "Skill - Tier" }, parse: "string" },
