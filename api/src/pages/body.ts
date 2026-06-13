@@ -1,17 +1,19 @@
-import { chapterFilter, mapTable } from "./shared";
+import { chapterFilter, getEntireSheet, getRangeData, mapTableInPage } from "./shared";
 
 export function getBody(info: SpreadsheetInfo): Body.Details {
+	const range = getEntireSheet(info, "Body");
+	const rangeData = getRangeData(range, true, false);
+
 	return {
-		mutations: getMutations(info),
-		races: getRaces(info),
-		bloodlines: getBloodlines(info),
-		tempering: getTempering(info),
+		mutations: getMutations(info, rangeData),
+		races: getRaces(info, rangeData),
+		bloodlines: getBloodlines(info, rangeData),
+		tempering: getTempering(info, rangeData),
 	};
 }
 
-function getMutations(info: SpreadsheetInfo) {
-	const range = getRange(info, "Mutations");
-	const mutationFields: Fields<Body.Modification> = [
+function getMutations(info: SpreadsheetInfo, rangeData: RangeData) {
+	const fields: Fields<Body.Modification> = [
 		{ key: "name", source: { type: "exact", name: "Mutation" }, parse: "string" },
 		{ key: "chapters", source: { type: "exact", name: "Chapters" }, parse: "split_number", limited: true },
 		{ key: "tier", source: { type: "exact", name: "Rarity" }, parse: "string", optional: true },
@@ -19,12 +21,11 @@ function getMutations(info: SpreadsheetInfo) {
 		{ key: "note", source: { type: "exact", name: "Description" }, parse: "string", optional: true },
 		{ key: "source", source: { type: "exact", name: "Source" }, parse: "rich" },
 	];
-	return mapTable(info, range, mutationFields).filter((x) => x.chapters.length > 0);
+	return mapTableInPage(info, rangeData, fields).filter((x) => x.chapters.length > 0);
 }
 
-function getRaces(info: SpreadsheetInfo) {
-	const range = getRange(info, "Races");
-	const raceFields: Fields<Race> = [
+function getRaces(info: SpreadsheetInfo, rangeData: RangeData) {
+	const fields: Fields<Race> = [
 		{ key: "chapter", source: { type: "exact", name: "Chapter" }, parse: "number" },
 		{ key: "name", source: { type: "exact", name: "Race" }, parse: "string" },
 		{ key: "tier", source: { type: "exact", name: "Tier" }, parse: "number" },
@@ -32,28 +33,11 @@ function getRaces(info: SpreadsheetInfo) {
 		{ key: "freeSlots", source: { type: "exact", name: "Free Slots" }, parse: "number" },
 		{ key: "note", source: { type: "exact", name: "Description" }, parse: "rich" },
 	];
-	return mapTable(info, range, raceFields).filter(chapterFilter(info.chapterLimit, "chapter"));
+	return mapTableInPage(info, rangeData, fields).filter(chapterFilter(info.chapterLimit, "chapter"));
 }
 
-export function getTempering(info: SpreadsheetInfo) {
-	const updates = getTemperingSteps(info);
-
-	const range = getRange(info, "Body Tempering Stages");
-	const temperingFields: Fields<TemperingStage> = [
-		{ key: "name", source: { type: "exact", name: "Stage" }, parse: "string" },
-		{ key: "tier", source: { type: "exact", name: "Quality" }, parse: "string" },
-		{ key: "chapter", source: { type: "exact", name: "Revealed" }, parse: "number" },
-		{ key: "expectedSteps", source: { type: "exact", name: "Steps" }, parse: "number" },
-		{ key: "description", source: { type: "exact", name: "Description" }, parse: "rich" },
-		// Must process after name
-		{ key: "updates", parse: ({ rowSoFar }) => updates.filter((x) => x.stage === rowSoFar.name) },
-	];
-	return mapTable(info, range, temperingFields).filter((x) => x.updates.length > 0);
-}
-
-function getTemperingSteps(info: SpreadsheetInfo) {
-	const range = getRange(info, "Body Tempering Progress");
-	const temperingStepFields: Fields<TemperingStep> = [
+function getTempering(info: SpreadsheetInfo, rangeData: RangeData) {
+	const stepFields: Fields<TemperingStep> = [
 		{ key: "stage", source: { type: "exact", name: "Stage" }, parse: "string" },
 		{ key: "category", source: { type: "exact", name: "Step" }, parse: "string" },
 		{ key: "started", source: { type: "exact", name: "Started" }, parse: "number" },
@@ -63,26 +47,22 @@ function getTemperingSteps(info: SpreadsheetInfo) {
 		{ key: "link", source: { type: "exact", name: "Link" }, parse: "tiered_id", optional: true },
 		{ key: "note", source: { type: "exact", name: "Update" }, parse: "rich" },
 	];
-	return mapTable(info, range, temperingStepFields).filter(chapterFilter(info.chapterLimit, "started"));
-}
+	const steps = mapTableInPage(info, rangeData, stepFields).filter(chapterFilter(info.chapterLimit, "started"));
 
-export function getBloodlines(info: SpreadsheetInfo) {
-	const updates = getBloodlineUpdates(info);
-
-	const range = getRange(info, "Bloodlines");
-	const bloodlineFields: Fields<Bloodline> = [
-		{ key: "name", source: { type: "exact", name: "Bloodline" }, parse: "string" },
-		{ key: "lore", source: { type: "exact", name: "Lore Key" }, parse: "string" },
-		{ key: "quality", source: { type: "exact", name: "Quality" }, parse: "string" },
+	const fields: Fields<TemperingStage> = [
+		{ key: "name", source: { type: "exact", name: "Stage" }, parse: "string" },
+		{ key: "tier", source: { type: "exact", name: "Quality" }, parse: "string" },
+		{ key: "chapter", source: { type: "exact", name: "Revealed" }, parse: "number" },
+		{ key: "expectedSteps", source: { type: "exact", name: "Steps" }, parse: "number" },
+		{ key: "description", source: { type: "exact", name: "Description" }, parse: "rich" },
 		// Must process after name
-		{ key: "updates", parse: ({ rowSoFar }) => updates.filter((x) => x.name === rowSoFar.name) },
+		{ key: "updates", parse: ({ rowSoFar }) => steps.filter((x) => x.stage === rowSoFar.name) },
 	];
-	return mapTable(info, range, bloodlineFields).filter((x) => x.updates.length > 0);
+	return mapTableInPage(info, rangeData, fields).filter((x) => x.updates.length > 0);
 }
 
-function getBloodlineUpdates(info: SpreadsheetInfo) {
-	const range = getRange(info, "Bloodline Updates");
-	const bloodlineUpdateFields: Fields<BloodlineStatus> = [
+function getBloodlines(info: SpreadsheetInfo, rangeData: RangeData) {
+	const updateFields: Fields<BloodlineStatus> = [
 		{ key: "name", source: { type: "exact", name: "Race" }, parse: "string" },
 		{ key: "chapter", source: { type: "exact", name: "Chapter" }, parse: "number" },
 		{ key: "purity", source: { type: "exact", name: "Purity" }, parse: "string_number" },
@@ -90,9 +70,14 @@ function getBloodlineUpdates(info: SpreadsheetInfo) {
 		{ key: "note", source: { type: "exact", name: "Cause" }, parse: "rich" },
 		{ key: "title", source: { type: "exact", name: "Title" }, parse: "tiered_id", optional: true },
 	];
-	return mapTable(info, range, bloodlineUpdateFields).filter(chapterFilter(info.chapterLimit, "chapter"));
-}
+	const updates = mapTableInPage(info, rangeData, updateFields).filter(chapterFilter(info.chapterLimit, "chapter"));
 
-function getRange(info: SpreadsheetInfo, name: RangeKey): Range {
-	return info.ss.getRange(info.ranges[name]);
+	const bloodlineFields: Fields<Bloodline> = [
+		{ key: "name", source: { type: "exact", name: "Bloodline" }, parse: "string" },
+		{ key: "lore", source: { type: "exact", name: "Lore Key" }, parse: "string" },
+		{ key: "quality", source: { type: "exact", name: "Quality" }, parse: "string" },
+		// Must process after name
+		{ key: "updates", parse: ({ rowSoFar }) => updates.filter((x) => x.name === rowSoFar.name) },
+	];
+	return mapTableInPage(info, rangeData, bloodlineFields).filter((x) => x.updates.length > 0);
 }
