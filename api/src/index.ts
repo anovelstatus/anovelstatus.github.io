@@ -61,6 +61,7 @@ function updateAllFiles(ss?: Spreadsheet) {
 		"body",
 		"lore",
 		"skills",
+		"soul",
 		"statuses",
 		"talents",
 		"titles",
