@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { useColumns } from "./columns";
 import AchievementCard from "./AchievementCard";
 import { LoreSection } from "@/components/LoreSection";
+import { toPlainText } from "@/components/RichTextSpan";
 
 export default function AchievementTable() {
 	const chapter = useChapter();
@@ -39,8 +40,7 @@ export default function AchievementTable() {
 	const table = useAppTable({
 		data,
 		columns: useColumns(),
-		getRowId: (row) =>
-			row.chapter + (typeof row.description === "string" ? row.description : row.description.map((x) => x.t).join("")),
+		getRowId: (row) => row.chapter + toPlainText(row.description),
 		initialState: {
 			sorting: [{ id: "chapter", desc: true }],
 		},

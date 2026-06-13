@@ -10,6 +10,12 @@ export function hasNote(data: string | RichTextSpans): boolean {
 	return (data || []).some((x) => x.t.length > 0);
 }
 
+export function toPlainText(data: RichTextSpanProps["data"]) {
+	if (typeof data === "string") return data;
+	if (!data) return "";
+	return data.map((x) => x.t).join("");
+}
+
 export function RichTextSpan({ data, sx, ...props }: RichTextSpanProps) {
 	// Support plain text, but also support text formatting details from the spreasdheet
 	if (typeof data === "string") {
