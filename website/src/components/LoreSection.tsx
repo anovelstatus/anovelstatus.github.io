@@ -1,16 +1,15 @@
 import { ChaptersChip } from "@/components/chips";
 import { RichTextSpan } from "@/components/RichTextSpan";
 import { useChapter, useLore } from "@/data/api";
-import { Stack, Typography } from "@mui/material";
+import { Stack } from "@mui/material";
 import { maxBy, orderBy } from "es-toolkit";
 
 type LoreSectionProps = {
 	topic: string;
 	subtopic?: string;
-	includeHeader?: boolean;
 };
 
-export function LoreSection({ topic, subtopic, includeHeader }: LoreSectionProps) {
+export function LoreSection({ topic, subtopic }: LoreSectionProps) {
 	const chapter = useChapter();
 
 	const realTopic = subtopic ? `${topic} - ${subtopic}` : topic;
@@ -20,7 +19,6 @@ export function LoreSection({ topic, subtopic, includeHeader }: LoreSectionProps
 
 	return (
 		<Stack>
-			{includeHeader && <Typography variant="h6">Lore</Typography>}
 			<RichTextSpan data={lore.description} />
 			{lore.updates.map((update, index) => (
 				<Stack direction="row" key={index}>

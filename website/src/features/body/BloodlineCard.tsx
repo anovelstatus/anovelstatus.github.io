@@ -51,7 +51,8 @@ export function BloodlineCard({ bloodline }: BloodlineProps) {
 				</Stack>
 			</CardContent>
 			<CardContent>
-				<LoreSection topic={bloodline.lore} includeHeader />
+				<Typography variant="h6">Other Information</Typography>
+				<LoreSection topic={bloodline.lore} />
 			</CardContent>
 		</Card>
 	);
