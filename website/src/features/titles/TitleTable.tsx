@@ -43,7 +43,7 @@ export default function TitleTable() {
 	const table = useAppTable<Title>({
 		data: titles,
 		columns,
-		getRowId: (row) => toIdString(row),
+		getRowId: (row, _, parent) => toIdString(row) + toIdString(parent?.original),
 		initialState: {
 			sorting: [
 				{ id: "tier", desc: true },
