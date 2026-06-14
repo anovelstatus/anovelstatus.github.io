@@ -9,8 +9,9 @@ import {
 	Stack,
 	Toolbar,
 	useTheme,
+	type ButtonProps,
 } from "@mui/material";
-import { Event, Menu as MenuIcon } from "@mui/icons-material";
+import { Event, Menu as MenuIcon, Search } from "@mui/icons-material";
 import ChapterPicker from "./ChapterPicker";
 import { useIsFetching } from "@tanstack/react-query";
 import { useState } from "react";
@@ -24,9 +25,11 @@ type NavLink = {
 	to: ValidateToPath<RegisteredRouter>;
 	title: string;
 	key: string;
+	props?: ButtonProps;
 };
 const links: NavLink[] = [
 	{ key: "home", to: "/", title: "Home" },
+	{ key: "search", to: "/search", title: "Search", props: { endIcon: <Search /> } },
 	{ key: "attributes", to: "/attributes", title: "Attributes" },
 	{ key: "soul", to: "/soul", title: "Soul" },
 	{ key: "body", to: "/body", title: "Body" },
@@ -46,22 +49,27 @@ export default function NavBar() {
 	const theme = useTheme();
 	const location = useLocation();
 
+	const currentLink = links.find((x) => x.to === location.pathname);
+
 	const compactMenu = (
 		<PopupState variant="popover" popupId="nav-bar">
 			{(popupState) => (
 				<>
-					<Button
-						size="large"
-						aria-label="navigation menu"
-						aria-controls="menu-appbar"
-						aria-haspopup="true"
-						{...bindTrigger(popupState)}
-						color="inherit"
-						startIcon={<MenuIcon />}
-						variant="text"
-					>
-						{links.find((x) => x.to === location.pathname)!.title as string}
-					</Button>
+					{currentLink && (
+						<Button
+							size="large"
+							aria-label="navigation menu"
+							aria-controls="menu-appbar"
+							aria-haspopup="true"
+							{...bindTrigger(popupState)}
+							color="inherit"
+							startIcon={<MenuIcon />}
+							variant="text"
+							{...currentLink.props}
+						>
+							{currentLink.title as string}
+						</Button>
+					)}
 
 					<Menu
 						onClick={() => popupState.close()}
@@ -103,6 +111,7 @@ export default function NavBar() {
 								component={Link}
 								key={link.key}
 								to={link.to}
+								{...link.props}
 							>
 								{link.title}
 							</Button>
