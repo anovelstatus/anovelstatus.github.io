@@ -2,13 +2,11 @@ import { ChaptersChip } from "@/components/chips";
 import { RichTextSpan } from "@/components/RichTextSpan";
 import { Stack, Typography } from "@mui/material";
 
-type LoreSectionProps = {
+type LoreCardProps = {
 	lore: LoreEntry;
-	subtopic?: string;
-	includeHeader?: boolean;
 };
 
-export function LoreCard({ lore }: LoreSectionProps) {
+export function LoreCard({ lore }: LoreCardProps) {
 	return (
 		<Stack>
 			<Typography variant="h6">{lore.key}</Typography>

@@ -14,7 +14,7 @@ export function useTalentGroups() {
 			// Remove ones that haven't been gained yet
 			.filter((x) => x.chapterGained <= chapter)
 			// Remove ones that have been undone
-			.filter((x) => !x.chapterUndone || x.chapterUndone <= chapter);
+			.filter((x) => !x.chapterUndone || x.chapterUndone > chapter);
 
 		// Now remove ones that are replaced by another one in the remaining list
 		filtered = filtered.filter((x) => !filtered.some((some) => some.previous?.some((prev) => sameId(prev, x))));

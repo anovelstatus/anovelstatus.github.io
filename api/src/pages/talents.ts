@@ -3,8 +3,7 @@ import { chapterFilter, getEntireSheet, mapTable } from "./shared";
 export function getTalents(info: SpreadsheetInfo) {
 	const range = getEntireSheet(info, "Talents");
 	const fields: Fields<Talent> = [
-		{ key: "name", source: { type: "exact", name: "Name" }, parse: "string" },
-		{ key: "tier", source: { type: "exact", name: "Tier" }, parse: "string" },
+		{ key: "name|tier", source: { type: "exact", name: "Talent" }, parse: "tiered_id" },
 		{ key: "chapterGained", source: { type: "exact", name: "Chapter Gained" }, parse: "number" },
 		{ key: "chapterUndone", source: { type: "exact", name: "Chapter Undone" }, parse: "number", limited: true },
 		{

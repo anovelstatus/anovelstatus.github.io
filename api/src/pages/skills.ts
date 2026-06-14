@@ -1,4 +1,4 @@
-import { chapterFilter, getEntireSheet, mapTable, parseString } from "./shared";
+import { chapterFilter, getEntireSheet, mapTable } from "./shared";
 
 type InternalSkillGain = SkillGain & { id: string };
 
@@ -7,7 +7,7 @@ export function getSkills(info: SpreadsheetInfo) {
 
 	const range = getEntireSheet(info, "Skill List");
 	const fields: Fields<Skill> = [
-		{ key: "tier", source: { type: "exact", name: "Tier" }, parse: "string" },
+		{ key: "name|tier", source: { type: "exact", name: "Name" }, parse: "tiered_id" },
 		{ key: "previous", source: { type: "contains", contains: "Previous" }, parse: "split_tiered_id" },
 		{ key: "replaced", source: { type: "contains", contains: "Replaced" }, parse: "bool", optional: true },
 		{ key: "description", source: { type: "exact", name: "Description" }, parse: "rich" },
@@ -17,12 +17,6 @@ export function getSkills(info: SpreadsheetInfo) {
 		{ key: "notes", source: { type: "exact", name: "Note" }, parse: "rich" },
 		{ key: "tags", source: { type: "exact", name: "Tags" }, parse: "string", optional: true },
 		{ key: "attributes", parse: "attributes" },
-		// Must process after tier
-		{
-			key: "name",
-			source: { type: "exact", name: "Name" },
-			parse: ({ rowSoFar, value }) => parseString(value).replace(" - " + rowSoFar.tier!, ""),
-		},
 		// Must process after tier and name
 		{
 			key: "gains",

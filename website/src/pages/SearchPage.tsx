@@ -14,6 +14,7 @@ const skillKeys: PlainOrRichTextKeys<Skill>[] = ["name", "description", "notes",
 const talentKeys: PlainOrRichTextKeys<Talent>[] = ["name", "note", "type"];
 const titleKeys: PlainOrRichTextKeys<Title>[] = ["name", "note"];
 const achievementKeys: PlainOrRichTextKeys<Achievement>[] = ["description", "note", "message", "rewards"];
+const loreKeys: PlainOrRichTextKeys<LoreEntry>[] = ["note", "key"];
 
 export function SearchPage() {
 	const [inputValue, setInputValue] = useState("");
@@ -27,7 +28,7 @@ export function SearchPage() {
 					inputValue
 						.toLowerCase()
 						.split(" ")
-						.filter((x) => x),
+						.filter((x) => x && x !== ""),
 				),
 			);
 		}, 500);
@@ -39,15 +40,70 @@ export function SearchPage() {
 		setInputValue(evt.target.value);
 	};
 
-	const { data: skills } = useSkills();
-	const { data: titles } = useTitles();
-	const { data: talents } = useTalents();
+	const { data: skills, isFetching: isFetchingSkills } = useSkills();
+	const { data: titles, isFetching: isFetchingTitles } = useTitles();
+	const { data: talents, isFetching: isFetchingTalents } = useTalents();
 
-	const { data: achievements } = useAchievements();
+	const { data: achievements, isFetching: isFetchingAchievements } = useAchievements();
 
-	const { data: lore } = useLore();
+	const { data: lore, isFetching: isFetchingLore } = useLore();
 
 	const theme = useTheme();
+
+	const sections = [
+		<ResultSection
+			key="skills-results-section"
+			title="Skills"
+			items={skills}
+			keys={skillKeys}
+			loading={isFetchingSkills}
+			component={(x) => <SkillCard id={x} key={toIdString(x)} />}
+			showOnChapter={(item, chapter) => item.gains.some((gain) => gain.chapter <= chapter)}
+			query={debouncedValue}
+		/>,
+		<ResultSection
+			key="talents-results-section"
+			title="Talents"
+			items={talents}
+			keys={talentKeys}
+			loading={isFetchingTalents}
+			component={(x) => <TalentCard id={x} key={toIdString(x)} />}
+			showOnChapter={(item, chapter) => item.chapterGained <= chapter}
+			query={debouncedValue}
+		/>,
+		<ResultSection
+			key="titles-results-section"
+			title="Titles"
+			items={titles}
+			keys={titleKeys}
+			loading={isFetchingTitles}
+			component={(x) => <TitleCard id={x} key={toIdString(x)} />}
+			showOnChapter={(item, chapter) => item.chapter <= chapter}
+			query={debouncedValue}
+		/>,
+		<ResultSection
+			key="achievements-results-section"
+			title="Achievements"
+			items={achievements}
+			keys={achievementKeys}
+			loading={isFetchingAchievements}
+			component={(x) => <AchievementCard achievement={x} key={toPlainText(x.description) + x.chapter} />}
+			showOnChapter={(item, chapter) => item.chapter <= chapter}
+			query={debouncedValue}
+		/>,
+		<ResultSection
+			key="lore-results-section"
+			title="Miscellaneous"
+			items={lore}
+			keys={loreKeys}
+			loading={isFetchingLore}
+			component={(x) => <LoreCard lore={x} key={x.key + x.chapter + x.permanent} />}
+			showOnChapter={(item, chapter) => item.chapter <= chapter}
+			query={debouncedValue}
+		/>,
+	];
+
+	const hasQuery = debouncedValue.length > 0;
 
 	return (
 		<Stack spacing={2}>
@@ -55,46 +111,7 @@ export function SearchPage() {
 			<Box sx={{ position: "sticky", top: 0, width: "100%", backgroundColor: theme.palette.background.paper }}>
 				<TextField onChange={onSearchChange} label="Search" variant="filled" fullWidth />
 			</Box>
-			<ResultSection
-				title="Skills"
-				items={skills}
-				keys={skillKeys}
-				component={(x) => <SkillCard id={x} key={toIdString(x)} />}
-				showOnChapter={(item, chapter) => item.gains.some((gain) => gain.chapter <= chapter)}
-				query={debouncedValue}
-			/>
-			<ResultSection
-				title="Talents"
-				items={talents}
-				keys={talentKeys}
-				component={(x) => <TalentCard id={x} key={toIdString(x)} />}
-				showOnChapter={(item, chapter) => item.chapterGained <= chapter}
-				query={debouncedValue}
-			/>
-			<ResultSection
-				title="Titles"
-				items={titles}
-				keys={titleKeys}
-				component={(x) => <TitleCard id={x} key={toIdString(x)} />}
-				showOnChapter={(item, chapter) => item.chapter <= chapter}
-				query={debouncedValue}
-			/>
-			<ResultSection
-				title="Achievements"
-				items={achievements}
-				keys={achievementKeys}
-				component={(x) => <AchievementCard achievement={x} key={toPlainText(x.description) + x.chapter} />}
-				showOnChapter={(item, chapter) => item.chapter <= chapter}
-				query={debouncedValue}
-			/>
-			<ResultSection
-				title="Miscellaneous"
-				items={lore}
-				keys={["note", "key"]}
-				component={(x) => <LoreCard lore={x} key={toPlainText(x.key) + x.chapter} />}
-				showOnChapter={(item, chapter) => item.chapter <= chapter}
-				query={debouncedValue}
-			/>
+			{hasQuery && sections}
 		</Stack>
 	);
 }

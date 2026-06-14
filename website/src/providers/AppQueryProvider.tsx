@@ -3,6 +3,7 @@ import type { PropsWithChildren } from "react";
 import { getPatreonKey } from "@/data/localStorage";
 
 const API_URL = import.meta.env.VITE_API_URL;
+const oneHour = 1 * 60 * 60 * 1_000;
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -15,8 +16,8 @@ const queryClient = new QueryClient({
 				});
 				return response.json();
 			},
-			staleTime: Infinity,
-			gcTime: Infinity,
+			staleTime: oneHour,
+			gcTime: oneHour * 6,
 		},
 	},
 });
