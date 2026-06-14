@@ -3,6 +3,7 @@ export * from "./AttributePage";
 export * from "./BodyPage";
 export * from "./IndexPage";
 export * from "./MindPage";
+export * from "./SearchPage";
 export * from "./SkillPage";
 export * from "./SoulPage";
 export * from "./TalentPage";

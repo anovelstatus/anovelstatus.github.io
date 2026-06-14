@@ -1,3 +1,6 @@
+/** Get keys from type T where T's properties for those keys are of type TValue */
+declare type KeysMatching<T, TValue> = keyof { [P in keyof T as T[P] extends TValue ? P : never]: P } & keyof T;
+
 /** Pages of data that can be fetched */
 declare type ApiPage =
 	| "chapters"
@@ -27,6 +30,8 @@ declare type RichText = {
 };
 
 declare type RichTextSpans = RichText[] | undefined;
+/** Get keys from type T where T has a string or rich text metadata */
+declare type PlainOrRichTextKeys<T> = KeysMatching<T, string | RichTextSpans>;
 
 declare namespace Attribute {
 	type Evolution = {
