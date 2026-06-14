@@ -1,5 +1,6 @@
+import { LoreCard } from "@/components/LoreCard";
 import { toPlainText } from "@/components/RichTextSpan";
-import { useAchievements, useSkills, useTalents, useTitles } from "@/data/api";
+import { useAchievements, useLore, useSkills, useTalents, useTitles } from "@/data/api";
 import { toIdString } from "@/data/helpers";
 import AchievementCard from "@/features/achievements/AchievementCard";
 import { ResultSection } from "@/features/search/ResultSection";
@@ -44,6 +45,8 @@ export function SearchPage() {
 
 	const { data: achievements } = useAchievements();
 
+	const { data: lore } = useLore();
+
 	const theme = useTheme();
 
 	return (
@@ -81,6 +84,14 @@ export function SearchPage() {
 				items={achievements}
 				keys={achievementKeys}
 				component={(x) => <AchievementCard achievement={x} key={toPlainText(x.description) + x.chapter} />}
+				showOnChapter={(item, chapter) => item.chapter <= chapter}
+				query={debouncedValue}
+			/>
+			<ResultSection
+				title="Miscellaneous"
+				items={lore}
+				keys={["note", "key"]}
+				component={(x) => <LoreCard lore={x} key={toPlainText(x.key) + x.chapter} />}
 				showOnChapter={(item, chapter) => item.chapter <= chapter}
 				query={debouncedValue}
 			/>
