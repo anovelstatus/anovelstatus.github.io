@@ -18,7 +18,7 @@ export const useColumns = () => {
 		{
 			accessorKey: "name",
 			header: "Title",
-			size: 100,
+			size: 150,
 			enableSorting: true,
 			cell: ({ row }) => (
 				<Stack direction="column">
@@ -33,7 +33,7 @@ export const useColumns = () => {
 							startIcon={row.getIsExpanded() ? <ExpandLess /> : <ExpandMore />}
 							onClick={row.getToggleExpandedHandler()}
 						>
-							See previous
+							{row.getIsExpanded() ? "Hide previous" : "See previous"}
 						</Button>
 					) : null}
 				</Stack>
@@ -51,7 +51,7 @@ export const useColumns = () => {
 		{
 			accessorKey: "notes",
 			header: "Notes",
-			size: 400,
+			size: 1000,
 			enableSorting: false,
 			cell: ({ row }) => <RichTextSpan data={row.original.note} />,
 			meta: {

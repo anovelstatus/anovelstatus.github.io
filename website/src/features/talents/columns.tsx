@@ -24,7 +24,7 @@ export const useColumns = () => {
 		{
 			accessorKey: "name",
 			header: "Talent",
-			size: 100,
+			size: 150,
 			cell: ({ row }) => (
 				<Stack direction="column">
 					<Stack direction="row" sx={{ flexWrap: "wrap", alignItems: "baseline", paddingLeft: `${row.depth * 20}px` }}>
@@ -38,7 +38,7 @@ export const useColumns = () => {
 							startIcon={row.getIsExpanded() ? <ExpandLess /> : <ExpandMore />}
 							onClick={row.getToggleExpandedHandler()}
 						>
-							See previous
+							{row.getIsExpanded() ? "Hide previous" : "See previous"}
 						</Button>
 					) : null}
 				</Stack>
@@ -57,7 +57,7 @@ export const useColumns = () => {
 		{
 			accessorKey: "note",
 			header: "Description",
-			size: 400,
+			size: 1000,
 			enableSorting: false,
 			cell: ({ row }) => <RichTextSpan data={row.original.note} />,
 			meta: {
