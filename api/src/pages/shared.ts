@@ -249,9 +249,14 @@ function mapRow<T>(
 				case "bool":
 					item[key] = optional ? parseOptionalBoolean(value) : parseBoolean(value);
 					break;
-				case "tiered_id":
-					item[key] = optional && !value ? undefined : parseId(value);
+				case "tiered_id": {
+					const id = optional && !value ? undefined : parseId(value);
+					if (id && key === "name|tier") {
+						item.name = id.name;
+						item.tier = id.tier;
+					} else item[key] = id;
 					break;
+				}
 				case "split_tiered_id":
 					item[key] = parseSplitString(value).map(parseId);
 					break;

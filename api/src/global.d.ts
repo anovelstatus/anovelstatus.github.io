@@ -56,7 +56,7 @@ type Field<T, TKey extends keyof T & string> = {
 	limited?: boolean;
 };
 
-type Fields<T> = Field<T, keyof T & string>[];
+type Fields<T> = Field<T, (keyof T & string) | "name|tier">[];
 
 /**
  * Randomly-generated string that users should paste into the website
