@@ -137,7 +137,7 @@ export function useAttributeAnalysis(): AttributeAnalysisRow[] {
 	const { data: attributes } = useAttributes();
 	const statuses = useStatusDictionary();
 
-	if (!attributes.length || !statuses[1]) {
+	if (!attributes.length || !statuses[1] || !skills.length) {
 		return [];
 	}
 
