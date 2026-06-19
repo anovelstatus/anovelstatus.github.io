@@ -8,7 +8,7 @@ import LoadingPlaceholder from "@/components/LoadingPlaceholder";
 
 export function SoulPage() {
 	const cardSize = { xs: 12, md: 6 };
-	const { data: soul, isFetching } = useSoul();
+	const { data: soul, isLoading } = useSoul();
 
 	// remove ? and || once API is up
 	const supremacies = Object.keys(soul?.supremacies || {}).toSorted();
@@ -56,7 +56,7 @@ export function SoulPage() {
 			</Section>
 			<Section title="Heart Supremacies">
 				<Stack direction="column" spacing={2}>
-					{isFetching && <LoadingPlaceholder />}
+					{isLoading && <LoadingPlaceholder />}
 					<LoreSection topic="Heart Supremacies" />
 					<Grid container spacing={1}>
 						{supremacies.map((supremacy) => (

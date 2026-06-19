@@ -53,10 +53,10 @@ export function getCurrentBoost(chapter: number, attribute?: Attribute.Details):
 
 export function useCalculatedStatus(chapter: number): number[] | undefined {
 	const { data: skills, isLoading: skillsLoading } = useSkills();
-	const attributes = useAttributes();
+	const { data: attributes, isLoading: attributesLoading } = useAttributes();
 	return useMemo(() => {
-		if (skillsLoading || attributes.isFetching) return undefined;
-		return calculateStatus(chapter, skills, attributes.data);
+		if (skillsLoading || attributesLoading) return undefined;
+		return calculateStatus(chapter, skills, attributes);
 	}, [chapter, skills, attributes]);
 }
 

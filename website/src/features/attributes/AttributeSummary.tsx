@@ -8,9 +8,9 @@ type AttributeSummaryProps = {
 
 /** Write out list of attributes provided by something */
 export function AttributeSummary({ gains }: AttributeSummaryProps) {
-	const { data: attributes, isFetching } = useAttributes();
+	const { data: attributes, isLoading } = useAttributes();
 
-	if (isFetching) return <CircularProgress size="16px" color="inherit" />;
+	if (isLoading) return <CircularProgress size="16px" color="inherit" />;
 
 	const data = zip(gains, attributes);
 

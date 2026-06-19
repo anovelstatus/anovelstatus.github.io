@@ -17,12 +17,12 @@ export function getCalculationText(analysis: AttributeAnalysis) {
 }
 
 export function useAttributeAnalysis(): AttributeAnalysisRow[] {
-	const { data: skills } = useSkills();
-	const { data: attributes } = useAttributes();
-	const { data: statuses } = useStatuses();
+	const { data: skills, isLoading: isLoadingSkills } = useSkills();
+	const { data: attributes, isLoading: isLoadingAttributes } = useAttributes();
+	const { data: statuses, isLoading: isLoadingStatuses } = useStatuses();
 
 	return useMemo(() => {
-		if (!attributes.length || !statuses[1] || !skills.length) {
+		if (isLoadingAttributes || isLoadingStatuses || isLoadingSkills) {
 			return [];
 		}
 		const data: AttributeAnalysisRow[] = [];

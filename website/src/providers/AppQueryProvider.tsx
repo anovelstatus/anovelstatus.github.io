@@ -16,6 +16,7 @@ const queryClient = new QueryClient({
 				});
 				return response.json();
 			},
+			throwOnError: true,
 			staleTime: oneHour,
 			gcTime: oneHour * 6,
 		},

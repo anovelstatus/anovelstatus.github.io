@@ -41,12 +41,10 @@ export function SearchPage() {
 	};
 
 	const { data: skills, isLoading: isFetchingSkills } = useSkills();
-	const { data: titles, isFetching: isFetchingTitles } = useTitles();
-	const { data: talents, isFetching: isFetchingTalents } = useTalents();
-
-	const { data: achievements, isFetching: isFetchingAchievements } = useAchievements();
-
-	const { data: lore, isFetching: isFetchingLore } = useLore();
+	const { data: titles, isLoading: isFetchingTitles } = useTitles();
+	const { data: talents, isLoading: isFetchingTalents } = useTalents();
+	const { data: achievements, isLoading: isFetchingAchievements } = useAchievements();
+	const { data: lore, isLoading: isFetchingLore } = useLore();
 
 	const theme = useTheme();
 
