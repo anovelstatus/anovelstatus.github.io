@@ -155,7 +155,7 @@ export function useAttributeAnalysis(): AttributeAnalysisRow[] {
 		const data: AttributeAnalysisRow[] = [];
 		let previousStatus = statuses[0] as Required<OfficialStatus>;
 		let lastOfficialStatus = previousStatus;
-		for (let index = 1; index < statuses.length; index++) {
+		for (let index = 0; index < statuses.length; index++) {
 			const chapter = index + 1;
 			const status = statuses[index]!;
 			if (status.attributes?.length) {
