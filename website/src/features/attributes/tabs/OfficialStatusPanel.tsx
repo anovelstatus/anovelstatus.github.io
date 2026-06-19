@@ -1,11 +1,12 @@
 import { ChaptersChip } from "@/components/chips";
 import { useChapter, useStatusDictionary } from "@/data/api";
 import { Box, Stack, Typography } from "@mui/material";
-import { AttributeDescriptions } from "@/features/attributes/AttributeDescriptions";
+import { AttributeGrid } from "@/features/attributes/AttributeGrid";
 import { AttributeStatus } from "@/features/attributes/AttributeStatus";
 import { getPastMilestones, getLatestStatus, getCurrentEvolution } from "@/features/attributes/helpers";
 import { RichTextSpan } from "@/components/RichTextSpan";
 import LoadingPlaceholder from "@/components/LoadingPlaceholder";
+import { LoreSection } from "@/components/LoreSection";
 
 export function OfficialStatusPanel() {
 	const chapter = useChapter();
@@ -22,38 +23,69 @@ export function OfficialStatusPanel() {
 				totals based on skills and titles, check out the other tab.
 			</Typography>
 			<AttributeStatus status={status} previousStatus={previousStatus} />
-			<AttributeDescriptions
-				name="Evolutions"
-				getNotes={(attribute) => {
-					const evolution = getCurrentEvolution(chapter, attribute);
-					if (!evolution) return <RichTextSpan data="None" />;
-					return [
-						<Stack direction="row" key={evolution.name} sx={{ alignItems: "center" }}>
-							<ChaptersChip chapters={evolution.chapter} />
-							<Box>
-								<Typography variant="body2" sx={{ display: "inline" }}>
-									{evolution.name || "None"}:{" "}
-								</Typography>
-								<RichTextSpan data={evolution.note} />
-							</Box>
-						</Stack>,
-					];
-				}}
+			<Typography variant="h4" gutterBottom>
+				Evolutions
+			</Typography>
+			<LoreSection topic="Attributes" subtopic="Evolution" />
+			<AttributeGrid
+				formatAttribute={(attribute) => (
+					<EvolutionDisplay key={"attribute-evolution-" + attribute.name} attribute={attribute} />
+				)}
 			/>
-			<AttributeDescriptions
-				name="Descriptions & Milestones"
-				getNotes={(attribute) => [
-					<RichTextSpan key={attribute.name} data={attribute.note} />,
-					...getPastMilestones(status, attribute).map((x) => (
-						<Box key={x.milestone}>
-							<Typography variant="body2" sx={{ display: "inline" }}>
-								{x.milestone}:{" "}
-							</Typography>
-							<RichTextSpan data={x.note} />
-						</Box>
-					)),
-				]}
+			<Typography variant="h4" gutterBottom>
+				Descriptions & Milestones
+			</Typography>
+			<AttributeGrid
+				formatAttribute={(attribute) => (
+					<DescriptionDisplay key={"attribute-description-" + attribute.name} attribute={attribute} status={status} />
+				)}
 			/>
+		</Stack>
+	);
+}
+
+function EvolutionDisplay({ attribute }: { attribute: Attribute.Details }) {
+	const chapter = useChapter();
+	const evolution = getCurrentEvolution(chapter, attribute);
+	if (!evolution)
+		return (
+			<Box>
+				<Typography variant="h6" component="span" sx={{ fontWeight: "bold" }}>
+					{attribute.name}
+				</Typography>
+				<Typography variant="body2" component="span">
+					{" - None"}
+				</Typography>
+			</Box>
+		);
+	return (
+		<Stack>
+			<Stack direction="row" sx={{ alignItems: "center" }}>
+				<Typography variant="h6">
+					<span style={{ fontWeight: "bold" }}>{attribute.name}</span> - {evolution.name || "None"}
+				</Typography>
+				<ChaptersChip chapters={evolution.chapter} />
+			</Stack>
+			<RichTextSpan data={evolution.note} />
+		</Stack>
+	);
+}
+
+function DescriptionDisplay({ attribute, status }: { attribute: Attribute.Details; status: Status }) {
+	return (
+		<Stack>
+			<Typography variant="h6" sx={{ fontWeight: "bold" }}>
+				{attribute.name}
+			</Typography>
+			<RichTextSpan key={attribute.name} data={attribute.note} />
+			{getPastMilestones(status, attribute).map((x) => (
+				<Box key={x.milestone}>
+					<Typography variant="body2" sx={{ display: "inline" }}>
+						{x.milestone}:{" "}
+					</Typography>
+					<RichTextSpan data={x.note} />
+				</Box>
+			))}
 		</Stack>
 	);
 }

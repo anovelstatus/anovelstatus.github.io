@@ -6,7 +6,7 @@ import { useMemo, useState } from "react";
 import { sumBy } from "es-toolkit";
 import LoadingPlaceholder from "@/components/LoadingPlaceholder";
 import { LoreSection } from "@/components/LoreSection";
-import { AttributeDescriptions } from "../AttributeDescriptions";
+import { AttributeGrid } from "../AttributeGrid";
 import { formatNumber } from "@/data/helpers";
 
 export function TribulationPanel() {
@@ -45,42 +45,46 @@ export function TribulationPanel() {
 				Title boosts will be added for you. Just add what is gained directly from a skill level or other source.
 			</Typography>
 			<LoreSection topic="Tribulations" />
-			<AttributeDescriptions
-				name="Simulated"
-				getNotes={(attribute) => {
+			<AttributeGrid
+				formatAttribute={(attribute) => {
 					const existing = status.attributes[attribute.index]!;
 					const boost = getCurrentBoost(status.chapter, attribute);
 					const boostSuffix = boost === 0 ? "" : `+ ${Math.round(boost * 100)}%)`;
 					const total = Math.round(existing + (changes[attribute.index] ?? 0) * (1 + boost));
 					return (
-						<Typography variant="body2" component="div">
-							{formatNumber(existing)}
-							{" + " + (boost > 0 ? "(" : "")}
-							<Input
-								id={attribute.name + "-addition"}
-								value={changes[attribute.index] || 0}
-								size="small"
-								onChange={(e) => {
-									const newValue = Number(e.target.value);
-									setChanges((prev) => {
-										const newChanges = [...prev];
-										newChanges[attribute.index] = newValue;
-										return newChanges;
-									});
-								}}
-								inputProps={{
-									step: 1,
-									min: 0,
-									type: "number",
-									"aria-labelledby": `input-${attribute.name}`,
-									"aria-label": attribute.name,
-								}}
-								sx={{ marginLeft: "4px", width: "6ch" }}
-							/>
-							{boostSuffix}
-							{" = "}
-							{formatNumber(total)}
-						</Typography>
+						<Stack key={"tribulation-simulator-" + attribute.name}>
+							<Typography variant="subtitle2" sx={{ fontWeight: "bold" }}>
+								{attribute.name}
+							</Typography>
+							<Typography variant="body2" component="div">
+								{formatNumber(existing)}
+								{" + " + (boost > 0 ? "(" : "")}
+								<Input
+									id={attribute.name + "-addition"}
+									value={changes[attribute.index] || 0}
+									size="small"
+									onChange={(e) => {
+										const newValue = Number(e.target.value);
+										setChanges((prev) => {
+											const newChanges = [...prev];
+											newChanges[attribute.index] = newValue;
+											return newChanges;
+										});
+									}}
+									inputProps={{
+										step: 1,
+										min: 0,
+										type: "number",
+										"aria-labelledby": `input-${attribute.name}`,
+										"aria-label": attribute.name,
+									}}
+									sx={{ marginLeft: "4px", width: "6ch" }}
+								/>
+								{boostSuffix}
+								{" = "}
+								{formatNumber(total)}
+							</Typography>
+						</Stack>
 					);
 				}}
 			/>
