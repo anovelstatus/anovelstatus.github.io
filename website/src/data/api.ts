@@ -8,7 +8,7 @@ type GuaranteedQueryResult<T> = UseQueryResult<T> & {
 	data: T;
 };
 
-type LoadableData<T> = { isLoading: boolean; data: T };
+export type LoadableData<T> = { isLoading: boolean; data: T };
 
 export function useChapter() {
 	const { chapter } = useContext(ChapterContext);

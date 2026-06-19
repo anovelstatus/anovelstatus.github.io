@@ -40,11 +40,11 @@ export function SearchPage() {
 		setInputValue(evt.target.value);
 	};
 
-	const { data: skills, isLoading: isFetchingSkills } = useSkills();
-	const { data: titles, isLoading: isFetchingTitles } = useTitles();
-	const { data: talents, isLoading: isFetchingTalents } = useTalents();
-	const { data: achievements, isLoading: isFetchingAchievements } = useAchievements();
-	const { data: lore, isLoading: isFetchingLore } = useLore();
+	const skills = useSkills();
+	const titles = useTitles();
+	const talents = useTalents();
+	const achievements = useAchievements();
+	const lore = useLore();
 
 	const theme = useTheme();
 
@@ -52,9 +52,8 @@ export function SearchPage() {
 		<ResultSection
 			key="skills-results-section"
 			title="Skills"
-			items={skills}
+			source={skills}
 			keys={skillKeys}
-			loading={isFetchingSkills}
 			component={(x) => <SkillCard id={x} key={toIdString(x)} />}
 			showOnChapter={(item, chapter) => item.gains.some((gain) => gain.chapter <= chapter)}
 			query={debouncedValue}
@@ -62,9 +61,8 @@ export function SearchPage() {
 		<ResultSection
 			key="talents-results-section"
 			title="Talents"
-			items={talents}
+			source={talents}
 			keys={talentKeys}
-			loading={isFetchingTalents}
 			component={(x) => <TalentCard id={x} key={toIdString(x)} />}
 			showOnChapter={(item, chapter) => item.chapterGained <= chapter}
 			query={debouncedValue}
@@ -72,9 +70,8 @@ export function SearchPage() {
 		<ResultSection
 			key="titles-results-section"
 			title="Titles"
-			items={titles}
+			source={titles}
 			keys={titleKeys}
-			loading={isFetchingTitles}
 			component={(x) => <TitleCard id={x} key={toIdString(x)} />}
 			showOnChapter={(item, chapter) => item.chapter <= chapter}
 			query={debouncedValue}
@@ -82,9 +79,8 @@ export function SearchPage() {
 		<ResultSection
 			key="achievements-results-section"
 			title="Achievements"
-			items={achievements}
+			source={achievements}
 			keys={achievementKeys}
-			loading={isFetchingAchievements}
 			component={(x) => <AchievementCard achievement={x} key={toPlainText(x.description) + x.chapter} />}
 			showOnChapter={(item, chapter) => item.chapter <= chapter}
 			query={debouncedValue}
@@ -92,9 +88,8 @@ export function SearchPage() {
 		<ResultSection
 			key="lore-results-section"
 			title="Miscellaneous"
-			items={lore}
+			source={lore}
 			keys={loreKeys}
-			loading={isFetchingLore}
 			component={(x) => <LoreCard lore={x} key={x.key + x.chapter + x.permanent} />}
 			showOnChapter={(item, chapter) => item.chapter <= chapter}
 			query={debouncedValue}
