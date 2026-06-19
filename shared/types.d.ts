@@ -240,6 +240,7 @@ declare type SkillDetails = {
 	bonuses: RichTextSpans;
 	notes: RichTextSpans;
 	tags: string;
+	adjustment?: number;
 };
 declare type Skill = TieredId & SkillDetails & HasPrevious;
 
