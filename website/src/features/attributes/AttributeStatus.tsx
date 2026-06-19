@@ -5,7 +5,13 @@ import { BoostList } from "./BoostList";
 import { useState } from "react";
 import { AttributeGrid } from "./AttributeGrid";
 
-export function AttributeStatus({ status, previousStatus }: { status: Status; previousStatus?: Status }) {
+type AttributeStatusProps = {
+	chapter: number;
+	status: number[];
+	previousStatus: number[] | undefined;
+};
+
+export function AttributeStatus({ chapter, status, previousStatus }: AttributeStatusProps) {
 	const [selectedAttribute, setSelectedAttribute] = useState<Attribute.Details | undefined>(undefined);
 
 	const toggleAttribute = (attribute: Attribute.Details) => {
@@ -21,7 +27,7 @@ export function AttributeStatus({ status, previousStatus }: { status: Status; pr
 			<Typography variant="body2">Click an attribute to view details on where the % boost comes from.</Typography>
 			<AttributeGrid
 				formatAttribute={(attribute) => {
-					const evolvedName = getEvolvedName(attribute, status.chapter);
+					const evolvedName = getEvolvedName(attribute, chapter);
 					return (
 						<Box key={attribute.name}>
 							<Typography
@@ -33,7 +39,7 @@ export function AttributeStatus({ status, previousStatus }: { status: Status; pr
 								onClick={() => toggleAttribute(attribute)}
 							>
 								<span style={{ fontWeight: "bold" }}>{evolvedName}</span>
-								{getStatusLine(status, attribute, previousStatus)}
+								{getStatusLine(chapter, status, attribute, previousStatus)}
 							</Typography>
 							{selectedAttribute === attribute ? <BoostList attribute={attribute} /> : null}
 						</Box>
@@ -44,11 +50,16 @@ export function AttributeStatus({ status, previousStatus }: { status: Status; pr
 	);
 }
 
-function getStatusLine(status: Status, attribute: Attribute.Details, previousStatus?: Status): string {
-	const baseValue = status.attributes[attribute.index]!;
-	const improvement = previousStatus ? baseValue - previousStatus.attributes[attribute.index]! : 0;
+function getStatusLine(
+	chapter: number,
+	status: number[],
+	attribute: Attribute.Details,
+	previousStatus?: number[],
+): string {
+	const baseValue = status[attribute.index]!;
+	const improvement = previousStatus ? baseValue - previousStatus[attribute.index]! : 0;
 	const improvementSuffix = improvement ? " (" + (improvement > 0 ? "+" : "") + improvement + ")" : "";
-	const boost = getCurrentBoost(status.chapter, attribute);
+	const boost = getCurrentBoost(chapter, attribute);
 	const boostSuffix = boost === 0 ? "" : ` (${Math.round(boost * 100)}%)`;
 	return `: ${formatNumber(baseValue)}${improvementSuffix}${boostSuffix}`;
 }

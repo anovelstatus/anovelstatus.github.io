@@ -21,7 +21,7 @@ export function CalculatedStatusPanel() {
 				This displays a calculated status for <ChaptersChip chapters={[chapter]} /> based on total skill levels and
 				title boosts. For official published numbers, check out the other tab.
 			</Typography>
-			<AttributeStatus status={status} previousStatus={previousStatus} />
+			<AttributeStatus chapter={chapter} status={status} previousStatus={previousStatus} />
 			<Typography variant="h4">Gains This Chapter</Typography>
 			<Stack>{gains}</Stack>
 		</Stack>

@@ -1,5 +1,5 @@
 import { ChaptersChip } from "@/components/chips";
-import { useChapter, useStatusDictionary } from "@/data/api";
+import { useChapter, useStatuses } from "@/data/api";
 import { Box, Stack, Typography } from "@mui/material";
 import { AttributeGrid } from "@/features/attributes/AttributeGrid";
 import { AttributeStatus } from "@/features/attributes/AttributeStatus";
@@ -10,7 +10,7 @@ import { LoreSection } from "@/components/LoreSection";
 
 export function OfficialStatusPanel() {
 	const chapter = useChapter();
-	const statuses = useStatusDictionary();
+	const { data: statuses } = useStatuses();
 	const status = getLatestStatus(statuses, chapter);
 	const previousStatus = getLatestStatus(statuses, chapter - 1);
 
@@ -22,7 +22,11 @@ export function OfficialStatusPanel() {
 				This displays the official status at the bottom of <ChaptersChip chapters={[status.chapter]} />. For calculated
 				totals based on skills and titles, check out the other tab.
 			</Typography>
-			<AttributeStatus status={status} previousStatus={previousStatus} />
+			<AttributeStatus
+				chapter={status.chapter}
+				status={status.attributes}
+				previousStatus={previousStatus?.attributes}
+			/>
 			<Typography variant="h4" gutterBottom>
 				Evolutions
 			</Typography>
@@ -33,7 +37,7 @@ export function OfficialStatusPanel() {
 			</Typography>
 			<AttributeGrid
 				formatAttribute={(attribute) => (
-					<DescriptionDisplay key={attribute.name} attribute={attribute} status={status} />
+					<DescriptionDisplay key={attribute.name} attribute={attribute} status={status.attributes} />
 				)}
 			/>
 		</Stack>
@@ -67,7 +71,7 @@ function EvolutionDisplay({ attribute }: { attribute: Attribute.Details }) {
 	);
 }
 
-function DescriptionDisplay({ attribute, status }: { attribute: Attribute.Details; status: Status }) {
+function DescriptionDisplay({ attribute, status }: { attribute: Attribute.Details; status: number[] }) {
 	return (
 		<Stack>
 			<Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>

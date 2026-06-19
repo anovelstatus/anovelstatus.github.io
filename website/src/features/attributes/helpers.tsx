@@ -1,4 +1,4 @@
-import { useAttributes, useLatestChapter, useSkills, useStatusDictionary } from "@/data/api";
+import { useAttributes, useSkills, useStatuses } from "@/data/api";
 import { formatNumber, toIdString } from "@/data/helpers";
 import { Box } from "@mui/material";
 import { useMemo } from "react";
@@ -10,10 +10,12 @@ import { getLevelOnChapter } from "@/features/skills/helpers";
 import type { AttributeAnalysisRow, AttributeAnalysis } from "./analysis/types";
 
 /** Find the latest status for a given chapter or earlier */
-export function getLatestStatus(statuses: Record<number, Status>, chapter: number): Status | undefined {
+export function getLatestStatus(statuses: OfficialStatus[], chapter: number): FoundStatus | undefined {
 	while (chapter >= 1) {
 		const status = statuses[chapter];
-		if (status) return status;
+		if (status?.attributes?.length) {
+			return { chapter, attributes: status.attributes };
+		}
 		chapter--;
 	}
 	return undefined;
@@ -29,9 +31,9 @@ export function getEvolvedName(attribute: Attribute.Details, chapter: number): s
 	return `${attribute.name} (${suffix})`;
 }
 
-export function getPastMilestones(status?: Status, attribute?: Attribute.Details): Attribute.Milestone[] {
+export function getPastMilestones(status?: number[], attribute?: Attribute.Details): Attribute.Milestone[] {
 	if (!status || !attribute) return [];
-	return attribute.milestones?.filter((x) => x.milestone <= status.attributes[attribute.index]!) ?? [];
+	return attribute.milestones?.filter((x) => x.milestone <= status[attribute.index]!) ?? [];
 }
 
 export function getPastBoosts(chapter: number, attribute?: Attribute.Details): Attribute.Boost[] {
@@ -51,7 +53,7 @@ export function getCurrentBoost(chapter: number, attribute?: Attribute.Details):
 	return Math.round(total * 100) / 100;
 }
 
-export function useCalculatedStatus(chapter: number): Status | undefined {
+export function useCalculatedStatus(chapter: number): number[] | undefined {
 	const skills = useSkills();
 	const attributes = useAttributes();
 	return useMemo(() => {
@@ -60,13 +62,13 @@ export function useCalculatedStatus(chapter: number): Status | undefined {
 	}, [chapter, skills, attributes]);
 }
 
-export function calculateStatus(chapter: number, skills: Skill[], attributes: Attribute.Details[]): Status | undefined {
-	const status: Status = { chapter: chapter, attributes: [] };
+function calculateStatus(chapter: number, skills: Skill[], attributes: Attribute.Details[]): number[] | undefined {
+	const status: number[] = [];
 
 	for (const attribute of attributes) {
 		const baseValue = calculateBaseAttributeValue(skills, attribute, chapter);
 		const boost = getCurrentBoost(chapter, attribute);
-		status.attributes[attribute.index] = Math.round(baseValue * (1 + boost));
+		status[attribute.index] = Math.round(baseValue * (1 + boost));
 	}
 	return status;
 }
@@ -142,10 +144,9 @@ export function useChapterGains(chapter: number): React.ReactNode[] {
 }
 
 export function useAttributeAnalysis(): AttributeAnalysisRow[] {
-	const maxChapter = useLatestChapter();
 	const { data: skills } = useSkills();
 	const { data: attributes } = useAttributes();
-	const statuses = useStatusDictionary();
+	const { data: statuses } = useStatuses();
 
 	if (!attributes.length || !statuses[1] || !skills.length) {
 		return [];
@@ -153,12 +154,13 @@ export function useAttributeAnalysis(): AttributeAnalysisRow[] {
 
 	return useMemo(() => {
 		const data: AttributeAnalysisRow[] = [];
-		let previousStatus = statuses[1]!;
-		let lastOfficialStatus = statuses[1]!;
+		const maxChapter = statuses.length;
+		let previousStatus = statuses[0] as Required<OfficialStatus>;
+		let lastOfficialStatus = previousStatus;
 		for (let chapter = 1; chapter <= maxChapter; chapter++) {
-			const status = statuses[chapter];
-			if (status) {
-				lastOfficialStatus = status;
+			const status = statuses[chapter - 1]!;
+			if (status.attributes?.length) {
+				lastOfficialStatus = status as Required<OfficialStatus>;
 			}
 			data.push({
 				chapter: chapter,
@@ -171,13 +173,13 @@ export function useAttributeAnalysis(): AttributeAnalysisRow[] {
 		}
 
 		return data;
-	}, [maxChapter, skills, attributes, statuses]);
+	}, [skills, attributes, statuses]);
 }
 
 function calculateAttributeAnalysis(
-	previousStatus: Status,
-	lastOfficialStatus: Status,
-	status: Status | undefined,
+	previousStatus: Required<OfficialStatus>,
+	lastOfficialStatus: Required<OfficialStatus>,
+	status: OfficialStatus,
 	chapter: number,
 	attribute: Attribute.Details,
 	skills: Skill[],
@@ -187,10 +189,10 @@ function calculateAttributeAnalysis(
 	const boost = getCurrentBoost(chapter, attribute);
 	const calculatedValue = Math.round(baseValue * (1 + boost));
 	let officialValue = "?";
-	if (status) {
+	if (status.attributes) {
 		officialValue = formatNumber(status.attributes[attribute.index] || 0);
 	}
-	const lastOfficialValue = (status ?? lastOfficialStatus).attributes[attribute.index] || 0;
+	const lastOfficialValue = (status.attributes ?? lastOfficialStatus.attributes)[attribute.index] || 0;
 
 	return {
 		attribute,
@@ -203,12 +205,12 @@ function calculateAttributeAnalysis(
 	};
 }
 
-export function useTribulationThresholds(status: Status | undefined, race: Race | undefined): TribulationThreshold[] {
+export function useTribulationThresholds(status: number[] | undefined, race: Race | undefined): TribulationThreshold[] {
 	if (!status || !race) return [];
 
 	// Assuming thresholds of 100 * race tier, when 1/3/6/12 attributes cross that threshold
 	const relevantCounts = [1, 3, 6, 12];
-	const stats = status.attributes;
+	const stats = status;
 	const max = maxBy(stats, (x) => x) ?? 0;
 	const tier = 100 * (race.tier + 1);
 	const data: Record<number, number[]> = {};

@@ -151,9 +151,13 @@ declare type SupremacyStage = {
 	bonus: string;
 };
 
-declare type Status = {
-	chapter: number;
+declare type OfficialStatus = {
 	note?: string;
+	attributes?: number[];
+};
+
+declare type FoundStatus = {
+	chapter: number;
 	attributes: number[];
 };
 
