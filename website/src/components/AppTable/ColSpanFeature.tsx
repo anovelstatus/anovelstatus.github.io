@@ -50,8 +50,6 @@ export const ColSpanFeature: TableFeature = {
 			if (span > 1) {
 				const columns = table.getAllColumns();
 				const index = columns.indexOf(column)!;
-				console.log(`Span: ${span}. Index: ${index}`);
-				console.log("Columns", columns);
 				for (let i = 1; i < span; i++) {
 					size += columns[index + i]!.getSize();
 				}
