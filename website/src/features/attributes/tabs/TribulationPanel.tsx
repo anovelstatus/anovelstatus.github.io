@@ -6,7 +6,7 @@ import { useMemo, useState } from "react";
 import { sumBy } from "es-toolkit";
 import LoadingPlaceholder from "@/components/LoadingPlaceholder";
 import { LoreSection } from "@/components/LoreSection";
-import { AttributeGrid } from "../AttributeGrid";
+import { AttributeGrid } from "@/features/attributes/AttributeGrid";
 import { formatNumber } from "@/data/helpers";
 import { useRaceOnChapter } from "@/features/body/helpers";
 

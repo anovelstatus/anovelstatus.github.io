@@ -1,11 +1,11 @@
 export type AttributeAnalysis = {
-	attribute: Attribute.Details;
 	baseValue: number;
 	titleBoost: number;
 	calculatedValue: number;
 	officialValue: string;
 	lastOfficialValue: number;
 	previousValue: number;
+	diff: number;
 };
 
 export type AttributeAnalysisRow = {

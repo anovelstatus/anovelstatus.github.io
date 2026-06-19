@@ -1,13 +1,13 @@
 import AppTable, { useAppTable } from "@/components/AppTable";
 import { useAttributes, useChapter } from "@/data/api";
 import { Box, Grid, Stack, Typography } from "@mui/material";
-import { useAttributeAnalysis } from "@/features/attributes/helpers";
 import { useEffect, useMemo, useState } from "react";
 import { createColumnHelper, getFilteredRowModel, type Cell, type ColumnDef } from "@tanstack/react-table";
 import type { AttributeAnalysisRow } from "@/features/attributes/analysis/types";
 import { styles, getClass } from "@/features/attributes/analysis/styles";
 import { AnalysisStack } from "@/features/attributes/analysis/AnalysisStack";
 import { AnalysisCard } from "@/features/attributes/analysis/AnalysisCard";
+import { useAttributeAnalysis } from "@/features/attributes/analysis/helpers";
 
 const notes = [
 	{ class: "ch-note", note: "Hover this chapter cell for a note" },
@@ -95,7 +95,7 @@ function createAttributeColumn(attribute: Attribute.Details) {
 		},
 		cell: ({ row }) => {
 			const analysis = row.original.attributes[attribute.index]!;
-			return <AnalysisStack analysis={analysis} />;
+			return useMemo(() => <AnalysisStack analysis={analysis} />, [analysis]);
 		},
 	});
 }

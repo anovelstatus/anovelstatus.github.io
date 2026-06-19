@@ -11,10 +11,14 @@ export function getOfficialStatuses(info: SpreadsheetInfo): OfficialStatus[] {
 		{ key: "attributes", parse: "attributes" },
 	];
 
-	return mapTable(info, range, fields)
-		.slice(0, info.chapterLimit)
-		.map((status) => {
-			if (status.attributes?.every((a) => a === 0)) status.attributes = undefined;
-			return status;
-		});
+	return (
+		mapTable(info, range, fields)
+			// Assume the sheet is ordered by chapter
+			.slice(0, info.chapterLimit)
+			// Keep entry but save bytes on chapters missing an official status
+			.map((status) => {
+				if (status.attributes?.every((a) => a === 0)) status.attributes = undefined;
+				return status;
+			})
+	);
 }
