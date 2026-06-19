@@ -157,6 +157,11 @@ declare type Status = {
 	attributes: number[];
 };
 
+declare type TribulationThreshold = {
+	threshold: number;
+	counts: number[];
+};
+
 declare type BasicInfo = {
 	latest: number;
 	unlocked: boolean;

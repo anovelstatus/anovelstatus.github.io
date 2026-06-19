@@ -5,7 +5,7 @@ import { useMemo } from "react";
 import { SkillButton } from "@/features/skills";
 import { TitleButton } from "@/features/titles";
 import { hasNote, RichTextSpan } from "@/components/RichTextSpan";
-import { maxBy, sumBy } from "es-toolkit";
+import { maxBy, orderBy, sumBy } from "es-toolkit";
 import { getLevelOnChapter } from "@/features/skills/helpers";
 import type { AttributeAnalysisRow, AttributeAnalysis } from "./analysis/types";
 
@@ -211,4 +211,30 @@ function calculateAttributeAnalysis(
 		titleBoost: boost,
 		calculatedValue: calculatedValue,
 	};
+}
+
+export function useTribulationThresholds(status: Status | undefined, race: Race | undefined): TribulationThreshold[] {
+	if (!status || !race) return [];
+
+	// Assuming thresholds of 100 * race tier, when 1/3/6/12 attributes cross that threshold
+	const relevantCounts = [1, 3, 6, 12];
+	const stats = status.attributes;
+	const max = maxBy(stats, (x) => x) ?? 0;
+	const tier = 100 * (race.tier + 1);
+	const data: Record<number, number[]> = {};
+	for (let i = tier; i <= max; i += tier) {
+		const count = stats.filter((x) => x >= i).length;
+		for (const relevantCount of relevantCounts) {
+			if (count >= relevantCount) {
+				if (!data[i]) data[i] = [];
+				data[i]!.push(relevantCount);
+			}
+		}
+	}
+
+	return orderBy(
+		Object.entries(data).map((x) => ({ threshold: parseInt(x[0]), counts: x[1] })),
+		[(x) => x.threshold],
+		["asc"],
+	);
 }
