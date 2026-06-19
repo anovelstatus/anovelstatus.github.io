@@ -1,5 +1,5 @@
-import { useAttributes, useSkills, useStatuses } from "@/data/api";
-import { formatNumber, toIdString } from "@/data/helpers";
+import { useAttributes, useSkills } from "@/data/api";
+import { toIdString } from "@/data/helpers";
 import { Box } from "@mui/material";
 import { useMemo } from "react";
 import { SkillButton } from "@/features/skills";
@@ -7,7 +7,6 @@ import { TitleButton } from "@/features/titles";
 import { hasNote, RichTextSpan } from "@/components/RichTextSpan";
 import { maxBy, orderBy, sumBy } from "es-toolkit";
 import { getLevelOnChapter } from "@/features/skills/helpers";
-import type { AttributeAnalysisRow, AttributeAnalysis } from "./analysis/types";
 
 /** Find the latest status for a given chapter or earlier */
 export function getLatestStatus(statuses: OfficialStatus[], chapter: number): FoundStatus | undefined {
@@ -140,68 +139,6 @@ export function useChapterGains(chapter: number): React.ReactNode[] {
 		}
 	}
 	return notes;
-}
-
-export function useAttributeAnalysis(): AttributeAnalysisRow[] {
-	const { data: skills } = useSkills();
-	const { data: attributes } = useAttributes();
-	const { data: statuses } = useStatuses();
-
-	if (!attributes.length || !statuses[1] || !skills.length) {
-		return [];
-	}
-
-	return useMemo(() => {
-		const data: AttributeAnalysisRow[] = [];
-		let previousStatus = statuses[0] as Required<OfficialStatus>;
-		let lastOfficialStatus = previousStatus;
-		for (let index = 0; index < statuses.length; index++) {
-			const chapter = index + 1;
-			const status = statuses[index]!;
-			if (status.attributes?.length) {
-				lastOfficialStatus = status as Required<OfficialStatus>;
-			}
-			data.push({
-				chapter: chapter,
-				note: status?.note ?? "",
-				attributes: attributes.map((x) =>
-					calculateAttributeAnalysis(previousStatus, lastOfficialStatus, status, chapter, x, skills),
-				),
-			});
-			previousStatus = lastOfficialStatus;
-		}
-
-		return data;
-	}, [skills, attributes, statuses]);
-}
-
-function calculateAttributeAnalysis(
-	previousStatus: Required<OfficialStatus>,
-	lastOfficialStatus: Required<OfficialStatus>,
-	status: OfficialStatus,
-	chapter: number,
-	attribute: Attribute.Details,
-	skills: Skill[],
-): AttributeAnalysis {
-	const previousValue = previousStatus.attributes[attribute.index]!;
-	const baseValue = calculateBaseAttributeValue(skills, attribute, chapter);
-	const boost = getCurrentBoost(chapter, attribute);
-	const calculatedValue = Math.round(baseValue * (1 + boost));
-	let officialValue = "?";
-	if (status.attributes) {
-		officialValue = formatNumber(status.attributes[attribute.index] || 0);
-	}
-	const lastOfficialValue = (status.attributes ?? lastOfficialStatus.attributes)[attribute.index] || 0;
-
-	return {
-		attribute,
-		previousValue,
-		lastOfficialValue: lastOfficialValue,
-		officialValue: officialValue,
-		baseValue: baseValue,
-		titleBoost: boost,
-		calculatedValue: calculatedValue,
-	};
 }
 
 export function useTribulationThresholds(status: number[] | undefined, race: Race | undefined): TribulationThreshold[] {

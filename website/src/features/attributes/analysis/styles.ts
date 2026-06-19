@@ -6,13 +6,13 @@ export const styles: SxProps<Theme> = {
 		backgroundColor: "#582b00",
 	},
 	".error": {
-		backgroundColor: "#af0000 !important",
+		backgroundColor: "#810000 !important",
 	},
 	".higher": {
-		backgroundColor: "#b46c00 !important",
+		backgroundColor: "#8a5300 !important",
 	},
 	".lower": {
-		backgroundColor: "#003b99 !important",
+		backgroundColor: "#002e79 !important",
 	},
 };
 
