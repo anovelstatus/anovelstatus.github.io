@@ -91,10 +91,10 @@ function createAttributeColumn(attribute: Attribute.Details) {
 		enableSorting: false,
 		enableGlobalFilter: false,
 		meta: {
-			bodyClassName: (cell) => getClass(cell.row.original.attributes[attribute.name]!),
+			bodyClassName: (cell) => getClass(cell.row.original.attributes[attribute.index]!),
 		},
 		cell: ({ row }) => {
-			const analysis = row.original.attributes[attribute.name]!;
+			const analysis = row.original.attributes[attribute.index]!;
 			return <AnalysisStack analysis={analysis} />;
 		},
 	});

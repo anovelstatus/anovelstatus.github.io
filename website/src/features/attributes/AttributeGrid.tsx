@@ -1,6 +1,7 @@
 import { Stack, Grid, Card, CardContent, CardHeader } from "@mui/material";
-import { useGroupedAttributes } from "@/data/api";
+import { useAttributes } from "@/data/api";
 import type React from "react";
+import { useMemo } from "react";
 
 type AttributeGridProps = {
 	formatAttribute: (attribute: Attribute.Details) => React.ReactNode;
@@ -12,7 +13,11 @@ type AttributeGroupCardProps = {
 };
 
 export function AttributeGrid({ formatAttribute }: AttributeGridProps) {
-	const groups = useGroupedAttributes();
+	const { data: attributes } = useAttributes();
+	const groups = useMemo(() => {
+		const map = Map.groupBy(attributes, (x) => x.category);
+		return Array.from(map);
+	}, [attributes]);
 
 	return (
 		<Stack spacing={1}>

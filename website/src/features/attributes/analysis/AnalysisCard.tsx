@@ -16,7 +16,7 @@ export function AnalysisCard({ data }: AnalysisCardProps) {
 			<CardContent sx={{ paddingTop: 0 }}>
 				<Stack spacing={0}>
 					{attributes.map((x) => (
-						<AnalysisRow key={x.name} attribute={x} analysis={data.attributes[x.name]!} />
+						<AnalysisRow key={x.name} attribute={x} analysis={data.attributes[x.index]!} />
 					))}
 				</Stack>
 			</CardContent>
