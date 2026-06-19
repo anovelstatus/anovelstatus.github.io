@@ -95,7 +95,7 @@ function createAttributeColumn(attribute: Attribute.Details) {
 		},
 		cell: ({ row }) => {
 			const analysis = row.original.attributes[attribute.index]!;
-			return <AnalysisStack analysis={analysis} />;
+			return useMemo(() => <AnalysisStack analysis={analysis} />, [analysis]);
 		},
 	});
 }
