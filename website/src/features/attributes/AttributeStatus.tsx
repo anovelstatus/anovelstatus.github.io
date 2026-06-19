@@ -56,7 +56,7 @@ export function AttributeStatus({ status, previousStatus }: { status: Status; pr
 
 function getStatusLine(status: Status, attribute: Attribute.Details, previousStatus?: Status): string {
 	const baseValue = status.attributes[attribute.index]!;
-	const evolvedName = getEvolvedName(attribute, status);
+	const evolvedName = getEvolvedName(attribute, status.chapter);
 	const improvement = previousStatus ? baseValue - previousStatus.attributes[attribute.index]! : 0;
 	const improvementSuffix = improvement ? " (" + (improvement > 0 ? "+" : "") + improvement + ")" : "";
 	const boost = getCurrentBoost(status.chapter, attribute);

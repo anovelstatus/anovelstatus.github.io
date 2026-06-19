@@ -1,9 +1,9 @@
 import { ChaptersChip } from "@/components/chips";
 import { useChapter, useStatusDictionary } from "@/data/api";
-import { Stack, Typography } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import { AttributeDescriptions } from "@/features/attributes/AttributeDescriptions";
 import { AttributeStatus } from "@/features/attributes/AttributeStatus";
-import { getPastMilestones, getPastEvolutions } from "@/features/attributes/helpers";
+import { getPastMilestones, getLatestStatus, getCurrentEvolution } from "@/features/attributes/helpers";
 import { RichTextSpan } from "@/components/RichTextSpan";
 import LoadingPlaceholder from "@/components/LoadingPlaceholder";
 
@@ -23,41 +23,37 @@ export function OfficialStatusPanel() {
 			</Typography>
 			<AttributeStatus status={status} previousStatus={previousStatus} />
 			<AttributeDescriptions
-				name="Descriptions"
-				getNotes={(attribute) => [<RichTextSpan key={attribute.name} data={attribute.note} />]}
-			/>
-			<AttributeDescriptions
-				name="Milestones"
-				getNotes={(attribute) =>
-					getPastMilestones(status, attribute).map((x) => (
-						<span key={x.milestone}>
-							{x.milestone}: <RichTextSpan data={x.note} />
-						</span>
-					))
-				}
-			/>
-			<AttributeDescriptions
 				name="Evolutions"
-				getNotes={(attribute) =>
-					getPastEvolutions(status, attribute)
-						.slice(-1)
-						.map((evolution) => (
-							<span key={evolution.name}>
-								{evolution.name || "None"}: <RichTextSpan data={evolution.note} />
-							</span>
-						))
-				}
+				getNotes={(attribute) => {
+					const evolution = getCurrentEvolution(chapter, attribute);
+					if (!evolution) return <RichTextSpan data="None" />;
+					return [
+						<Stack direction="row" key={evolution.name} sx={{ alignItems: "center" }}>
+							<ChaptersChip chapters={evolution.chapter} />
+							<Box>
+								<Typography variant="body2" sx={{ display: "inline" }}>
+									{evolution.name || "None"}:{" "}
+								</Typography>
+								<RichTextSpan data={evolution.note} />
+							</Box>
+						</Stack>,
+					];
+				}}
+			/>
+			<AttributeDescriptions
+				name="Descriptions & Milestones"
+				getNotes={(attribute) => [
+					<RichTextSpan key={attribute.name} data={attribute.note} />,
+					...getPastMilestones(status, attribute).map((x) => (
+						<Box key={x.milestone}>
+							<Typography variant="body2" sx={{ display: "inline" }}>
+								{x.milestone}:{" "}
+							</Typography>
+							<RichTextSpan data={x.note} />
+						</Box>
+					)),
+				]}
 			/>
 		</Stack>
 	);
-}
-
-/** Find the latest status for a given chapter or earlier */
-function getLatestStatus(statuses: Record<number, Status>, chapter: number): Status | undefined {
-	while (chapter >= 1) {
-		const status = statuses[chapter];
-		if (status) return status;
-		chapter--;
-	}
-	return undefined;
 }

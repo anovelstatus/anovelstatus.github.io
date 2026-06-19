@@ -6,7 +6,7 @@ import { LoreSection } from "@/components/LoreSection";
 
 export type AttributeDescriptionsProps = {
 	name: string;
-	getNotes: (attribute: Attribute.Details) => React.ReactNode[];
+	getNotes: (attribute: Attribute.Details) => React.ReactNode;
 };
 
 export function AttributeDescriptions({ name, getNotes }: AttributeDescriptionsProps) {
@@ -31,11 +31,7 @@ export function AttributeDescriptions({ name, getNotes }: AttributeDescriptionsP
 											<Typography variant="subtitle2" sx={{ fontWeight: "bold" }}>
 												{attribute.name}
 											</Typography>
-											{getNotes(attribute).map((note, index) => (
-												<Typography key={index} variant="body2" sx={{ color: "text.secondary" }}>
-													{note}
-												</Typography>
-											))}
+											{getNotes(attribute)}
 										</Box>
 									))}
 								</Stack>

@@ -18,17 +18,14 @@ export function toPlainText(data: RichTextSpanProps["data"]) {
 
 export function RichTextSpan({ data, sx, ...props }: RichTextSpanProps) {
 	// Support plain text, but also support text formatting details from the spreasdheet
-	if (typeof data === "string") {
-		return (
-			<Typography component="span" variant="body2" sx={{ whiteSpace: "pre-line", ...sx }} {...props}>
-				{data}
-			</Typography>
-		);
+	let text = data;
+	if (typeof text === "string") {
+		text = [{ t: text }];
 	}
-	if (!data || data.length === 0) return null;
+	if (!text || text.length === 0) return null;
 	return (
 		<Typography component="span" variant="body2" sx={{ whiteSpace: "pre-line", ...sx }} {...props}>
-			{data.map((x, index) => (
+			{text.map((x, index) => (
 				<FormattedSpan key={index} {...x} />
 			))}
 		</Typography>

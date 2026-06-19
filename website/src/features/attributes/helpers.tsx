@@ -5,14 +5,28 @@ import { useMemo } from "react";
 import { SkillButton } from "@/features/skills";
 import { TitleButton } from "@/features/titles";
 import { hasNote, RichTextSpan } from "@/components/RichTextSpan";
-import { sumBy } from "es-toolkit";
+import { maxBy, sumBy } from "es-toolkit";
 import { getLevelOnChapter } from "@/features/skills/helpers";
 import type { AttributeAnalysisRow, AttributeAnalysis } from "./analysis/types";
 
-export function getEvolvedName(attribute: Attribute.Details, status: Status): string {
-	const evolution = getCurrentEvolution(status, attribute);
-	const suffix = evolution?.name ? ` (${evolution.name[0]})` : "";
-	return attribute.name + suffix;
+/** Find the latest status for a given chapter or earlier */
+export function getLatestStatus(statuses: Record<number, Status>, chapter: number): Status | undefined {
+	while (chapter >= 1) {
+		const status = statuses[chapter];
+		if (status) return status;
+		chapter--;
+	}
+	return undefined;
+}
+
+export function getEvolvedName(attribute: Attribute.Details, chapter: number): string {
+	const evolution = getCurrentEvolution(chapter, attribute);
+	if (!evolution?.name) return attribute.name;
+	const suffix = evolution.name
+		.split("-")
+		.map((x) => x.trim()[0])
+		.join("");
+	return `${attribute.name} (${suffix})`;
 }
 
 export function getPastMilestones(status?: Status, attribute?: Attribute.Details): Attribute.Milestone[] {
@@ -20,19 +34,15 @@ export function getPastMilestones(status?: Status, attribute?: Attribute.Details
 	return attribute.milestones?.filter((x) => x.milestone <= status.attributes[attribute.index]!) ?? [];
 }
 
-export function getPastEvolutions(status?: Status, attribute?: Attribute.Details): Attribute.Evolution[] {
-	if (!status || !attribute) return [];
-	return attribute.evolutions?.filter((x) => x.chapter <= status.chapter) ?? [];
-}
-
 export function getPastBoosts(chapter: number, attribute?: Attribute.Details): Attribute.Boost[] {
 	if (!attribute || !attribute.boosts) return [];
 	return attribute.boosts.filter((x) => x.chapter <= chapter) ?? [];
 }
 
-export function getCurrentEvolution(status?: Status, attribute?: Attribute.Details): Attribute.Evolution | undefined {
-	if (!status || !attribute) return undefined;
-	return attribute.evolutions?.findLast((x) => x.chapter <= status.chapter);
+export function getCurrentEvolution(chapter: number, attribute?: Attribute.Details): Attribute.Evolution | undefined {
+	if (!chapter || !attribute) return undefined;
+	const pastEvolutions = attribute.evolutions?.filter((x) => x.chapter <= chapter) ?? [];
+	return maxBy(pastEvolutions, (x) => x.chapter);
 }
 
 export function getCurrentBoost(chapter: number, attribute?: Attribute.Details): number {
