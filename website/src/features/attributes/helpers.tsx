@@ -11,12 +11,11 @@ import type { AttributeAnalysisRow, AttributeAnalysis } from "./analysis/types";
 
 /** Find the latest status for a given chapter or earlier */
 export function getLatestStatus(statuses: OfficialStatus[], chapter: number): FoundStatus | undefined {
-	while (chapter >= 1) {
-		const status = statuses[chapter];
-		if (status?.attributes?.length) {
-			return { chapter, attributes: status.attributes };
+	for (let i = Math.min(chapter, statuses.length - 1); i >= 0; i--) {
+		const status = statuses[i]!;
+		if (status.attributes) {
+			return { chapter: i + 1, attributes: status.attributes };
 		}
-		chapter--;
 	}
 	return undefined;
 }
@@ -154,11 +153,11 @@ export function useAttributeAnalysis(): AttributeAnalysisRow[] {
 
 	return useMemo(() => {
 		const data: AttributeAnalysisRow[] = [];
-		const maxChapter = statuses.length;
 		let previousStatus = statuses[0] as Required<OfficialStatus>;
 		let lastOfficialStatus = previousStatus;
-		for (let chapter = 1; chapter <= maxChapter; chapter++) {
-			const status = statuses[chapter - 1]!;
+		for (let index = 1; index < statuses.length; index++) {
+			const chapter = index + 1;
+			const status = statuses[index]!;
 			if (status.attributes?.length) {
 				lastOfficialStatus = status as Required<OfficialStatus>;
 			}
