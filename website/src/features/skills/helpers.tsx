@@ -9,22 +9,25 @@ export type SkillFiltersOptions = {
 	providesAttributes: Attribute.Details[];
 	tier?: string;
 	idealOnly: boolean;
+	tags: string[];
 };
 
-export function showSkill(x: Skill, filters: SkillFiltersOptions) {
-	if (filters.tier && x.tier !== filters.tier) return false;
+export function showSkill(skill: Skill, filters: SkillFiltersOptions) {
+	if (filters.tier && skill.tier !== filters.tier) return false;
 
-	if (getLevelOnChapter(x, filters.chapter) <= 0 && !filters.showFormerSkills) return false;
+	if (getLevelOnChapter(skill, filters.chapter) <= 0 && !filters.showFormerSkills) return false;
 
-	if (!filters.showFormerSkills && x.replaced) return false;
+	if (!filters.showFormerSkills && skill.replaced) return false;
 
 	if (filters.providesAttributes.length) {
 		for (const { index } of filters.providesAttributes) {
-			if (!x.attributes[index]) return false;
+			if (!skill.attributes[index]) return false;
 		}
 	}
 
-	if (filters.idealOnly && x.quality !== IDEAL_QUALITY) return false;
+	if (filters.idealOnly && skill.quality !== IDEAL_QUALITY) return false;
+
+	if (filters.tags.length && !filters.tags.every((tag) => skill.tags?.includes(tag))) return false;
 
 	return true;
 }

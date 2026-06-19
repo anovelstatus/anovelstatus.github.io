@@ -10,7 +10,7 @@ import { TitleCard } from "@/features/titles";
 import { Box, Stack, TextField, Typography, useTheme } from "@mui/material";
 import { useEffect, useState, useTransition, type ChangeEvent } from "react";
 
-const skillKeys: PlainOrRichTextKeys<Skill>[] = ["name", "description", "notes", "prerequisites", "tags"];
+const skillKeys: PlainOrRichTextKeys<Skill>[] = ["name", "description", "notes", "prerequisites"];
 const talentKeys: PlainOrRichTextKeys<Talent>[] = ["name", "note", "type"];
 const titleKeys: PlainOrRichTextKeys<Title>[] = ["name", "note"];
 const achievementKeys: PlainOrRichTextKeys<Achievement>[] = ["description", "note", "message", "rewards"];
@@ -40,7 +40,7 @@ export function SearchPage() {
 		setInputValue(evt.target.value);
 	};
 
-	const { data: skills, isFetching: isFetchingSkills } = useSkills();
+	const { data: skills, isLoading: isFetchingSkills } = useSkills();
 	const { data: titles, isFetching: isFetchingTitles } = useTitles();
 	const { data: talents, isFetching: isFetchingTalents } = useTalents();
 

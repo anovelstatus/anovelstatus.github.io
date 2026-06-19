@@ -8,17 +8,17 @@ import { useColumns } from "./columns";
 import { getFilteredRowModel } from "@tanstack/react-table";
 import SkillFilters from "./SkillFilters";
 import { showSkill, type SkillFiltersOptions } from "./helpers";
-import { LoreSection } from "@/components/LoreSection";
 
 export default function SkillTable() {
 	const chapter = useChapter();
-	const { data: skills, isFetching } = useSkills();
+	const { data: skills, isLoading } = useSkills();
 
 	const [filters, setFilters] = useState<SkillFiltersOptions>({
 		chapter,
 		showFormerSkills: false,
 		providesAttributes: [],
 		idealOnly: false,
+		tags: [],
 	});
 
 	const columns = useColumns();
@@ -54,10 +54,6 @@ export default function SkillTable() {
 
 	return (
 		<>
-			<Typography variant="h4" gutterBottom>
-				Priam's Skills
-			</Typography>
-			<LoreSection topic="Skills" />
 			<SkillFilters onChange={setFilters} />
 			<Grid container spacing={2}>
 				<FormGroup>
@@ -67,7 +63,10 @@ export default function SkillTable() {
 					/>
 				</FormGroup>
 			</Grid>
-			<AppTable isLoading={isFetching} table={table} />
+			<Typography>
+				Showing {table.getRowCount()}/{skills.length} skills
+			</Typography>
+			<AppTable isLoading={isLoading} table={table} />
 		</>
 	);
 }

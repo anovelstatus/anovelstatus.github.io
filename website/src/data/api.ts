@@ -8,6 +8,8 @@ type GuaranteedQueryResult<T> = UseQueryResult<T> & {
 	data: T;
 };
 
+type LoadableData<T> = { isLoading: boolean; data: T };
+
 export function useChapter() {
 	const { chapter } = useContext(ChapterContext);
 	return chapter < 1 ? 1 : chapter;
@@ -86,8 +88,9 @@ export function useAttributes() {
 	return useSpreadsheet<Attribute.Details[]>("attributes", []);
 }
 
-export function useSkills() {
-	return useSpreadsheet<Skill[]>("skills", []);
+export function useSkills(): LoadableData<Skill[]> {
+	const result = useSpreadsheet<Skill[]>("skills", []);
+	return { data: result.data, isLoading: result.data.length == 0 };
 }
 
 export function useAchievements() {

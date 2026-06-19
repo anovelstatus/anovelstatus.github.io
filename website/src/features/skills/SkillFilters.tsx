@@ -3,6 +3,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useAttributes, useChapter, useSkills, useSkillTiers } from "@/data/api";
 import { RarityButtonChip } from "@/components/chips";
 import { IDEAL_QUALITY, showSkill, type SkillFiltersOptions } from "./helpers";
+import { uniq } from "es-toolkit";
 
 export type SkillFiltersProps = {
 	onChange: (filters: SkillFiltersOptions) => void;
@@ -14,11 +15,14 @@ export default function SkillFilters({ onChange }: SkillFiltersProps) {
 	const skillTiers = useSkillTiers();
 	const { data: attributes } = useAttributes();
 
+	const tags = useMemo(() => getTags(skills), [skills]);
+
 	const [filters, setFilters] = useState<SkillFiltersOptions>({
 		chapter,
 		showFormerSkills: false,
 		providesAttributes: [],
 		idealOnly: false,
+		tags: [],
 	});
 
 	useEffect(() => {
@@ -36,6 +40,9 @@ export default function SkillFilters({ onChange }: SkillFiltersProps) {
 	};
 	const changeAttributesFilter = (attributes: Attribute.Details[]) => {
 		setFilters((filters) => ({ ...filters, providesAttributes: attributes }));
+	};
+	const changeTagsFilter = (tags: string[]) => {
+		setFilters((filters) => ({ ...filters, tags }));
 	};
 
 	const changeTierFilter = (tier: string) => {
@@ -67,10 +74,7 @@ export default function SkillFilters({ onChange }: SkillFiltersProps) {
 			</Grid>
 			<Grid container spacing={2}>
 				<FormGroup>
-					<FormControlLabel
-						label={totals[IDEAL_QUALITY] + " ⭐ Ideal Only"}
-						control={<Checkbox onChange={toggleIdealFilter} />}
-					/>
+					<FormControlLabel label={"⭐ Ideal Only"} control={<Checkbox onChange={toggleIdealFilter} />} />
 					<FormControlLabel label="Show former skills" control={<Checkbox onChange={toggleFormerSkills} />} />
 					<FormControl sx={{ margin: 1, width: 500 }}>
 						<Autocomplete
@@ -86,6 +90,17 @@ export default function SkillFilters({ onChange }: SkillFiltersProps) {
 							getOptionKey={(x) => x.name}
 						/>
 					</FormControl>
+					<FormControl sx={{ margin: 1, width: 500 }}>
+						<Autocomplete
+							multiple={true}
+							aria-description="Filter by skills with selected tags"
+							id="attributes-filter"
+							value={filters.tags}
+							onChange={(_evt, value) => changeTagsFilter(value)}
+							renderInput={(params) => <TextField {...params} label="Tagged as..." />}
+							options={tags}
+						/>
+					</FormControl>
 				</FormGroup>
 			</Grid>
 		</>
@@ -93,7 +108,7 @@ export default function SkillFilters({ onChange }: SkillFiltersProps) {
 }
 
 function getTotals(skills: Skill[], chapter: number): Partial<Record<string, number>> {
-	const filters: SkillFiltersOptions = { chapter, providesAttributes: [], idealOnly: false };
+	const filters: SkillFiltersOptions = { chapter, providesAttributes: [], idealOnly: false, tags: [] };
 
 	return skills
 		.filter((x) => showSkill(x, filters))
@@ -106,4 +121,8 @@ function getTotals(skills: Skill[], chapter: number): Partial<Record<string, num
 			},
 			{ [IDEAL_QUALITY]: 0 } as Partial<Record<string, number>>,
 		);
+}
+
+function getTags(skills: Skill[]): string[] {
+	return uniq(skills.filter((x) => x.tags?.length).flatMap((x) => x.tags)).sort();
 }
