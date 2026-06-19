@@ -16,6 +16,7 @@ export function getSkills(info: SpreadsheetInfo) {
 		{ key: "bonuses", source: { type: "exact", name: "Bonus" }, parse: "rich" },
 		{ key: "notes", source: { type: "exact", name: "Note" }, parse: "rich" },
 		{ key: "tags", source: { type: "exact", name: "Tags" }, parse: "string", optional: true },
+		{ key: "adjustment", source: { type: "contains", contains: "Adjustment" }, parse: "number", optional: true },
 		{ key: "attributes", parse: "attributes" },
 		// Must process after tier and name
 		{

@@ -39,8 +39,10 @@ export function getProgressGradient(percent: number, hexColor: string): string {
 }
 
 export function getLevelOnChapter(skill: Skill, chapter: number) {
-	return sumBy(
-		skill.gains.filter((x) => x.chapter <= chapter),
-		(x) => x.count,
+	return (
+		sumBy(
+			skill.gains.filter((x) => x.chapter <= chapter),
+			(x) => x.count,
+		) + (skill.adjustment || 0)
 	);
 }
