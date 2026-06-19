@@ -12,7 +12,7 @@ import { LoreSection } from "@/components/LoreSection";
 
 export default function TitleTable() {
 	const chapter = useChapter();
-	const { data: titles, isFetching } = useTitles();
+	const { data: titles, isLoading } = useTitles();
 	const metalTiers = useMetalTiers();
 	const columns = useColumns();
 
@@ -82,7 +82,7 @@ export default function TitleTable() {
 						/>
 					))}
 			</Grid>
-			<AppTable table={table} isLoading={isFetching} sx={columnstyles} />
+			<AppTable table={table} isLoading={isLoading} sx={columnstyles} />
 		</>
 	);
 }

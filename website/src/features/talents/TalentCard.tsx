@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardContent, Stack, Typography, Grid, CardActions } from "@mui/material";
+import { Card, CardHeader, CardContent, Stack, Typography, CardActions } from "@mui/material";
 import { ChaptersChip, RarityChip } from "@/components/chips";
 import { findByIds, sameId } from "@/data/helpers";
 import { useTalents } from "@/data/api";
@@ -21,10 +21,10 @@ export default function TalentCard({ id, sx }: TalentCardProps) {
 		<Card sx={sx}>
 			<CardHeader
 				title={
-					<Grid container spacing={1} sx={{ alignItems: "center" }}>
+					<Stack direction="row" sx={{ flexWrap: "wrap", alignItems: "center" }}>
 						{talent.name} <RarityChip name={talent.tier} />
 						<ChaptersChip chapters={[talent.chapterGained]} />
-					</Grid>
+					</Stack>
 				}
 			/>
 			<CardContent>
@@ -33,8 +33,10 @@ export default function TalentCard({ id, sx }: TalentCardProps) {
 			{previousCount ? (
 				<CardActions>
 					<Stack>
-						<Typography variant="h6">Previous Talent{previousCount > 1 ? "s" : ""}:</Typography>
-						<Stack direction="row" spacing={1} sx={{ flexWrap: "wrap" }}>
+						<Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+							Previous:
+						</Typography>
+						<Stack direction="row" spacing={1} sx={{ flexWrap: "wrap", alignItems: "center" }}>
 							{previousTalents.map((x, index) => (
 								<TalentButton key={index} item={x} />
 							))}

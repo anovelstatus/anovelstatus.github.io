@@ -10,7 +10,7 @@ import { TitleCard } from "@/features/titles";
 import { Box, Stack, TextField, Typography, useTheme } from "@mui/material";
 import { useEffect, useState, useTransition, type ChangeEvent } from "react";
 
-const skillKeys: PlainOrRichTextKeys<Skill>[] = ["name", "description", "notes", "prerequisites", "tags"];
+const skillKeys: PlainOrRichTextKeys<Skill>[] = ["name", "description", "notes", "prerequisites"];
 const talentKeys: PlainOrRichTextKeys<Talent>[] = ["name", "note", "type"];
 const titleKeys: PlainOrRichTextKeys<Title>[] = ["name", "note"];
 const achievementKeys: PlainOrRichTextKeys<Achievement>[] = ["description", "note", "message", "rewards"];
@@ -40,13 +40,11 @@ export function SearchPage() {
 		setInputValue(evt.target.value);
 	};
 
-	const { data: skills, isFetching: isFetchingSkills } = useSkills();
-	const { data: titles, isFetching: isFetchingTitles } = useTitles();
-	const { data: talents, isFetching: isFetchingTalents } = useTalents();
-
-	const { data: achievements, isFetching: isFetchingAchievements } = useAchievements();
-
-	const { data: lore, isFetching: isFetchingLore } = useLore();
+	const skills = useSkills();
+	const titles = useTitles();
+	const talents = useTalents();
+	const achievements = useAchievements();
+	const lore = useLore();
 
 	const theme = useTheme();
 
@@ -54,9 +52,8 @@ export function SearchPage() {
 		<ResultSection
 			key="skills-results-section"
 			title="Skills"
-			items={skills}
+			source={skills}
 			keys={skillKeys}
-			loading={isFetchingSkills}
 			component={(x) => <SkillCard id={x} key={toIdString(x)} />}
 			showOnChapter={(item, chapter) => item.gains.some((gain) => gain.chapter <= chapter)}
 			query={debouncedValue}
@@ -64,9 +61,8 @@ export function SearchPage() {
 		<ResultSection
 			key="talents-results-section"
 			title="Talents"
-			items={talents}
+			source={talents}
 			keys={talentKeys}
-			loading={isFetchingTalents}
 			component={(x) => <TalentCard id={x} key={toIdString(x)} />}
 			showOnChapter={(item, chapter) => item.chapterGained <= chapter}
 			query={debouncedValue}
@@ -74,9 +70,8 @@ export function SearchPage() {
 		<ResultSection
 			key="titles-results-section"
 			title="Titles"
-			items={titles}
+			source={titles}
 			keys={titleKeys}
-			loading={isFetchingTitles}
 			component={(x) => <TitleCard id={x} key={toIdString(x)} />}
 			showOnChapter={(item, chapter) => item.chapter <= chapter}
 			query={debouncedValue}
@@ -84,9 +79,8 @@ export function SearchPage() {
 		<ResultSection
 			key="achievements-results-section"
 			title="Achievements"
-			items={achievements}
+			source={achievements}
 			keys={achievementKeys}
-			loading={isFetchingAchievements}
 			component={(x) => <AchievementCard achievement={x} key={toPlainText(x.description) + x.chapter} />}
 			showOnChapter={(item, chapter) => item.chapter <= chapter}
 			query={debouncedValue}
@@ -94,9 +88,8 @@ export function SearchPage() {
 		<ResultSection
 			key="lore-results-section"
 			title="Miscellaneous"
-			items={lore}
+			source={lore}
 			keys={loreKeys}
-			loading={isFetchingLore}
 			component={(x) => <LoreCard lore={x} key={x.key + x.chapter + x.permanent} />}
 			showOnChapter={(item, chapter) => item.chapter <= chapter}
 			query={debouncedValue}

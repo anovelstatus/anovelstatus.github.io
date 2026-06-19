@@ -8,6 +8,8 @@ type GuaranteedQueryResult<T> = UseQueryResult<T> & {
 	data: T;
 };
 
+export type LoadableData<T> = { isLoading: boolean; data: T };
+
 export function useChapter() {
 	const { chapter } = useContext(ChapterContext);
 	return chapter < 1 ? 1 : chapter;
@@ -33,14 +35,22 @@ export function useMetalTiers() {
 	return data.tiers.map((x) => x.metalName);
 }
 
+export function useTimelineShortcuts(): LoadableData<Shortcut[]> {
+	const { data } = useBasicInfo();
+	return { data: data.shortcuts, isLoading: data.shortcuts.length == 0 };
+}
+
 export function useBasicInfo() {
-	return useSpreadsheet<BasicInfo>("chapters", {
-		latest: 1,
-		unlocked: false,
-		tiers: [],
-		shortcuts: [],
-		attributes: [],
-	});
+	return useQuery<BasicInfo>({
+		queryKey: ["page", "chapters"],
+		placeholderData: {
+			latest: 1,
+			unlocked: false,
+			tiers: [],
+			shortcuts: [],
+			attributes: [],
+		},
+	}) as GuaranteedQueryResult<BasicInfo>;
 }
 
 function useBody() {
@@ -104,9 +114,11 @@ export function useLore() {
 
 // Copying type constraint from Tanstack's NonFunctionGuard type
 // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-function useSpreadsheet<T>(page: ApiPage, placeholder: T extends Function ? never : T) {
-	return useQuery<T>({
+function useSpreadsheet<T>(page: ApiPage, placeholder: T extends Function ? never : T): LoadableData<T> {
+	const result = useQuery<T>({
 		queryKey: ["page", page],
 		placeholderData: placeholder,
 	}) as GuaranteedQueryResult<T>;
+
+	return { data: result.data, isLoading: result.isPlaceholderData };
 }

@@ -239,7 +239,7 @@ declare type SkillDetails = {
 	quality: string;
 	bonuses: RichTextSpans;
 	notes: RichTextSpans;
-	tags: string;
+	tags: string[];
 	adjustment?: number;
 };
 declare type Skill = TieredId & SkillDetails & HasPrevious;

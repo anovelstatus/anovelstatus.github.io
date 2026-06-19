@@ -11,7 +11,7 @@ import { toPlainText } from "@/components/RichTextSpan";
 
 export default function AchievementTable() {
 	const chapter = useChapter();
-	const { data, isFetching } = useAchievements();
+	const { data, isLoading } = useAchievements();
 	const metalTiers = useMetalTiers();
 	const [filters, setFilters] = useState<FilterOptions>({ chapter });
 
@@ -73,7 +73,7 @@ export default function AchievementTable() {
 						/>
 					))}
 			</Grid>
-			<AppTable table={table} isLoading={isFetching} />
+			<AppTable table={table} isLoading={isLoading} />
 		</>
 	);
 }

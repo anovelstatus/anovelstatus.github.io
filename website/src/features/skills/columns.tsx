@@ -18,7 +18,7 @@ export const useColumns = () => {
 		{
 			accessorKey: "name",
 			header: "Skill",
-			size: 100,
+			size: 120,
 			enableSorting: true,
 			cell: ({ row }) => {
 				const chapter = useChapter();
@@ -87,13 +87,17 @@ export const useColumns = () => {
 				return (
 					<Stack>
 						<RichTextSpan data={row.original.description} />
-						<PrerequisiteList skill={row.original} />
-						{previousSkills.length > 0 && <Typography variant="h6">Previous/Merged Skill(s):</Typography>}
-						<Stack direction="row" spacing={1} sx={{ flexWrap: "wrap" }}>
-							{previousSkills.map((x, index) => (
-								<SkillButton key={index} item={x} />
-							))}
-						</Stack>
+						<PrerequisiteList skill={row.original} headerSx={{ fontWeight: "bold" }} />
+						{previousSkills.length > 0 && (
+							<Stack direction="row" sx={{ flexWrap: "wrap", alignItems: "center" }}>
+								<Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+									Previous:
+								</Typography>
+								{previousSkills.map((x, index) => (
+									<SkillButton key={index} item={x} />
+								))}
+							</Stack>
+						)}
 					</Stack>
 				);
 			},

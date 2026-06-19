@@ -18,7 +18,7 @@ export function PrerequisiteList({ skill, headerSx }: PrerequisiteListProps) {
 	const elements = getList(skill, list);
 	return (
 		<>
-			<Typography variant="h6" sx={headerSx}>
+			<Typography variant="subtitle1" sx={headerSx}>
 				Ideal Prerequisites:
 			</Typography>
 			{elements}
@@ -40,7 +40,7 @@ function getList(skill: Skill, list: string[]) {
 	const extra = list.slice(5);
 
 	return [
-		<Typography variant="h6" key={`${keyPrefix}-selected`}>
+		<Typography variant="subtitle2" key={`${keyPrefix}-selected`}>
 			Selected
 		</Typography>,
 		...selected.map((x, index) => (
@@ -48,7 +48,7 @@ function getList(skill: Skill, list: string[]) {
 				{x}
 			</Typography>
 		)),
-		<Typography variant="h6" key={`${keyPrefix}-more`}>
+		<Typography variant="subtitle2" key={`${keyPrefix}-more`}>
 			and {list.length - 5} more...
 		</Typography>,
 		...extra.map((x, index) => (

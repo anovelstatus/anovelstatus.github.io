@@ -1,15 +1,14 @@
 import { Button, CircularProgress, Container, Grid, Slider, Stack } from "@mui/material";
 import { useContext, useMemo } from "react";
 import { ChapterContext } from "@/providers/ChapterContext";
-import { useBasicInfo } from "@/data/api";
+import { useLatestChapter, useTimelineShortcuts } from "@/data/api";
 import { ShortcutMenu } from "./ShortcutMenu";
 import { mapValues as mapMapValues } from "es-toolkit/map";
 
 export default function ChapterTimeline() {
 	const { chapter, setChapter } = useContext(ChapterContext);
-	const { data, isFetching } = useBasicInfo();
-	const shortcuts = data.shortcuts;
-	const latestChapter = data.latest;
+	const { data: shortcuts, isLoading: isLoadingShortcuts } = useTimelineShortcuts();
+	const latestChapter = useLatestChapter();
 
 	const groupedShortcuts = useMemo(() => {
 		const menus = Map.groupBy(shortcuts, (x) => x.menu || "");
@@ -39,7 +38,7 @@ export default function ChapterTimeline() {
 					value={chapter}
 					onChange={handleSliderChange}
 				/>
-				{isFetching ? (
+				{isLoadingShortcuts ? (
 					<Stack direction="row" sx={{ justifyContent: "center", alignItems: "center", width: "100%" }}>
 						<CircularProgress size="16px" color="inherit" />
 						<span>Loading shortcuts...</span>

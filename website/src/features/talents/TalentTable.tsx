@@ -10,7 +10,7 @@ type TalentTableProps = {
 };
 
 export default function TalentTable({ data }: TalentTableProps) {
-	const { data: allTalents } = useTalents();
+	const { data: allTalents, isLoading } = useTalents();
 	const columns = useColumns();
 
 	const table = useAppTable({
@@ -25,5 +25,5 @@ export default function TalentTable({ data }: TalentTableProps) {
 		enableSorting: false,
 	});
 
-	return <AppTable table={table} isLoading={allTalents.length === 0} sx={columnstyles} />;
+	return <AppTable table={table} isLoading={isLoading} sx={columnstyles} />;
 }
