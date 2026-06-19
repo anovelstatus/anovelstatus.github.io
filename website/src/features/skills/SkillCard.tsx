@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardContent, Box, Stack, Grid, Typography, Chip, Divider } from "@mui/material";
+import { Card, CardHeader, CardContent, Box, Stack, Typography, Chip } from "@mui/material";
 import { ChaptersChip, IdealChip, RarityChip } from "@/components/chips";
 import { findByIds, sameId } from "@/data/helpers";
 import { AttributeSummary } from "@/features/attributes";
@@ -33,11 +33,11 @@ export default function SkillCard({ id, sx }: SkillCardProps) {
 			<CardHeader
 				sx={{ background: gradient }}
 				title={
-					<Grid container spacing={1} sx={{ alignItems: "center" }}>
+					<Stack direction="row" sx={{ flexWrap: "wrap", alignItems: "center" }}>
 						{skill.name} <RarityChip name={skill.tier} />
 						<IdealChip skill={skill} />
 						<Chip size="small" label={levelText} />
-					</Grid>
+					</Stack>
 				}
 			/>
 			<CardContent>
@@ -55,7 +55,6 @@ export default function SkillCard({ id, sx }: SkillCardProps) {
 							})}
 						</Stack>
 					)}
-					<Divider />
 					<Typography variant="subtitle1" sx={{ marginTop: "20px", fontWeight: "bold" }}>
 						Levels Gained:
 					</Typography>
