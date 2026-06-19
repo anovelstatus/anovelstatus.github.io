@@ -12,6 +12,7 @@ import { PrerequisiteList } from "./PrerequisiteList";
 
 export const useColumns = () => {
 	const skillTiers = useSkillTiers();
+	const chapter = useChapter();
 
 	return [
 		{
@@ -54,13 +55,15 @@ export const useColumns = () => {
 		},
 		createCollapsedTierColumn<Skill>(skillTiers),
 		{
-			accessorKey: "level",
+			id: "level",
+			accessorFn: (skill) => getLevelOnChapter(skill, chapter),
 			header: "Level",
 			size: 30,
 			enableSorting: true,
 			meta: {
 				bodyColSpan: 0,
 			},
+			sortingFn: "basic",
 		},
 		{
 			accessorKey: "attributes",
