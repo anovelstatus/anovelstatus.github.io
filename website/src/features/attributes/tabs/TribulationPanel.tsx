@@ -1,4 +1,4 @@
-import { useAttributes, useChapter, useRaceOnChapter } from "@/data/api";
+import { useAttributes, useChapter } from "@/data/api";
 import { Input, Stack, Typography } from "@mui/material";
 import { getCurrentBoost, useCalculatedStatus, useTribulationThresholds } from "@/features/attributes/helpers";
 import ChaptersChip from "@/components/chips/ChaptersChip";
@@ -8,6 +8,7 @@ import LoadingPlaceholder from "@/components/LoadingPlaceholder";
 import { LoreSection } from "@/components/LoreSection";
 import { AttributeGrid } from "../AttributeGrid";
 import { formatNumber } from "@/data/helpers";
+import { useRaceOnChapter } from "@/features/body/helpers";
 
 export function TribulationPanel() {
 	const chapter = useChapter();

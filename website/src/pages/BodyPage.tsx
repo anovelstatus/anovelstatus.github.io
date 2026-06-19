@@ -1,14 +1,14 @@
 import { BloodlineCard, BodyModificationCard, RaceCard, TemperingStageCard } from "@/features/body";
+import { useChapter } from "@/data/api";
+import { Stack, Typography, Grid } from "@mui/material";
+import Section from "@/components/Section";
+import { LoreSection } from "@/components/LoreSection";
 import {
 	useBloodlinesOnChapter,
 	useBodyMutationsOnChapter,
 	useBodyTemperingForChapter,
-	useChapter,
 	useRaceOnChapter,
-} from "@/data/api";
-import { Stack, Typography, Grid } from "@mui/material";
-import Section from "@/components/Section";
-import { LoreSection } from "@/components/LoreSection";
+} from "@/features/body/helpers";
 
 export function BodyPage() {
 	const chapter = useChapter();

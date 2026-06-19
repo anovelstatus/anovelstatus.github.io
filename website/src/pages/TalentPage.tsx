@@ -1,9 +1,10 @@
 import { TalentTable, useTalentGroups } from "@/features/talents";
-import { useChapter, useRaceOnChapter } from "@/data/api";
+import { useChapter } from "@/data/api";
 import { Stack, Typography, Chip } from "@mui/material";
 import { sumBy } from "es-toolkit";
 import { LoreSection } from "@/components/LoreSection";
 import { Fragment } from "react/jsx-runtime";
+import { useRaceOnChapter } from "@/features/body/helpers";
 
 export function TalentPage() {
 	const chapter = useChapter();

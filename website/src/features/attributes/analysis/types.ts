@@ -1,4 +1,5 @@
 export type AttributeAnalysis = {
+	attribute: Attribute.Details;
 	baseValue: number;
 	titleBoost: number;
 	calculatedValue: number;
@@ -10,5 +11,5 @@ export type AttributeAnalysis = {
 export type AttributeAnalysisRow = {
 	chapter: number;
 	note: string;
-	attributes: Record<string, AttributeAnalysis>;
+	attributes: AttributeAnalysis[];
 };

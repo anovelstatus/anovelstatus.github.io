@@ -160,24 +160,13 @@ export function useAttributeAnalysis(): AttributeAnalysisRow[] {
 			if (status) {
 				lastOfficialStatus = status;
 			}
-
-			const row: AttributeAnalysisRow = {
+			data.push({
 				chapter: chapter,
 				note: status?.note ?? "",
-				attributes: {},
-			};
-
-			for (const attribute of attributes) {
-				row.attributes[attribute.name] = calculateAttributeAnalysis(
-					previousStatus,
-					lastOfficialStatus,
-					status,
-					chapter,
-					attribute,
-					skills,
-				);
-			}
-			data.push(row);
+				attributes: attributes.map((x) =>
+					calculateAttributeAnalysis(previousStatus, lastOfficialStatus, status, chapter, x, skills),
+				),
+			});
 			previousStatus = lastOfficialStatus;
 		}
 
@@ -204,6 +193,7 @@ function calculateAttributeAnalysis(
 	const lastOfficialValue = (status ?? lastOfficialStatus).attributes[attribute.index] || 0;
 
 	return {
+		attribute,
 		previousValue,
 		lastOfficialValue: lastOfficialValue,
 		officialValue: officialValue,
