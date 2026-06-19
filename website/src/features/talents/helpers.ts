@@ -1,6 +1,6 @@
 import { useChapter, useTalents } from "@/data/api";
 import { sameId } from "@/data/helpers";
-import { groupBy } from "es-toolkit";
+import { groupBy, orderBy } from "es-toolkit";
 import { useMemo } from "react";
 
 export function useTalentGroups() {
@@ -18,6 +18,8 @@ export function useTalentGroups() {
 
 		// Now remove ones that are replaced by another one in the remaining list
 		filtered = filtered.filter((x) => !filtered.some((some) => some.previous?.some((prev) => sameId(prev, x))));
+
+		filtered = orderBy(filtered, ["tier", "name", "type"], ["desc", "asc", "asc"]);
 
 		return groupBy(filtered, (x) => x.type);
 	}, [chapter, talents]);

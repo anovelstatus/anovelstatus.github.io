@@ -11,6 +11,7 @@ export const useColumns = () => {
 		createColumnHelper<Achievement>().accessor("description", {
 			header: "Description",
 			size: 300,
+			enableSorting: false,
 			cell: ({ row }) => (
 				<Stack>
 					<RichTextSpan data={row.original.description} />
@@ -41,11 +42,13 @@ export const useColumns = () => {
 		createColumnHelper<Achievement>().accessor("rewards", {
 			header: "Rewards",
 			size: 300,
+			enableSorting: false,
 			cell: ({ row }) => <RichTextSpan data={row.original.rewards} />,
 		}),
 		createColumnHelper<Achievement>().accessor("note", {
 			header: "Other Notes",
 			size: 300,
+			enableSorting: false,
 			cell: ({ row }) => <RichTextSpan data={row.original.note} />,
 		}),
 	] as ColumnDef<Achievement>[];

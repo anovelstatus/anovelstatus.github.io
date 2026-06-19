@@ -3,6 +3,7 @@ import type { AttributeAnalysis, AttributeAnalysisRow } from "./types";
 import { useSkills, useAttributes, useStatuses } from "@/data/api";
 import { useMemo } from "react";
 import { calculateBaseAttributeValue, getCurrentBoost } from "..";
+import { orderBy } from "es-toolkit";
 
 export function formatDiff(diff: number) {
 	if (diff === 0) return "--";
@@ -43,7 +44,7 @@ export function useAttributeAnalysis(): AttributeAnalysisRow[] {
 			previousStatus = lastOfficialStatus;
 		}
 
-		return data;
+		return orderBy(data, ["chapter"], ["desc"]);
 	}, [skills, attributes, statuses]);
 }
 

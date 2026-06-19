@@ -17,14 +17,12 @@ export default function TalentTable({ data }: TalentTableProps) {
 		data,
 		columns,
 		getRowId: (row, _, parent) => toIdString(row) + toIdString(parent?.original),
-		initialState: {
-			sorting: [{ id: "tier", desc: true }],
-		},
 		narrowBreakpoint: "md",
 		renderNarrowRow: ({ original, depth }) => <TalentCard id={original} key={depth + toIdString(original)} />,
 		getExpandedRowModel: getExpandedRowModel(),
 		maxLeafRowFilterDepth: 0,
 		getSubRows: (row) => findByIds(allTalents, row.previous),
+		enableSorting: false,
 	});
 
 	return <AppTable table={table} isLoading={allTalents.length === 0} sx={columnstyles} />;

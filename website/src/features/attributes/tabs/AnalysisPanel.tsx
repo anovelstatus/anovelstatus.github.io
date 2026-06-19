@@ -52,8 +52,8 @@ export function AnalysisPanel() {
 	const table = useAppTable<AttributeAnalysisRow>({
 		data: tableData,
 		columns: columns,
+		enableSorting: false,
 		getRowId: (row) => row.chapter.toString(),
-		initialState: { sorting: [{ id: "chapter", desc: true }] },
 		renderNarrowRow: (row) => <AnalysisCard key={row.id} data={row.original} />,
 		getFilteredRowModel: getFilteredRowModel(),
 		state: { globalFilter: filters },
