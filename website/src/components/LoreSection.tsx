@@ -12,10 +12,10 @@ type LoreSectionProps = {
 export function LoreSection({ topic, subtopic }: LoreSectionProps) {
 	const chapter = useChapter();
 
-	const realTopic = subtopic ? `${topic} - ${subtopic}` : topic;
-	const lore = useLoreTopic(realTopic, chapter);
+	const key = subtopic ? `${topic} - ${subtopic}` : topic;
+	const lore = useLoreTopic(key, chapter);
 
-	if (!lore.description && !lore.updates.length) return <></>;
+	if (!lore.description && !lore.updates.length) return null;
 
 	return (
 		<Stack>

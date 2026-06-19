@@ -1,4 +1,4 @@
-import { Checkbox, FormControlLabel, FormGroup, Grid, Typography } from "@mui/material";
+import { FormControlLabel, Switch, Typography } from "@mui/material";
 import { toIdString } from "@/data/helpers";
 import { useState, useEffect } from "react";
 import SkillCard from "./SkillCard";
@@ -55,14 +55,10 @@ export default function SkillTable() {
 	return (
 		<>
 			<SkillFilters onChange={setFilters} />
-			<Grid container spacing={2}>
-				<FormGroup>
-					<FormControlLabel
-						label="Show levels gained by chapter"
-						control={<Checkbox onChange={toggleNotesColumn} value={columnVisibility.gains} />}
-					/>
-				</FormGroup>
-			</Grid>
+			<FormControlLabel
+				label="Show levels gained by chapter"
+				control={<Switch onChange={toggleNotesColumn} value={columnVisibility.gains} />}
+			/>
 			<Typography>
 				Showing {table.getRowCount()}/{skills.length} skills
 			</Typography>

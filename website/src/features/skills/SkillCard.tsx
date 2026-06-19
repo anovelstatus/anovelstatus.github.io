@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardContent, Box, Stack, Grid, Typography, Chip } from "@mui/material";
+import { Card, CardHeader, CardContent, Box, Stack, Grid, Typography, Chip, Divider } from "@mui/material";
 import { ChaptersChip, IdealChip, RarityChip } from "@/components/chips";
 import { findByIds, sameId } from "@/data/helpers";
 import { AttributeSummary } from "@/features/attributes";
@@ -44,20 +44,19 @@ export default function SkillCard({ id, sx }: SkillCardProps) {
 				<Stack>
 					<RichTextSpan data={skill.description} />
 					<AttributeSummary gains={skill.attributes} />
-					<PrerequisiteList skill={skill} headerSx={{ marginTop: "20px" }} />
-					{previousSkills.length > 0 ? (
-						<>
-							<Typography variant="h6" sx={{ marginTop: "20px" }}>
-								Previous/Merged Skill(s):
+					<PrerequisiteList skill={skill} headerSx={{ marginTop: "20px", fontWeight: "bold" }} />
+					{previousSkills.length > 0 && (
+						<Stack direction="row" spacing={1} sx={{ flexWrap: "wrap", alignItems: "center" }}>
+							<Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+								Previous:
 							</Typography>
-							<Stack direction="row" spacing={1} sx={{ flexWrap: "wrap" }}>
-								{previousSkills.map((x, index) => {
-									return <SkillButton key={index} item={x} />;
-								})}
-							</Stack>
-						</>
-					) : null}
-					<Typography variant="h6" sx={{ marginTop: "20px" }}>
+							{previousSkills.map((x, index) => {
+								return <SkillButton key={index} item={x} />;
+							})}
+						</Stack>
+					)}
+					<Divider />
+					<Typography variant="subtitle1" sx={{ marginTop: "20px", fontWeight: "bold" }}>
 						Levels Gained:
 					</Typography>
 					{skill.gains

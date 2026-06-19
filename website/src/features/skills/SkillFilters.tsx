@@ -1,4 +1,4 @@
-import { Autocomplete, Checkbox, FormControl, FormControlLabel, FormGroup, Grid, TextField } from "@mui/material";
+import { Autocomplete, FormControl, FormControlLabel, Stack, Switch, TextField } from "@mui/material";
 import { useState, useEffect, useMemo } from "react";
 import { useAttributes, useChapter, useSkills, useSkillTiers } from "@/data/api";
 import { RarityButtonChip } from "@/components/chips";
@@ -58,7 +58,7 @@ export default function SkillFilters({ onChange }: SkillFiltersProps) {
 
 	return (
 		<>
-			<Grid container spacing={2}>
+			<Stack direction="row" sx={{ flexWrap: "wrap", alignItems: "center" }}>
 				{skillTiers
 					.filter((x) => totals[x])
 					.toReversed()
@@ -71,38 +71,36 @@ export default function SkillFilters({ onChange }: SkillFiltersProps) {
 							prefix={totals[x] + " "}
 						/>
 					))}
-			</Grid>
-			<Grid container spacing={2}>
-				<FormGroup>
-					<FormControlLabel label={"⭐ Ideal Only"} control={<Checkbox onChange={toggleIdealFilter} />} />
-					<FormControlLabel label="Show former skills" control={<Checkbox onChange={toggleFormerSkills} />} />
-					<FormControl sx={{ margin: 1, width: 500 }}>
-						<Autocomplete
-							multiple={true}
-							aria-description="Filter by skills which provide selected attributes"
-							id="attributes-filter"
-							value={filters.providesAttributes}
-							onChange={(_evt, value) => changeAttributesFilter(value)}
-							renderInput={(params) => <TextField {...params} label="Provides..." />}
-							options={attributes}
-							groupBy={(x) => x.category}
-							getOptionLabel={(x) => x.name}
-							getOptionKey={(x) => x.name}
-						/>
-					</FormControl>
-					<FormControl sx={{ margin: 1, width: 500 }}>
-						<Autocomplete
-							multiple={true}
-							aria-description="Filter by skills with selected tags"
-							id="attributes-filter"
-							value={filters.tags}
-							onChange={(_evt, value) => changeTagsFilter(value)}
-							renderInput={(params) => <TextField {...params} label="Tagged as..." />}
-							options={tags}
-						/>
-					</FormControl>
-				</FormGroup>
-			</Grid>
+			</Stack>
+			<Stack direction="row" sx={{ flexWrap: "wrap", alignItems: "center" }}>
+				<FormControlLabel label="⭐ Ideal Only" control={<Switch onChange={toggleIdealFilter} />} />
+				<FormControlLabel label="Show former skills" control={<Switch onChange={toggleFormerSkills} />} />
+				<FormControl sx={{ margin: 1, width: 400 }}>
+					<Autocomplete
+						multiple={true}
+						aria-description="Filter by skills which provide selected attributes"
+						id="attributes-filter"
+						value={filters.providesAttributes}
+						onChange={(_evt, value) => changeAttributesFilter(value)}
+						renderInput={(params) => <TextField {...params} label="Provides..." />}
+						options={attributes}
+						groupBy={(x) => x.category}
+						getOptionLabel={(x) => x.name}
+						getOptionKey={(x) => x.name}
+					/>
+				</FormControl>
+				<FormControl sx={{ margin: 1, width: 400 }}>
+					<Autocomplete
+						multiple={true}
+						aria-description="Filter by skills with selected tags"
+						id="attributes-filter"
+						value={filters.tags}
+						onChange={(_evt, value) => changeTagsFilter(value)}
+						renderInput={(params) => <TextField {...params} label="Tagged as..." />}
+						options={tags}
+					/>
+				</FormControl>
+			</Stack>
 		</>
 	);
 }
