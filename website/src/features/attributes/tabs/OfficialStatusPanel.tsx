@@ -27,17 +27,13 @@ export function OfficialStatusPanel() {
 				Evolutions
 			</Typography>
 			<LoreSection topic="Attributes" subtopic="Evolution" />
-			<AttributeGrid
-				formatAttribute={(attribute) => (
-					<EvolutionDisplay key={"attribute-evolution-" + attribute.name} attribute={attribute} />
-				)}
-			/>
+			<AttributeGrid formatAttribute={(attribute) => <EvolutionDisplay key={attribute.name} attribute={attribute} />} />
 			<Typography variant="h4" gutterBottom>
 				Descriptions & Milestones
 			</Typography>
 			<AttributeGrid
 				formatAttribute={(attribute) => (
-					<DescriptionDisplay key={"attribute-description-" + attribute.name} attribute={attribute} status={status} />
+					<DescriptionDisplay key={attribute.name} attribute={attribute} status={status} />
 				)}
 			/>
 		</Stack>
@@ -50,7 +46,7 @@ function EvolutionDisplay({ attribute }: { attribute: Attribute.Details }) {
 	if (!evolution)
 		return (
 			<Box>
-				<Typography variant="h6" component="span" sx={{ fontWeight: "bold" }}>
+				<Typography variant="subtitle1" component="span" sx={{ fontWeight: "bold" }}>
 					{attribute.name}
 				</Typography>
 				<Typography variant="body2" component="span">
@@ -61,7 +57,7 @@ function EvolutionDisplay({ attribute }: { attribute: Attribute.Details }) {
 	return (
 		<Stack>
 			<Stack direction="row" sx={{ alignItems: "center" }}>
-				<Typography variant="h6">
+				<Typography variant="subtitle1">
 					<span style={{ fontWeight: "bold" }}>{attribute.name}</span> - {evolution.name || "None"}
 				</Typography>
 				<ChaptersChip chapters={evolution.chapter} />
@@ -74,7 +70,7 @@ function EvolutionDisplay({ attribute }: { attribute: Attribute.Details }) {
 function DescriptionDisplay({ attribute, status }: { attribute: Attribute.Details; status: Status }) {
 	return (
 		<Stack>
-			<Typography variant="h6" sx={{ fontWeight: "bold" }}>
+			<Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
 				{attribute.name}
 			</Typography>
 			<RichTextSpan key={attribute.name} data={attribute.note} />

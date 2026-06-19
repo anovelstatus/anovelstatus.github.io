@@ -23,7 +23,7 @@ export function AttributeStatus({ status, previousStatus }: { status: Status; pr
 				formatAttribute={(attribute) => {
 					const evolvedName = getEvolvedName(attribute, status.chapter);
 					return (
-						<Box key={"status-" + attribute.name}>
+						<Box key={attribute.name}>
 							<Typography
 								variant="body2"
 								sx={{
