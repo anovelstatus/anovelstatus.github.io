@@ -13,7 +13,7 @@ export default function BodyCell<T>({ cell }: BodyCellProps<T>) {
 
 	if (colSpan === 0) return <></>;
 
-	const size = cell.column.getSize();
+	const size = cell.getFullSize();
 
 	return (
 		<TableCell
@@ -25,7 +25,7 @@ export default function BodyCell<T>({ cell }: BodyCellProps<T>) {
 				borderWidth: 1,
 				borderStyle: "solid",
 				borderColor: theme.palette.grey[800],
-				width: size > 0 ? size * colSpan + "px" : undefined,
+				width: size > 0 ? size + "px" : undefined,
 				...cell.getSx(),
 			}}
 			title={cell.getTitle()}

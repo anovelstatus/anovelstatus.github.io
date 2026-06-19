@@ -138,9 +138,10 @@ function useStatuses() {
 	return useSpreadsheet<Status[]>("statuses", []);
 }
 
-export function useStatusDictionary() {
+export function useStatusDictionary(): Record<number, Status> {
 	const { data: statuses } = useStatuses();
 	return useMemo(() => {
+		if (!statuses.length) return {};
 		return Object.fromEntries(statuses.map((x) => [x.chapter, x]));
 	}, [statuses]);
 }

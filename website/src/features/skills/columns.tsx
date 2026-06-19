@@ -17,7 +17,7 @@ export const useColumns = () => {
 		{
 			accessorKey: "name",
 			header: "Skill",
-			size: 30,
+			size: 100,
 			enableSorting: true,
 			cell: ({ row }) => {
 				const chapter = useChapter();
@@ -65,7 +65,7 @@ export const useColumns = () => {
 		{
 			accessorKey: "attributes",
 			header: "Attributes",
-			size: 40,
+			size: 200,
 			enableSorting: false,
 			cell: ({ row }) => (
 				<Box sx={{ fontSize: "0.9em" }}>
@@ -77,7 +77,7 @@ export const useColumns = () => {
 			accessorKey: "description",
 			header: "Description",
 			enableSorting: false,
-			size: 300,
+			size: 1000,
 			cell: ({ row }) => {
 				const { data: skills } = useSkills();
 				const previousSkills = findByIds(skills, row.original.previous);

@@ -4,7 +4,7 @@ export function createCollapsedTierColumn<T extends HasTier>(tiers: string[]): C
 	return createColumnHelper<T>().accessor((row) => row.tier, {
 		header: "Tier",
 		id: "tier",
-		size: 30,
+		size: 100,
 		meta: {
 			bodyColSpan: 0,
 		},
@@ -16,7 +16,7 @@ export function createCollapsedChapterColumn<T>(accessor: (row: T) => number): C
 	return createColumnHelper<T>().accessor(accessor, {
 		header: "Chapter",
 		id: "chapter",
-		size: 30,
+		size: 100,
 		meta: {
 			bodyColSpan: 0,
 		},

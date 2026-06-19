@@ -11,6 +11,7 @@ interface ColSpanOptions<T> {
 
 interface ColSpanCell {
 	getColSpan: () => number;
+	getFullSize: () => number;
 }
 
 // Use declaration merging to add our new feature APIs and state types to TanStack Table's existing types.
@@ -35,13 +36,25 @@ export const ColSpanFeature: TableFeature = {
 		cell: Cell<TData, unknown>,
 		column: Column<TData>,
 		row: Row<TData>,
-		_table: Table<TData>,
+		table: Table<TData>,
 	): void => {
 		cell.getColSpan = () => {
 			const prop = column.columnDef.meta?.bodyColSpan;
 			if (typeof prop === "number") return prop;
 			if (typeof prop === "function") return prop(row);
 			return 1;
+		};
+		cell.getFullSize = () => {
+			const span = cell.getColSpan();
+			let size = column.getSize();
+			if (span > 1) {
+				const columns = table.getAllColumns();
+				const index = columns.indexOf(column)!;
+				for (let i = 1; i < span; i++) {
+					size += columns[index + i]!.getSize();
+				}
+			}
+			return size;
 		};
 	},
 	// if you need to add header instance APIs...

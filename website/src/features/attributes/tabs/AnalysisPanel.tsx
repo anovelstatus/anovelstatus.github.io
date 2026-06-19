@@ -1,12 +1,10 @@
 import AppTable, { useAppTable } from "@/components/AppTable";
-import { useAttributes, useChapter, useLatestChapter, useSkills, useStatusDictionary } from "@/data/api";
+import { useAttributes, useChapter } from "@/data/api";
 import { Box, Grid, Stack, Typography } from "@mui/material";
-import { calculateBaseAttributeValue, getCurrentBoost } from "@/features/attributes/helpers";
+import { useAttributeAnalysis } from "@/features/attributes/helpers";
 import { useEffect, useMemo, useState } from "react";
 import { createColumnHelper, getFilteredRowModel, type Cell, type ColumnDef } from "@tanstack/react-table";
-import { formatNumber } from "@/data/helpers";
-import LoadingPlaceholder from "@/components/LoadingPlaceholder";
-import type { AttributeAnalysis, AttributeAnalysisRow } from "@/features/attributes/analysis/types";
+import type { AttributeAnalysisRow } from "@/features/attributes/analysis/types";
 import { styles, getClass } from "@/features/attributes/analysis/styles";
 import { AnalysisStack } from "@/features/attributes/analysis/AnalysisStack";
 import { AnalysisCard } from "@/features/attributes/analysis/AnalysisCard";
@@ -27,10 +25,7 @@ export type AnalysisFilterOptions = {
 
 export function AnalysisPanel() {
 	const chapter = useChapter();
-	const maxChapter = useLatestChapter();
 	const { data: attributes } = useAttributes();
-	const statuses = useStatusDictionary();
-	const { data: skills } = useSkills();
 
 	const [filters, setFilters] = useState<AnalysisFilterOptions>({ chapter });
 	useEffect(() => {
@@ -52,10 +47,7 @@ export function AnalysisPanel() {
 		] as ColumnDef<AttributeAnalysisRow>[];
 	}, [attributes]);
 
-	const tableData = useMemo(
-		() => getTableData(maxChapter, attributes, statuses, skills),
-		[maxChapter, attributes, statuses, skills],
-	);
+	const tableData = useAttributeAnalysis();
 
 	const table = useAppTable<AttributeAnalysisRow>({
 		data: tableData,
@@ -70,8 +62,7 @@ export function AnalysisPanel() {
 		},
 	});
 
-	const isLoading = !attributes.length || !Object.keys(statuses).length || !skills.length;
-	if (isLoading) return <LoadingPlaceholder text="Loading statuses, skill levels, and titles..." />;
+	const isLoading = !tableData.length;
 
 	return (
 		<Stack spacing={2} sx={styles}>
@@ -107,75 +98,4 @@ function createAttributeColumn(attribute: Attribute.Details) {
 			return <AnalysisStack analysis={analysis} />;
 		},
 	});
-}
-
-function getTableData(
-	maxChapter: number,
-	attributes: Attribute.Details[],
-	statuses: Record<number, Status>,
-	skills: Skill[],
-): AttributeAnalysisRow[] {
-	const data: AttributeAnalysisRow[] = [];
-
-	if (!attributes.length || !statuses[1]) {
-		return data;
-	}
-
-	let previousStatus = statuses[1]!;
-	let lastOfficialStatus = statuses[1]!;
-	for (let chapter = 1; chapter <= maxChapter; chapter++) {
-		const status = statuses[chapter];
-		if (status) {
-			lastOfficialStatus = status;
-		}
-
-		const row: AttributeAnalysisRow = {
-			chapter: chapter,
-			note: status?.note ?? "",
-			attributes: {},
-		};
-
-		for (const attribute of attributes) {
-			row.attributes[attribute.name] = calculateAttribute(
-				previousStatus,
-				lastOfficialStatus,
-				status,
-				chapter,
-				attribute,
-				skills,
-			);
-		}
-		data.push(row);
-		previousStatus = lastOfficialStatus;
-	}
-
-	return data;
-}
-
-function calculateAttribute(
-	previousStatus: Status,
-	lastOfficialStatus: Status,
-	status: Status | undefined,
-	chapter: number,
-	attribute: Attribute.Details,
-	skills: Skill[],
-): AttributeAnalysis {
-	const previousValue = previousStatus.attributes[attribute.index]!;
-	const baseValue = calculateBaseAttributeValue(skills, attribute, chapter);
-	const boost = getCurrentBoost(chapter, attribute);
-	const calculatedValue = Math.round(baseValue * (1 + boost));
-	let officialValue = "?";
-	if (status) {
-		officialValue = formatNumber(status.attributes[attribute.index] || 0);
-	}
-	const lastOfficialValue = (status ?? lastOfficialStatus).attributes[attribute.index] || 0;
-
-	return {
-		previousValue,
-		lastOfficialValue: lastOfficialValue,
-		officialValue: officialValue,
-		baseValue: baseValue,
-		titleBoost: boost,
-		calculatedValue: calculatedValue,
-	};
 }

@@ -1,5 +1,5 @@
 export * from "./AttributeSummary";
-export * from "./AttributeDescriptions";
+export * from "./AttributeGrid";
 export * from "./AttributeStatus";
 export * from "./BoostList";
 export * from "./helpers";
