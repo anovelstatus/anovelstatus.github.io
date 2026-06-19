@@ -24,11 +24,10 @@ export function TribulationPanel() {
 		const adjusted: number[] = [];
 		for (const attribute of attributes) {
 			adjusted[attribute.index] = Math.round(
-				status.attributes[attribute.index]! +
-					(changes[attribute.index] || 0) * (1 + getCurrentBoost(chapter, attribute)),
+				status[attribute.index]! + (changes[attribute.index] || 0) * (1 + getCurrentBoost(chapter, attribute)),
 			);
 		}
-		return { ...status, attributes: adjusted };
+		return adjusted;
 	}, [status, attributes, changes]);
 
 	const thresholds = useTribulationThresholds(tempStatus, race);
@@ -48,8 +47,8 @@ export function TribulationPanel() {
 			<LoreSection topic="Tribulations" />
 			<AttributeGrid
 				formatAttribute={(attribute) => {
-					const existing = status.attributes[attribute.index]!;
-					const boost = getCurrentBoost(status.chapter, attribute);
+					const existing = status[attribute.index]!;
+					const boost = getCurrentBoost(chapter, attribute);
 					const boostSuffix = boost === 0 ? "" : `+ ${Math.round(boost * 100)}%)`;
 					const total = Math.round(existing + (changes[attribute.index] ?? 0) * (1 + boost));
 					return (

@@ -1,7 +1,7 @@
 import { ChapterContext } from "@/providers";
 import { useQuery, type UseQueryResult } from "@tanstack/react-query";
 import { orderBy } from "es-toolkit";
-import { useContext, useMemo } from "react";
+import { useContext } from "react";
 
 /** Make data not optional because we can guarantee a placeholder */
 type GuaranteedQueryResult<T> = UseQueryResult<T> & {
@@ -94,21 +94,8 @@ export function useAchievements() {
 	return useSpreadsheet<Achievement[]>("achievements", []);
 }
 
-function useStatuses() {
-	return useSpreadsheet<Status[]>("statuses", []);
-}
-
-export function useStatusDictionary(): Record<number, Status> {
-	const { data: statuses } = useStatuses();
-	return useMemo(() => {
-		return statuses.reduce(
-			(dict, x, _index) => {
-				if (x) dict[x.chapter] = x;
-				return dict;
-			},
-			{} as Record<number, Status>,
-		);
-	}, [statuses]);
+export function useStatuses() {
+	return useSpreadsheet<OfficialStatus[]>("statuses", []);
 }
 
 export function useLore() {

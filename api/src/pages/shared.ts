@@ -234,7 +234,7 @@ function mapRow<T>(
 					item[key] = parseRichText(richValues[headers[key]]);
 					break;
 				case "note":
-					item[key] = notes[headers[key]];
+					item[key] = notes[headers[key]] ? notes[headers[key]] : undefined;
 					break;
 				case "number":
 					item[key] = limited
