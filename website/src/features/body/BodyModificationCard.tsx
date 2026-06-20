@@ -2,6 +2,7 @@ import { Card, CardHeader, CardContent, Stack, Typography } from "@mui/material"
 import { ChaptersChip, RarityChip } from "@/components/chips";
 import { useChapter } from "@/data/api";
 import { RichTextSpan } from "@/components/RichTextSpan";
+import { WrappedRow } from "@/components/WrappedRow";
 
 export type BodyModificationCardProps = {
 	mutation: Body.Modification;
@@ -13,18 +14,16 @@ export function BodyModificationCard({ mutation }: BodyModificationCardProps) {
 		<Card>
 			<CardHeader
 				title={
-					<Stack direction="row" sx={{ alignItems: "center", flexWrap: "wrap" }}>
+					<WrappedRow>
 						{mutation.name}
 						<ChaptersChip chapters={mutation.chapters} />
 						{mutation.tier && <RarityChip name={mutation.tier} />}
-					</Stack>
+					</WrappedRow>
 				}
 			/>
 			<CardContent>
 				<Stack>
-					<Typography variant="body2" sx={{ whiteSpace: "pre-line" }}>
-						<RichTextSpan data={parseNote(mutation, chapter)} />
-					</Typography>
+					<RichTextSpan data={parseNote(mutation, chapter)} />
 					<Typography variant="body2" sx={{ whiteSpace: "pre-line" }}>
 						Source: <RichTextSpan data={mutation.source} />
 					</Typography>

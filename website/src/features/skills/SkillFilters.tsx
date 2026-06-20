@@ -1,9 +1,10 @@
-import { Autocomplete, FormControl, FormControlLabel, Stack, Switch, TextField } from "@mui/material";
+import { Autocomplete, FormControl, FormControlLabel, Switch, TextField } from "@mui/material";
 import { useState, useEffect, useMemo } from "react";
 import { useAttributes, useChapter, useSkills, useSkillTiers } from "@/data/api";
 import { RarityButtonChip } from "@/components/chips";
 import { IDEAL_QUALITY, showSkill, type SkillFiltersOptions } from "./helpers";
 import { uniq } from "es-toolkit";
+import { WrappedRow } from "@/components/WrappedRow";
 
 export type SkillFiltersProps = {
 	onChange: (filters: SkillFiltersOptions) => void;
@@ -58,7 +59,7 @@ export default function SkillFilters({ onChange }: SkillFiltersProps) {
 
 	return (
 		<>
-			<Stack direction="row" sx={{ flexWrap: "wrap", alignItems: "center" }}>
+			<WrappedRow>
 				{skillTiers
 					.filter((x) => totals[x])
 					.toReversed()
@@ -71,8 +72,8 @@ export default function SkillFilters({ onChange }: SkillFiltersProps) {
 							prefix={totals[x] + " "}
 						/>
 					))}
-			</Stack>
-			<Stack direction="row" sx={{ flexWrap: "wrap", alignItems: "center" }}>
+			</WrappedRow>
+			<WrappedRow>
 				<FormControlLabel label="⭐ Ideal Only" control={<Switch onChange={toggleIdealFilter} />} />
 				<FormControlLabel label="Show former skills" control={<Switch onChange={toggleFormerSkills} />} />
 				<FormControl sx={{ margin: 1, width: 400 }}>
@@ -100,7 +101,7 @@ export default function SkillFilters({ onChange }: SkillFiltersProps) {
 						options={tags}
 					/>
 				</FormControl>
-			</Stack>
+			</WrappedRow>
 		</>
 	);
 }

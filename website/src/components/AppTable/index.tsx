@@ -18,14 +18,15 @@ import {
 	type Table,
 	type TableOptions,
 } from "@tanstack/react-table";
-import { ColSpanFeature } from "./ColSpanFeature";
-import { NarrowFeature } from "./NarrowFeature";
-import HeaderCell from "./HeaderCell";
-import BodyCell from "./BodyCell";
-import { ClassNameFeature } from "./ClassNameFeature";
-import { SxFeature } from "./SxFeature";
-import { HoverTitleFeature } from "./HoverTitleFeature";
+import { ColSpanFeature } from "./features/ColSpanFeature";
+import { NarrowFeature } from "./features/NarrowFeature";
+import HeaderCell from "./components/HeaderCell";
+import BodyCell from "./components/BodyCell";
+import { ClassNameFeature } from "./features/ClassNameFeature";
+import { SxFeature } from "./features/SxFeature";
+import { HoverTitleFeature } from "./features/HoverTitleFeature";
 import type { PropsWithStyle } from "@/types";
+import { HideHeaderFeature } from "./features/HideHeaderFeature";
 
 type TableProps<T> = {
 	table: Table<T>;
@@ -39,6 +40,7 @@ export function useAppTable<T>(options: Partial<TableOptions<T>>) {
 		ColSpanFeature,
 		ClassNameFeature,
 		HoverTitleFeature,
+		HideHeaderFeature,
 		SxFeature,
 		...(options._features ?? []),
 	];
@@ -55,6 +57,7 @@ export default function AppTable<T>({ sx, table, isLoading, size = "medium" }: T
 	const theme = useTheme();
 
 	const isNarrow = useMediaQuery(theme.breakpoints.down(table.getNarrowBreakpoint()));
+	const showHeader = table.getShowHeader();
 
 	if (isLoading)
 		return (
@@ -77,15 +80,17 @@ export default function AppTable<T>({ sx, table, isLoading, size = "medium" }: T
 	return (
 		<TableContainer sx={sx} component={Paper}>
 			<TableComponent className="w-full " size={size}>
-				<TableHead>
-					{table.getHeaderGroups().map((headerGroup) => (
-						<TableRow key={headerGroup.id}>
-							{headerGroup.headers.map((header) => {
-								return <HeaderCell key={header.id} header={header} />;
-							})}
-						</TableRow>
-					))}
-				</TableHead>
+				{showHeader && (
+					<TableHead>
+						{table.getHeaderGroups().map((headerGroup) => (
+							<TableRow key={headerGroup.id}>
+								{headerGroup.headers.map((header) => {
+									return <HeaderCell key={header.id} header={header} />;
+								})}
+							</TableRow>
+						))}
+					</TableHead>
+				)}
 				<TableBody>
 					{table.getRowModel().rows.map((row) => {
 						return (

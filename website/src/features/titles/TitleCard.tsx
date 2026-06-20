@@ -7,6 +7,7 @@ import LoadingCard from "@/components/LoadingCard";
 import TitleButton from "./TitleButton";
 import { RichTextSpan } from "@/components/RichTextSpan";
 import type { PropsWithStyle } from "@/types";
+import { WrappedRow } from "@/components/WrappedRow";
 
 type TitleCardProps = { id: TieredId } & PropsWithStyle;
 
@@ -22,22 +23,22 @@ export default function TitleCard({ id, sx }: TitleCardProps) {
 		<Card sx={sx}>
 			<CardHeader
 				title={
-					<Stack direction="row" sx={{ flexWrap: "wrap", alignItems: "center" }}>
+					<WrappedRow>
 						{title.name} <RarityChip name={title.tier} />
 						<ChaptersChip chapters={title.chapter} />
-					</Stack>
+					</WrappedRow>
 				}
 			/>
 			<CardContent>
 				<Stack>
 					<RichTextSpan data={title.note} />
 					{previousTitle && (
-						<Stack direction="row" sx={{ flexWrap: "wrap", alignItems: "center" }}>
+						<WrappedRow>
 							<Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
 								Previous:
 							</Typography>
 							<TitleButton item={previousTitle} />
-						</Stack>
+						</WrappedRow>
 					)}
 				</Stack>
 			</CardContent>

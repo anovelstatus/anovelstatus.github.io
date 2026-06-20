@@ -6,6 +6,7 @@ import LoadingCard from "@/components/LoadingCard";
 import { RichTextSpan } from "@/components/RichTextSpan";
 import TalentButton from "./TalentButton";
 import type { PropsWithStyle } from "@/types";
+import { WrappedRow } from "@/components/WrappedRow";
 
 export type TalentCardProps = { id: TieredId } & PropsWithStyle;
 
@@ -22,10 +23,10 @@ export default function TalentCard({ id, sx }: TalentCardProps) {
 		<Card sx={sx}>
 			<CardHeader
 				title={
-					<Stack direction="row" sx={{ flexWrap: "wrap", alignItems: "center" }}>
+					<WrappedRow>
 						{talent.name} <RarityChip name={talent.tier} />
 						<ChaptersChip chapters={talent.chapterGained} />
-					</Stack>
+					</WrappedRow>
 				}
 			/>
 			<CardContent>
@@ -37,11 +38,11 @@ export default function TalentCard({ id, sx }: TalentCardProps) {
 						<Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
 							Previous:
 						</Typography>
-						<Stack direction="row" spacing={1} sx={{ flexWrap: "wrap", alignItems: "center" }}>
+						<WrappedRow>
 							{previousTalents.map((x, index) => (
 								<TalentButton key={index} item={x} />
 							))}
-						</Stack>
+						</WrappedRow>
 					</Stack>
 				</CardActions>
 			) : null}

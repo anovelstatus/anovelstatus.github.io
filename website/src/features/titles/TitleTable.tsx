@@ -1,4 +1,4 @@
-import { Button, Chip, Stack, Typography } from "@mui/material";
+import { Button, Chip, Typography } from "@mui/material";
 import { toIdString } from "@/data/helpers";
 import { useState, useEffect } from "react";
 import TitleCard from "./TitleCard";
@@ -9,6 +9,7 @@ import { getExpandedRowModel, getFilteredRowModel, type ExpandedState } from "@t
 import { getPreviousTitleChain } from "./helpers";
 import { RarityButtonChip } from "@/components/chips";
 import { LoreSection } from "@/components/LoreSection";
+import { WrappedRow } from "@/components/WrappedRow";
 
 export default function TitleTable() {
 	const chapter = useChapter();
@@ -44,15 +45,23 @@ export default function TitleTable() {
 		data: titles,
 		columns,
 		getRowId: (row, _, parent) => toIdString(row) + toIdString(parent?.original),
+
 		initialState: {
 			sorting: [
 				{ id: "tier", desc: true },
 				{ id: "name", desc: false },
 			],
 		},
+		state: { globalFilter: filters, expanded },
+
 		narrowBreakpoint: "md",
 		renderNarrowRow: ({ original }) => <TitleCard key={toIdString(original)} id={original} />,
+
 		getFilteredRowModel: getFilteredRowModel(),
+		globalFilterFn: (row, _, filterValue: FilterOptions) => {
+			return showTitle(row.original, filterValue);
+		},
+
 		getExpandedRowModel: getExpandedRowModel(),
 		maxLeafRowFilterDepth: 0,
 		getRowCanExpand: (row) => !row.parentId && row.subRows.length > 0,
@@ -60,11 +69,7 @@ export default function TitleTable() {
 		getSubRows: (row) => {
 			return getPreviousTitleChain(titles, row);
 		},
-		state: { globalFilter: filters, expanded },
 		onExpandedChange: setExpanded,
-		globalFilterFn: (row, _, filterValue: FilterOptions) => {
-			return showTitle(row.original, filterValue);
-		},
 	});
 
 	return (
@@ -73,7 +78,7 @@ export default function TitleTable() {
 				Priam's Titles <Chip label={currentTitles.length} sx={{ fontWeight: "bold" }} />
 			</Typography>
 			<LoreSection topic="Titles" />
-			<Stack direction="row" spacing={2} sx={{ alignItems: "center", flexWrap: "wrap" }}>
+			<WrappedRow>
 				{metalTiers
 					.filter((x) => totals[x])
 					.toReversed()
@@ -104,9 +109,9 @@ export default function TitleTable() {
 				>
 					Collapse All
 				</Button>
-			</Stack>
+			</WrappedRow>
 			<Typography>
-				Showing {table.getRowCount()}/{titles.length} skills
+				Showing {table.getRowCount()}/{titles.length} titles
 			</Typography>
 			<AppTable table={table} isLoading={isLoading} sx={columnstyles} />
 		</>

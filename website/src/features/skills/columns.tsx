@@ -9,6 +9,7 @@ import SkillButton from "./SkillButton";
 import { getLevelOnChapter, getMaxLevel, getProgressGradient } from "./helpers";
 import { RichTextSpan } from "@/components/RichTextSpan";
 import { PrerequisiteList } from "./PrerequisiteList";
+import { WrappedRow } from "@/components/WrappedRow";
 
 export const useColumns = () => {
 	const skillTiers = useSkillTiers();
@@ -89,14 +90,14 @@ export const useColumns = () => {
 						<RichTextSpan data={row.original.description} />
 						<PrerequisiteList skill={row.original} headerSx={{ fontWeight: "bold" }} />
 						{previousSkills.length > 0 && (
-							<Stack direction="row" sx={{ flexWrap: "wrap", alignItems: "center" }}>
+							<WrappedRow>
 								<Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
 									Previous:
 								</Typography>
 								{previousSkills.map((x, index) => (
 									<SkillButton key={index} item={x} />
 								))}
-							</Stack>
+							</WrappedRow>
 						)}
 					</Stack>
 				);
