@@ -1,11 +1,11 @@
-import { Chip, Grid, Typography } from "@mui/material";
+import { Button, Chip, Stack, Typography } from "@mui/material";
 import { toIdString } from "@/data/helpers";
 import { useState, useEffect } from "react";
 import TitleCard from "./TitleCard";
 import AppTable, { useAppTable } from "@/components/AppTable";
 import { useChapter, useMetalTiers, useTitles } from "@/data/api";
 import { useColumns, columnstyles } from "./columns";
-import { getExpandedRowModel, getFilteredRowModel } from "@tanstack/react-table";
+import { getExpandedRowModel, getFilteredRowModel, type ExpandedState } from "@tanstack/react-table";
 import { getPreviousTitleChain } from "./helpers";
 import { RarityButtonChip } from "@/components/chips";
 import { LoreSection } from "@/components/LoreSection";
@@ -15,7 +15,7 @@ export default function TitleTable() {
 	const { data: titles, isLoading } = useTitles();
 	const metalTiers = useMetalTiers();
 	const columns = useColumns();
-
+	const [expanded, setExpanded] = useState<ExpandedState>({});
 	const [filters, setFilters] = useState<FilterOptions>({ chapter });
 
 	useEffect(() => {
@@ -55,8 +55,13 @@ export default function TitleTable() {
 		getFilteredRowModel: getFilteredRowModel(),
 		getExpandedRowModel: getExpandedRowModel(),
 		maxLeafRowFilterDepth: 0,
-		getSubRows: (row) => getPreviousTitleChain(titles, row),
-		state: { globalFilter: filters },
+		getRowCanExpand: (row) => !row.parentId && row.subRows.length > 0,
+		getIsRowExpanded: (row) => !row.parentId && (expanded === true || expanded[row.id] === true),
+		getSubRows: (row) => {
+			return getPreviousTitleChain(titles, row);
+		},
+		state: { globalFilter: filters, expanded },
+		onExpandedChange: setExpanded,
 		globalFilterFn: (row, _, filterValue: FilterOptions) => {
 			return showTitle(row.original, filterValue);
 		},
@@ -68,7 +73,7 @@ export default function TitleTable() {
 				Priam's Titles <Chip label={currentTitles.length} sx={{ fontWeight: "bold" }} />
 			</Typography>
 			<LoreSection topic="Titles" />
-			<Grid container spacing={2}>
+			<Stack direction="row" spacing={2} sx={{ alignItems: "center", flexWrap: "wrap" }}>
 				{metalTiers
 					.filter((x) => totals[x])
 					.toReversed()
@@ -81,7 +86,28 @@ export default function TitleTable() {
 							prefix={totals[x] + " "}
 						/>
 					))}
-			</Grid>
+
+				<Button
+					disabled={table.getIsAllRowsExpanded()}
+					variant="contained"
+					onClick={() => table.toggleAllRowsExpanded(true)}
+					sx={{ display: { md: "inline-block", xs: "none" } }}
+				>
+					Expand All
+				</Button>
+
+				<Button
+					disabled={!table.getIsSomeRowsExpanded()}
+					variant="contained"
+					onClick={() => table.toggleAllRowsExpanded(false)}
+					sx={{ display: { md: "inline-block", xs: "none" } }}
+				>
+					Collapse All
+				</Button>
+			</Stack>
+			<Typography>
+				Showing {table.getRowCount()}/{titles.length} skills
+			</Typography>
 			<AppTable table={table} isLoading={isLoading} sx={columnstyles} />
 		</>
 	);
@@ -93,7 +119,7 @@ type FilterOptions = {
 };
 
 function showTitle(x: Title, { chapter, tier }: FilterOptions) {
-	if (x.chapter >= chapter) return false;
+	if (x.chapter > chapter) return false;
 
 	if (x.replaced && x.replaced <= chapter) return false;
 
