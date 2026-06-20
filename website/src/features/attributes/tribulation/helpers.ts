@@ -1,13 +1,16 @@
 export function adjustStatus(
 	status: number[] | undefined,
-	attributes: Attribute.Details[],
-	changes: number[],
-	allBoosts: number[],
+	extras: number[],
+	baseBoosts: number[],
+	extraBoosts: number[],
 ) {
-	if (!status || !attributes.length) return undefined;
+	if (!status) return undefined;
 	const adjusted: number[] = [];
-	for (const { index } of attributes) {
-		adjusted[index] = Math.round(status[index]! + (changes[index] || 0) * (1 + allBoosts[index]!));
+	for (let index = 0; index < status.length; index++) {
+		const currentTotal = status[index]!;
+		const extra = (extras[index] || 0) / 100;
+		const multiplier = 1 + baseBoosts[index]! + (extraBoosts[index] || 0);
+		adjusted[index] = Math.round(currentTotal + extra * multiplier);
 	}
 	return adjusted;
 }

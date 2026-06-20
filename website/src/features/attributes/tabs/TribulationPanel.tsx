@@ -1,6 +1,7 @@
-import { useAttributes, useChapter, useStatuses } from "@/data/api";
+import { useAttributes, useChapter, useSkills, useStatuses } from "@/data/api";
 import { Grid, Input, Stack, Typography } from "@mui/material";
 import {
+	calculateBaseAttributeValue,
 	getAllCurrentBoosts,
 	getLatestStatus,
 	useCalculatedStatus,
@@ -24,12 +25,15 @@ export function TribulationPanel() {
 
 	const { data: attributes } = useAttributes();
 	const race = useRaceOnChapter(chapter);
+	const { data: skills } = useSkills();
 
+	const baseValues = attributes.map((x) => calculateBaseAttributeValue(skills, x, chapter));
 	const [changes, setChanges] = useState([] as number[]);
+	const [extraBoosts, setExtraBoosts] = useState([] as number[]);
 
-	const allBoosts = useMemo(() => getAllCurrentBoosts(chapter, attributes), [chapter, attributes]);
+	const baseBoosts = useMemo(() => getAllCurrentBoosts(chapter, attributes), [chapter, attributes]);
 
-	const tempStatus = adjustStatus(status, attributes, changes, allBoosts);
+	const tempStatus = adjustStatus(status, changes, baseBoosts, extraBoosts);
 
 	const officialThresholds = useTribulationThresholds(officialStatus?.attributes, race);
 	const baseThresholds = useTribulationThresholds(status, race);
@@ -49,18 +53,20 @@ export function TribulationPanel() {
 			<LoreSection topic="Tribulations" />
 			<AttributeGrid
 				formatAttribute={(attribute) => {
-					const existing = status[attribute.index]!;
-					const boost = allBoosts[attribute.index]!;
-					const boostSuffix = boost === 0 ? "" : `+ ${Math.round(boost * 100)}%)`;
-					const total = Math.round(existing + (changes[attribute.index] ?? 0) * (1 + boost));
+					const base = baseValues[attribute.index]!;
+					const boost = baseBoosts[attribute.index]!;
+					const extraBoost = (extraBoosts[attribute.index] || 0) / 100;
+					const boostSuffix = boost === 0 ? "" : `${Math.round(boost * 100)}%`;
+					const total = Math.round((base + (changes[attribute.index] ?? 0)) * (1 + boost + extraBoost));
 					return (
 						<Stack key={"tribulation-simulator-" + attribute.name}>
 							<Typography variant="subtitle2" sx={{ fontWeight: "bold" }}>
 								{attribute.name}
 							</Typography>
 							<Typography variant="body2" component="div">
-								{formatNumber(existing)}
-								{" + " + (boost > 0 ? "(" : "")}
+								{"( "}
+								{formatNumber(base)}
+								{" + "}
 								<Input
 									id={attribute.name + "-addition"}
 									value={changes[attribute.index] || 0}
@@ -77,12 +83,35 @@ export function TribulationPanel() {
 										step: 1,
 										min: 0,
 										type: "number",
-										"aria-labelledby": `input-${attribute.name}`,
-										"aria-label": attribute.name,
+										"aria-description": `Increase ${attribute.name} by this amount, before title boosts`,
 									}}
-									sx={{ marginLeft: "4px", width: "6ch" }}
+									sx={{ marginLeft: "4px", width: "7ch" }}
 								/>
+								{" ) + ("}
 								{boostSuffix}
+								{" + "}
+								<Input
+									id={attribute.name + "-boost"}
+									value={extraBoosts[attribute.index] || 0}
+									size="small"
+									onChange={(e) => {
+										const newValue = Number(e.target.value);
+										setExtraBoosts((prev) => {
+											const newBoosts = [...prev];
+											newBoosts[attribute.index] = newValue;
+											return newBoosts;
+										});
+									}}
+									endAdornment="%"
+									inputProps={{
+										step: 10,
+										min: 0,
+										type: "number",
+										"aria-description": `Boost ${attribute.name} by this percentage`,
+									}}
+									sx={{ marginLeft: "4px", width: "7ch" }}
+								/>
+								{" )"}
 								{" = "}
 								{formatNumber(total)}
 							</Typography>
