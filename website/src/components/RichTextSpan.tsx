@@ -1,19 +1,14 @@
 import { Typography, type TypographyProps } from "@mui/material";
 
-export type RichTextSpanProps = {
-	data: string | RichTextSpans | null;
+type RichTextSpanProps = {
+	data: string | RichTextSpans;
 } & TypographyProps;
 
 /** The cell often returns an array of 1 span with empty text, so check for non-empty text */
 export function hasNote(data: string | RichTextSpans): boolean {
+	if (!data) return false;
 	if (typeof data === "string") return data.length > 0;
-	return (data || []).some((x) => x.t.length > 0);
-}
-
-export function toPlainText(data: RichTextSpanProps["data"]) {
-	if (typeof data === "string") return data;
-	if (!data) return "";
-	return data.map((x) => x.t).join("");
+	return data.some((x) => x.t.length > 0);
 }
 
 export function RichTextSpan({ data, sx, ...props }: RichTextSpanProps) {
@@ -36,6 +31,7 @@ function FormattedSpan(data: RichText) {
 	return (
 		<span
 			style={{
+				// Black shouldn't be in the JSON, but override it just in case
 				color: data.c == "#000000" ? undefined : data.c,
 				fontWeight: data.b ? "bold" : "normal",
 				fontStyle: data.i ? "italic" : "normal",

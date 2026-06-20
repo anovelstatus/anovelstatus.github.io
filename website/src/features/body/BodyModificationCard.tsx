@@ -13,7 +13,7 @@ export function BodyModificationCard({ mutation }: BodyModificationCardProps) {
 		<Card>
 			<CardHeader
 				title={
-					<Stack direction="row" sx={{ alignItems: "center" }}>
+					<Stack direction="row" sx={{ alignItems: "center", flexWrap: "wrap" }}>
 						{mutation.name}
 						<ChaptersChip chapters={mutation.chapters} />
 						{mutation.tier && <RarityChip name={mutation.tier} />}

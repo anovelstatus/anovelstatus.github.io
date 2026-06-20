@@ -5,17 +5,19 @@ import { RichTextSpan } from "@/components/RichTextSpan";
 import { LoreSection } from "@/components/LoreSection";
 import { ItemLinkButton } from "@/components/ItemLinkButton";
 
-export function TemperingStageCard({ stage }: { stage: TemperingStage }) {
+type StageProps = { stage: TemperingStage };
+type StepProps = { step: TemperingStep };
+
+export function TemperingStageCard({ stage }: StageProps) {
 	const chapter = useChapter();
 
 	const completedSteps = stage.updates.filter((x) => x.completed && x.completed <= chapter);
-	const startedSteps = stage.updates.filter((x) => x.started <= chapter);
 	const stepsTotal = `${completedSteps.length} / ${stage.expectedSteps} steps completed`;
 	return (
 		<Card>
 			<CardHeader
 				title={
-					<Stack direction="row" sx={{ alignItems: "center" }}>
+					<Stack direction="row" sx={{ alignItems: "center", flexWrap: "wrap" }}>
 						{stage.name} <RarityChip name={stage.tier} />
 						<ChaptersChip chapters={stage.chapter} />
 						<Chip size="small" label={stepsTotal} />
@@ -28,33 +30,36 @@ export function TemperingStageCard({ stage }: { stage: TemperingStage }) {
 					<LoreSection topic="Tempering" subtopic={stage.name} />
 					<Typography variant="h6">Steps</Typography>
 					<Grid container spacing={2}>
-						{startedSteps.map((x, index) => {
-							const isCompleted = x.completed && x.completed <= chapter;
-							const chapters = isCompleted ? [x.started, x.completed!] : [x.started];
-							return (
-								<Grid key={index} sx={{ alignItems: "center" }} size={{ xs: 12, sm: 6, md: 4 }} spacing={2}>
-									<Stack direction="row" sx={{ alignItems: "flex-start", justifyItems: "baseline" }} spacing={1}>
-										<ChaptersChip chapters={chapters} range />
-										<Stack direction="column" spacing={1}>
-											{!isCompleted && (
-												<Typography
-													color="error"
-													variant="body2"
-													sx={{ fontWeight: "bold", textTransform: "uppercase" }}
-												>
-													In Progress
-												</Typography>
-											)}
-											<RichTextSpan data={x.note} color={isCompleted ? "textPrimary" : "textSecondary"} />
-											<ItemLinkButton link={x.link} />
-										</Stack>
-									</Stack>
-								</Grid>
-							);
-						})}
+						{stage.updates.map((x, index) => (
+							<Grid key={index} size={{ xs: 12, sm: 6, md: 4 }} spacing={2}>
+								<TemperingStepSection step={x} />
+							</Grid>
+						))}
 					</Grid>
 				</Stack>
 			</CardContent>
 		</Card>
+	);
+}
+
+function TemperingStepSection({ step }: StepProps) {
+	const chapter = useChapter();
+
+	if (step.started > chapter) return null;
+	const isCompleted = step.completed && step.completed <= chapter;
+	const chapters = isCompleted ? [step.started, step.completed!] : [step.started];
+	return (
+		<Stack direction="row" sx={{ alignItems: "flex-start", justifyItems: "baseline" }} spacing={1}>
+			<ChaptersChip chapters={chapters} range />
+			<Stack direction="column" spacing={1}>
+				{!isCompleted && (
+					<Typography color="error" variant="body2" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>
+						In Progress
+					</Typography>
+				)}
+				<RichTextSpan data={step.note} color={isCompleted ? "textPrimary" : "textSecondary"} />
+				<ItemLinkButton link={step.link} />
+			</Stack>
+		</Stack>
 	);
 }

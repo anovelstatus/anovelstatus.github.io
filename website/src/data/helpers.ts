@@ -35,3 +35,9 @@ export function parseId(fullName: string): TieredId {
 	const name = parts.join(" - ");
 	return { name, tier };
 }
+
+export function toPlainText(data: string | RichTextSpans | undefined) {
+	if (typeof data === "string") return data;
+	if (!data) return "";
+	return data.map((x) => x.t).join("");
+}
