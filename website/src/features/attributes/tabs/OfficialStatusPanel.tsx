@@ -8,6 +8,7 @@ import { RichTextSpan } from "@/components/RichTextSpan";
 import LoadingPlaceholder from "@/components/LoadingPlaceholder";
 import { LoreSection } from "@/components/LoreSection";
 import { ItemLinkButton } from "@/components/ItemLinkButton";
+import { WrappedRow } from "@/components/WrappedRow";
 
 export function OfficialStatusPanel() {
 	const chapter = useChapter();
@@ -61,13 +62,13 @@ function EvolutionDisplay({ attribute }: { attribute: Attribute.Details }) {
 		);
 	return (
 		<Stack>
-			<Stack direction="row" sx={{ alignItems: "center", flexWrap: "wrap" }}>
+			<WrappedRow>
 				<Typography variant="subtitle1">
 					<span style={{ fontWeight: "bold" }}>{attribute.name}</span> - {evolution.name || "None"}
 				</Typography>
 				<ChaptersChip chapters={evolution.chapter} />
 				<ItemLinkButton link={evolution.link} />
-			</Stack>
+			</WrappedRow>
 			<RichTextSpan data={evolution.note} />
 		</Stack>
 	);

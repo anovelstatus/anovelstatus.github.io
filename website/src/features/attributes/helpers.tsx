@@ -45,6 +45,10 @@ export function getCurrentEvolution(chapter: number, attribute?: Attribute.Detai
 	return maxBy(pastEvolutions, (x) => x.chapter);
 }
 
+export function getAllCurrentBoosts(chapter: number, attributes: Attribute.Details[]) {
+	return attributes.map((x) => getCurrentBoost(chapter, x));
+}
+
 export function getCurrentBoost(chapter: number, attribute?: Attribute.Details): number {
 	const boosts = getPastBoosts(chapter, attribute);
 	const total = sumBy(boosts, (x) => x.boost);
