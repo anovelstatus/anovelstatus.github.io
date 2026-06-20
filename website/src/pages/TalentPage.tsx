@@ -1,10 +1,12 @@
-import { TalentTable, useTalentGroups } from "@/features/talents";
+import { useTalentGroups, TalentSection } from "@/features/talents";
 import { useChapter } from "@/data/api";
 import { Stack, Typography, Chip } from "@mui/material";
 import { sumBy } from "es-toolkit";
 import { LoreSection } from "@/components/LoreSection";
-import { Fragment } from "react/jsx-runtime";
 import { useRaceOnChapter } from "@/features/body/helpers";
+
+const GENERAL_TYPE = "General";
+const RACIAL_SLOT_TYPE = "Racial Slot";
 
 export function TalentPage() {
 	const chapter = useChapter();
@@ -12,46 +14,35 @@ export function TalentPage() {
 
 	const grouped = useTalentGroups();
 
-	const generalTalents = grouped["General"] ?? [];
-	const freeTalents = grouped["Racial Slot"] ?? [];
+	const generalTalents = grouped[GENERAL_TYPE] ?? [];
+	const freeTalents = grouped[RACIAL_SLOT_TYPE] ?? [];
 
 	const total = sumBy(Object.values(grouped), (x) => x.length);
 
 	const otherTypes = Object.keys(grouped)
-		.filter((x) => x != "General" && x != "Racial Slot")
+		.filter((x) => x != GENERAL_TYPE && x != RACIAL_SLOT_TYPE)
 		.toSorted();
 
 	return (
-		<Stack spacing={2}>
+		<Stack spacing={3}>
 			<Typography variant="h4" gutterBottom>
 				Priam's Talents <Chip label={total} sx={{ fontWeight: "bold" }} />
 			</Typography>
 			<LoreSection topic="Talents" />
-			<Typography variant="h5" gutterBottom>
-				Free Racial Slots{" "}
-				{currentRace && (
-					<Chip label={`${freeTalents.length}/${currentRace?.freeSlots} slots used`} sx={{ fontWeight: "bold" }} />
-				)}
-			</Typography>
-			<LoreSection topic="Talents" subtopic="Free Racial Slots" />
-			<TalentTable data={freeTalents} />
+			<TalentSection
+				chip={`${freeTalents.length}/${currentRace?.freeSlots} slots used`}
+				type="Free Racial Slots"
+				talents={freeTalents}
+			/>
 			{otherTypes.map((type) => (
-				<Fragment key={"talent-group-" + type}>
-					<Typography variant="h5" gutterBottom>
-						{type || "Uncategorized"} Talent{grouped[type]!.length !== 1 ? "s" : ""}{" "}
-						<Chip label={grouped[type]!.length} sx={{ fontWeight: "bold" }} />
-					</Typography>
-
-					<LoreSection topic="Talents" subtopic={type} />
-					<TalentTable data={grouped[type]!} />
-				</Fragment>
+				<TalentSection
+					key={type}
+					chip={grouped[type]!.length}
+					type={type || "Uncategorized"}
+					talents={grouped[type]!}
+				/>
 			))}
-			<Typography variant="h5" gutterBottom>
-				General Talent{generalTalents.length !== 1 ? "s" : ""}{" "}
-				<Chip label={generalTalents.length} sx={{ fontWeight: "bold" }} />
-			</Typography>
-			<LoreSection topic="Talents" subtopic="General" />
-			<TalentTable data={generalTalents} />
+			<TalentSection chip={generalTalents.length} type={GENERAL_TYPE} talents={generalTalents} />
 		</Stack>
 	);
 }

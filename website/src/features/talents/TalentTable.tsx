@@ -16,6 +16,7 @@ export default function TalentTable({ data }: TalentTableProps) {
 	const table = useAppTable({
 		data,
 		columns,
+		hideHeader: true,
 		getRowId: (row, _, parent) => toIdString(row) + toIdString(parent?.original),
 		narrowBreakpoint: "md",
 		renderNarrowRow: ({ original, depth }) => <TalentCard id={original} key={depth + toIdString(original)} />,

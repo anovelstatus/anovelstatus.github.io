@@ -26,6 +26,7 @@ import { ClassNameFeature } from "./features/ClassNameFeature";
 import { SxFeature } from "./features/SxFeature";
 import { HoverTitleFeature } from "./features/HoverTitleFeature";
 import type { PropsWithStyle } from "@/types";
+import { HideHeaderFeature } from "./features/HideHeaderFeature";
 
 type TableProps<T> = {
 	table: Table<T>;
@@ -39,6 +40,7 @@ export function useAppTable<T>(options: Partial<TableOptions<T>>) {
 		ColSpanFeature,
 		ClassNameFeature,
 		HoverTitleFeature,
+		HideHeaderFeature,
 		SxFeature,
 		...(options._features ?? []),
 	];
@@ -55,6 +57,7 @@ export default function AppTable<T>({ sx, table, isLoading, size = "medium" }: T
 	const theme = useTheme();
 
 	const isNarrow = useMediaQuery(theme.breakpoints.down(table.getNarrowBreakpoint()));
+	const showHeader = table.getShowHeader();
 
 	if (isLoading)
 		return (
@@ -77,15 +80,17 @@ export default function AppTable<T>({ sx, table, isLoading, size = "medium" }: T
 	return (
 		<TableContainer sx={sx} component={Paper}>
 			<TableComponent className="w-full " size={size}>
-				<TableHead>
-					{table.getHeaderGroups().map((headerGroup) => (
-						<TableRow key={headerGroup.id}>
-							{headerGroup.headers.map((header) => {
-								return <HeaderCell key={header.id} header={header} />;
-							})}
-						</TableRow>
-					))}
-				</TableHead>
+				{showHeader && (
+					<TableHead>
+						{table.getHeaderGroups().map((headerGroup) => (
+							<TableRow key={headerGroup.id}>
+								{headerGroup.headers.map((header) => {
+									return <HeaderCell key={header.id} header={header} />;
+								})}
+							</TableRow>
+						))}
+					</TableHead>
+				)}
 				<TableBody>
 					{table.getRowModel().rows.map((row) => {
 						return (

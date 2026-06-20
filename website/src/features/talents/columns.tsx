@@ -50,6 +50,7 @@ export const useColumns = () => {
 					if (depth > 0) return `nested nested-${depth}`;
 					return "";
 				},
+				bodySx: { verticalAlign: "top" },
 			},
 		},
 		createCollapsedTierColumn<Talent>(metalTiers),
