@@ -2,9 +2,8 @@ import { Card, CardHeader, CardContent, Stack, Typography, Chip, Grid } from "@m
 import { ChaptersChip, RarityChip } from "@/components/chips";
 import { useChapter } from "@/data/api";
 import { RichTextSpan } from "@/components/RichTextSpan";
-import { SkillButton } from "@/features/skills";
-import { TitleButton } from "@/features/titles";
 import { LoreSection } from "@/components/LoreSection";
+import { ItemLinkButton } from "@/components/ItemLinkButton";
 
 export function TemperingStageCard({ stage }: { stage: TemperingStage }) {
 	const chapter = useChapter();
@@ -38,8 +37,7 @@ export function TemperingStageCard({ stage }: { stage: TemperingStage }) {
 										<ChaptersChip chapters={chapters} />
 										<Stack direction="column" spacing={1}>
 											<RichTextSpan data={x.note} color={isCompleted ? "text.primary" : "text.secondary"} />
-											{x.link && x.linkType == "Skill" && <SkillButton item={x.link} />}
-											{x.link && x.linkType == "Title" && <TitleButton item={x.link} />}
+											<ItemLinkButton link={x.link} />
 										</Stack>
 									</Stack>
 								</Grid>

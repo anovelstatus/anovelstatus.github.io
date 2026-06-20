@@ -29,6 +29,11 @@ declare type RichText = {
 	u?: boolean;
 };
 
+declare type ItemLink = {
+	id: string;
+	type: "Talent" | "Skill" | "Title" | "Bloodline";
+};
+
 declare type RichTextSpans = RichText[] | undefined;
 /** Get keys from type T where T has a string or rich text metadata */
 declare type PlainOrRichTextKeys<T> = KeysMatching<T, string | RichTextSpans>;
@@ -38,11 +43,13 @@ declare namespace Attribute {
 		chapter: number;
 		name: string;
 		note: RichTextSpans;
+		link?: ItemLink;
 	};
 
 	type Milestone = {
 		milestone: number;
 		note: RichTextSpans;
+		link?: ItemLink;
 	};
 
 	type Boost = {
@@ -116,8 +123,7 @@ declare type TemperingStep = {
 	started: number;
 	completed: number | undefined;
 	note: RichTextSpans;
-	linkType?: string;
-	link?: TieredId;
+	link?: ItemLink;
 };
 
 declare namespace Body {

@@ -6,9 +6,9 @@ import { useChapter } from "@/data/api";
 import { RichTextSpan } from "@/components/RichTextSpan";
 import { LoreSection } from "@/components/LoreSection";
 
-export type BloodlineProps = { bloodline: Bloodline };
+export type BloodlineProps = { bloodline: Bloodline } & PropsWithStyle;
 
-export function BloodlineCard({ bloodline }: BloodlineProps) {
+export function BloodlineCard({ bloodline, sx }: BloodlineProps) {
 	const chapter = useChapter();
 	// In case there are multiple gains in the same chapter, display the one with the highest purity first
 	const updates = orderBy(
@@ -22,7 +22,7 @@ export function BloodlineCard({ bloodline }: BloodlineProps) {
 	const latest = updates[0]!;
 
 	return (
-		<Card>
+		<Card sx={sx}>
 			<CardHeader
 				title={
 					<Stack direction="row" sx={{ alignItems: "center" }}>

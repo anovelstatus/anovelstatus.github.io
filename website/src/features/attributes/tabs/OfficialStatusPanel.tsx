@@ -7,6 +7,7 @@ import { getPastMilestones, getLatestStatus, getCurrentEvolution } from "@/featu
 import { RichTextSpan } from "@/components/RichTextSpan";
 import LoadingPlaceholder from "@/components/LoadingPlaceholder";
 import { LoreSection } from "@/components/LoreSection";
+import { ItemLinkButton } from "@/components/ItemLinkButton";
 
 export function OfficialStatusPanel() {
 	const chapter = useChapter();
@@ -67,6 +68,7 @@ function EvolutionDisplay({ attribute }: { attribute: Attribute.Details }) {
 				<ChaptersChip chapters={evolution.chapter} />
 			</Stack>
 			<RichTextSpan data={evolution.note} />
+			<ItemLinkButton link={evolution.link} />
 		</Stack>
 	);
 }
@@ -84,6 +86,7 @@ function DescriptionDisplay({ attribute, status }: { attribute: Attribute.Detail
 						{x.milestone}:{" "}
 					</Typography>
 					<RichTextSpan data={x.note} />
+					<ItemLinkButton link={x.link} />
 				</Box>
 			))}
 		</Stack>

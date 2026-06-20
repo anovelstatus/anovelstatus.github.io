@@ -15,6 +15,7 @@ export function getAttributes(info: SpreadsheetInfo): Attribute.Details[] {
 		{ key: "attribute", source: { type: "exact", name: "Attribute" }, parse: "string" },
 		{ key: "name", source: { type: "exact", name: "Evolution" }, parse: "string" },
 		{ key: "note", source: { type: "exact", name: "Description" }, parse: "rich" },
+		{ key: "link", parse: "link", optional: true },
 	];
 	const evolutions = mapTableInPage(info, rangeData, evoFields);
 
@@ -22,6 +23,7 @@ export function getAttributes(info: SpreadsheetInfo): Attribute.Details[] {
 		{ key: "attribute", source: { type: "exact", name: "Attribute" }, parse: "string" },
 		{ key: "milestone", source: { type: "exact", name: "Milestone" }, parse: "number" },
 		{ key: "note", source: { type: "exact", name: "Description" }, parse: "rich" },
+		{ key: "link", parse: "link", optional: true },
 	];
 	const milestones = mapTableInPage(info, rangeData, milestoneFields);
 
