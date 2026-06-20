@@ -36,7 +36,7 @@ export function TemperingStageCard({ stage }: { stage: TemperingStage }) {
 									<Stack direction="row" sx={{ alignItems: "flex-start", justifyItems: "baseline" }} spacing={1}>
 										<ChaptersChip chapters={chapters} />
 										<Stack direction="column" spacing={1}>
-											<RichTextSpan data={x.note} color={isCompleted ? "text.primary" : "text.secondary"} />
+											<RichTextSpan data={x.note} color={isCompleted ? "textPrimary" : "textSecondary"} />
 											<ItemLinkButton link={x.link} />
 										</Stack>
 									</Stack>
