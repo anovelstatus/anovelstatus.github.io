@@ -1,6 +1,7 @@
 import { LoreSection } from "@/components/LoreSection";
 import { Stack, Typography, Chip } from "@mui/material";
 import TalentTable from "./TalentTable";
+import { WrappedRow } from "@/components/WrappedRow";
 
 type TalentSectionProps = {
 	chip: string | number;
@@ -12,10 +13,10 @@ export function TalentSection({ chip, type, talents }: TalentSectionProps) {
 	return (
 		<Stack>
 			<Typography variant="h5">
-				<Stack direction="row" sx={{ flexWrap: "wrap", alignItems: "center" }}>
+				<WrappedRow>
 					{type}
 					<Chip label={chip} sx={{ fontWeight: "bold" }} />
-				</Stack>
+				</WrappedRow>
 			</Typography>
 			<LoreSection topic="Talents" subtopic={type} />
 			<TalentTable data={talents} />

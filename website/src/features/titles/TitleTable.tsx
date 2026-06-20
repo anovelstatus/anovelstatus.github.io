@@ -1,4 +1,4 @@
-import { Button, Chip, Stack, Typography } from "@mui/material";
+import { Button, Chip, Typography } from "@mui/material";
 import { toIdString } from "@/data/helpers";
 import { useState, useEffect } from "react";
 import TitleCard from "./TitleCard";
@@ -9,6 +9,7 @@ import { getExpandedRowModel, getFilteredRowModel, type ExpandedState } from "@t
 import { getPreviousTitleChain } from "./helpers";
 import { RarityButtonChip } from "@/components/chips";
 import { LoreSection } from "@/components/LoreSection";
+import { WrappedRow } from "@/components/WrappedRow";
 
 export default function TitleTable() {
 	const chapter = useChapter();
@@ -77,7 +78,7 @@ export default function TitleTable() {
 				Priam's Titles <Chip label={currentTitles.length} sx={{ fontWeight: "bold" }} />
 			</Typography>
 			<LoreSection topic="Titles" />
-			<Stack direction="row" spacing={2} sx={{ alignItems: "center", flexWrap: "wrap" }}>
+			<WrappedRow>
 				{metalTiers
 					.filter((x) => totals[x])
 					.toReversed()
@@ -108,7 +109,7 @@ export default function TitleTable() {
 				>
 					Collapse All
 				</Button>
-			</Stack>
+			</WrappedRow>
 			<Typography>
 				Showing {table.getRowCount()}/{titles.length} titles
 			</Typography>

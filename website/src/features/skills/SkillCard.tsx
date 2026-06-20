@@ -9,6 +9,7 @@ import LoadingCard from "@/components/LoadingCard";
 import { RichTextSpan } from "@/components/RichTextSpan";
 import { PrerequisiteList } from "./PrerequisiteList";
 import type { PropsWithStyle } from "@/types";
+import { WrappedRow } from "@/components/WrappedRow";
 
 type SkillCardProps = { id: TieredId } & PropsWithStyle;
 
@@ -34,11 +35,11 @@ export default function SkillCard({ id, sx }: SkillCardProps) {
 			<CardHeader
 				sx={{ background: gradient }}
 				title={
-					<Stack direction="row" sx={{ flexWrap: "wrap", alignItems: "center" }}>
+					<WrappedRow>
 						{skill.name} <RarityChip name={skill.tier} />
 						<IdealChip skill={skill} />
 						<Chip size="small" label={levelText} />
-					</Stack>
+					</WrappedRow>
 				}
 			/>
 			<CardContent>
@@ -47,14 +48,14 @@ export default function SkillCard({ id, sx }: SkillCardProps) {
 					<AttributeSummary gains={skill.attributes} />
 					<PrerequisiteList skill={skill} headerSx={{ marginTop: "20px", fontWeight: "bold" }} />
 					{previousSkills.length > 0 && (
-						<Stack direction="row" spacing={1} sx={{ flexWrap: "wrap", alignItems: "center" }}>
+						<WrappedRow>
 							<Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
 								Previous:
 							</Typography>
 							{previousSkills.map((x, index) => {
 								return <SkillButton key={index} item={x} />;
 							})}
-						</Stack>
+						</WrappedRow>
 					)}
 					<Typography variant="subtitle1" sx={{ marginTop: "20px", fontWeight: "bold" }}>
 						Levels Gained:

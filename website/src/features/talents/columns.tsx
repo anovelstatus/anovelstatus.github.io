@@ -5,6 +5,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { createCollapsedChapterColumn, createCollapsedTierColumn } from "@/components/AppTable/columns";
 import { useMetalTiers } from "@/data/api";
 import { RichTextSpan } from "@/components/RichTextSpan";
+import { WrappedRow } from "@/components/WrappedRow";
 
 export const columnstyles: SxProps<Theme> = {
 	".nested": {
@@ -27,12 +28,12 @@ export const useColumns = () => {
 			size: 150,
 			cell: ({ row }) => (
 				<Stack direction="column">
-					<Stack direction="row" sx={{ flexWrap: "wrap", alignItems: "baseline", paddingLeft: `${row.depth * 20}px` }}>
+					<WrappedRow sx={{ paddingLeft: `${row.depth * 20}px` }}>
 						{row.depth > 0 ? <SubdirectoryArrowRight fontSize="small" /> : null}
 						<Typography variant="subtitle1">{row.original.name}</Typography>
 						<RarityChip name={row.original.tier} growth={row.original.growth} />
 						<ChaptersChip chapters={row.original.chapterGained} />
-					</Stack>
+					</WrappedRow>
 					{row.getCanExpand() ? (
 						<Button
 							startIcon={row.getIsExpanded() ? <ExpandLess /> : <ExpandMore />}
@@ -58,7 +59,7 @@ export const useColumns = () => {
 		{
 			accessorKey: "note",
 			header: "Description",
-			size: 1000,
+			size: 800,
 			enableSorting: false,
 			cell: ({ row }) => <RichTextSpan data={row.original.note} />,
 			meta: {

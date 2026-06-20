@@ -4,6 +4,7 @@ import { useChapter } from "@/data/api";
 import { RichTextSpan } from "@/components/RichTextSpan";
 import { LoreSection } from "@/components/LoreSection";
 import { ItemLinkButton } from "@/components/ItemLinkButton";
+import { WrappedRow } from "@/components/WrappedRow";
 
 type StageProps = { stage: TemperingStage };
 type StepProps = { step: TemperingStep };
@@ -17,11 +18,11 @@ export function TemperingStageCard({ stage }: StageProps) {
 		<Card>
 			<CardHeader
 				title={
-					<Stack direction="row" sx={{ alignItems: "center", flexWrap: "wrap" }}>
+					<WrappedRow>
 						{stage.name} <RarityChip name={stage.tier} />
 						<ChaptersChip chapters={stage.chapter} />
 						<Chip size="small" label={stepsTotal} />
-					</Stack>
+					</WrappedRow>
 				}
 			/>
 			<CardContent>

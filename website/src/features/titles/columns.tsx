@@ -1,10 +1,11 @@
-import { Button, Grid, Stack, Typography, type SxProps, type Theme } from "@mui/material";
+import { Button, Stack, Typography, type SxProps, type Theme } from "@mui/material";
 import { SubdirectoryArrowRight, ExpandLess, ExpandMore } from "@mui/icons-material";
 import { ChaptersChip, RarityChip } from "@/components/chips";
 import type { ColumnDef } from "@tanstack/react-table";
 import { createCollapsedChapterColumn, createCollapsedTierColumn } from "@/components/AppTable/columns";
 import { useMetalTiers } from "@/data/api";
 import { RichTextSpan } from "@/components/RichTextSpan";
+import { WrappedRow } from "@/components/WrappedRow";
 
 export const columnstyles: SxProps<Theme> = {
 	".nested": {
@@ -22,12 +23,12 @@ export const useColumns = () => {
 			enableSorting: true,
 			cell: ({ row }) => (
 				<Stack direction="column">
-					<Grid container spacing={1} sx={{ alignItems: "center", paddingLeft: `${row.depth * 2}rem` }}>
+					<WrappedRow sx={{ paddingLeft: `${row.depth}rem` }}>
 						{row.depth > 0 ? <SubdirectoryArrowRight fontSize="small" /> : null}
 						<Typography variant="subtitle1">{row.original.name}</Typography>
 						<RarityChip name={row.original.tier} />
 						<ChaptersChip chapters={row.original.chapter} />
-					</Grid>
+					</WrappedRow>
 					{row.getCanExpand() ? (
 						<Button
 							startIcon={row.getIsExpanded() ? <ExpandLess /> : <ExpandMore />}

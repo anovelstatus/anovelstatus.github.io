@@ -7,6 +7,7 @@ import { useRaces } from "@/data/api";
 import { RichTextSpan } from "@/components/RichTextSpan";
 import TalentButton from "@/features/talents/TalentButton";
 import type { PropsWithStyle } from "@/types";
+import { WrappedRow } from "@/components/WrappedRow";
 
 export type RaceCardProps = {
 	race?: Race;
@@ -39,12 +40,12 @@ export function RaceCard({ race, sx }: RaceCardProps) {
 				<Typography variant="h6" gutterBottom>
 					Talent{talents.length > 1 ? "s" : ""}:
 				</Typography>
-				<Stack direction="row" spacing={1} sx={{ flexWrap: "wrap", alignItems: "center" }}>
+				<WrappedRow>
 					{talents.map((id, index) => (
 						<TalentButton key={index} item={id} />
 					))}
 					{`+ ${race.freeSlots} free slots (see Talents page for current talents)`}
-				</Stack>
+				</WrappedRow>
 			</CardContent>
 			{previousRace && (
 				<CardContent>
