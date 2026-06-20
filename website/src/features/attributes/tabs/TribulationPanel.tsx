@@ -27,13 +27,16 @@ export function TribulationPanel() {
 	const race = useRaceOnChapter(chapter);
 	const { data: skills } = useSkills();
 
-	const baseValues = attributes.map((x) => calculateBaseAttributeValue(skills, x, chapter));
+	const baseValues = useMemo(
+		() => attributes.map((x) => calculateBaseAttributeValue(skills, x, chapter)),
+		[attributes, skills, chapter],
+	);
 	const [changes, setChanges] = useState([] as number[]);
 	const [extraBoosts, setExtraBoosts] = useState([] as number[]);
 
 	const baseBoosts = useMemo(() => getAllCurrentBoosts(chapter, attributes), [chapter, attributes]);
 
-	const tempStatus = adjustStatus(status, changes, baseBoosts, extraBoosts);
+	const tempStatus = adjustStatus(baseValues, changes, baseBoosts, extraBoosts);
 
 	const officialThresholds = useTribulationThresholds(officialStatus?.attributes, race);
 	const baseThresholds = useTribulationThresholds(status, race);
