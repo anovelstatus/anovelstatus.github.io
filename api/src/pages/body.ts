@@ -43,8 +43,7 @@ function getTempering(info: SpreadsheetInfo, rangeData: RangeData) {
 		{ key: "started", source: { type: "exact", name: "Started" }, parse: "number" },
 		// If the step is completed in the future, treat it as not completed
 		{ key: "completed", source: { type: "exact", name: "Finished" }, parse: "number", limited: true },
-		{ key: "linkType", source: { type: "exact", name: "Link Type" }, parse: "string" },
-		{ key: "link", source: { type: "exact", name: "Link" }, parse: "tiered_id", optional: true },
+		{ key: "link", parse: "link", optional: true },
 		{ key: "note", source: { type: "exact", name: "Update" }, parse: "rich" },
 	];
 	const steps = mapTableInPage(info, rangeData, stepFields).filter(chapterFilter(info.chapterLimit, "started"));

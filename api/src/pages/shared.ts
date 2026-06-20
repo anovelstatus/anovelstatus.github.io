@@ -1,3 +1,8 @@
+const COLUMNS = {
+	LinkId: "link_id",
+	LinkType: "link_type",
+} as const;
+
 export function getEntireSheet(info: SpreadsheetInfo, sheetName: string): Range {
 	return info.ss.getSheetByName(sheetName)!.getDataRange();
 }
@@ -208,6 +213,11 @@ function findColumns<T>(headers: SpreadsheetValue[], fields: Fields<T>, attribut
 			columns[attribute.name] = headers.indexOf(attribute.name);
 		}
 	}
+	// If the object supports link, check for both columns
+	if (fields.some((x) => x.parse === "link")) {
+		columns[COLUMNS.LinkId] = headers.indexOf("Link");
+		columns[COLUMNS.LinkType] = headers.indexOf("Link Type");
+	}
 	return columns;
 }
 
@@ -269,6 +279,12 @@ function mapRow<T>(
 				case "string_number":
 					item[key] = value as string | number; // no great, but only used by one column
 					break;
+				case "link": {
+					const linkId = parseOptionalString(values[headers[COLUMNS.LinkId]]);
+					const linkType = parseOptionalString(values[headers[COLUMNS.LinkType]]);
+					if (linkId && linkType) item[key] = { id: linkId, type: linkType } as ItemLink;
+					break;
+				}
 				default:
 					if (typeof parse === "function") item[key] = parse({ rowSoFar: item as Partial<T>, value });
 					else throw new Error(`Invalid parse for '${key}': ${parse}`);

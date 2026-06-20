@@ -49,6 +49,7 @@ type Field<T, TKey extends keyof T & string> = {
 		| "bool"
 		| "number"
 		| "split_number"
+		| "link"
 		| ((context: CustomContext<T>) => T[TKey]);
 	/** Only applies to tiered_id, string, bool, number, and split_number */
 	optional?: boolean;
