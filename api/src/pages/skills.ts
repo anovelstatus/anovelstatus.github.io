@@ -9,7 +9,6 @@ export function getSkills(info: SpreadsheetInfo) {
 	const fields: Fields<Skill> = [
 		{ key: "name|tier", source: { type: "exact", name: "Name" }, parse: "tiered_id" },
 		{ key: "previous", source: { type: "contains", contains: "Previous" }, parse: "split_tiered_id" },
-		{ key: "replaced", source: { type: "contains", contains: "Replaced" }, parse: "bool", optional: true },
 		{
 			key: "chReplaced",
 			source: { type: "exact", name: "Chapter Replaced" },

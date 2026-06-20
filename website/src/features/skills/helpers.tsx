@@ -15,9 +15,10 @@ export type SkillFiltersOptions = {
 export function showSkill(skill: Skill, filters: SkillFiltersOptions) {
 	if (filters.tier && skill.tier !== filters.tier) return false;
 
-	if (getLevelOnChapter(skill, filters.chapter) <= 0 && !filters.showFormerSkills) return false;
-
-	if (!filters.showFormerSkills && skill.replaced) return false;
+	// If a skill has replaced it, hide
+	if (!filters.showFormerSkills && skill.chReplaced && skill.chReplaced <= filters.chapter) return false;
+	// If it has no levels yet, hide
+	if (!skill.gains.some((gain) => gain.chapter <= filters.chapter)) return false;
 
 	if (filters.providesAttributes.length) {
 		for (const { index } of filters.providesAttributes) {
