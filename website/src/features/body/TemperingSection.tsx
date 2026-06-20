@@ -34,8 +34,17 @@ export function TemperingStageCard({ stage }: { stage: TemperingStage }) {
 							return (
 								<Grid key={index} sx={{ alignItems: "center" }} size={{ xs: 12, sm: 6, md: 4 }} spacing={2}>
 									<Stack direction="row" sx={{ alignItems: "flex-start", justifyItems: "baseline" }} spacing={1}>
-										<ChaptersChip chapters={chapters} />
+										<ChaptersChip chapters={chapters} range />
 										<Stack direction="column" spacing={1}>
+											{!isCompleted && (
+												<Typography
+													color="error"
+													variant="body2"
+													sx={{ fontWeight: "bold", textTransform: "uppercase" }}
+												>
+													In Progress
+												</Typography>
+											)}
 											<RichTextSpan data={x.note} color={isCompleted ? "textPrimary" : "textSecondary"} />
 											<ItemLinkButton link={x.link} />
 										</Stack>

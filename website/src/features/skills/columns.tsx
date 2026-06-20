@@ -115,7 +115,7 @@ export const useColumns = () => {
 							.map((x, index) => (
 								<Stack direction="row" key={index}>
 									<Typography variant="body2">{x.note}</Typography>
-									<ChaptersChip chapters={[x.chapter]} />
+									<ChaptersChip chapters={x.chapter} />
 								</Stack>
 							))}
 					</Stack>
