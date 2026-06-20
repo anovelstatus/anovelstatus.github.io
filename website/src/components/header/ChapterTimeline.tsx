@@ -1,6 +1,6 @@
 import { Button, CircularProgress, Container, Grid, Slider, Stack } from "@mui/material";
 import { useContext, useMemo } from "react";
-import { ChapterContext } from "@/providers/ChapterContext";
+import { ChapterContext } from "@/data/ChapterContext";
 import { useLatestChapter, useTimelineShortcuts } from "@/data/api";
 import { ShortcutMenu } from "./ShortcutMenu";
 import { mapValues as mapMapValues } from "es-toolkit/map";

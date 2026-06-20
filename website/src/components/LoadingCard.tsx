@@ -1,3 +1,4 @@
+import type { PropsWithStyle } from "@/types";
 import { Card, CardHeader, CardContent, Skeleton, CircularProgress, Stack } from "@mui/material";
 
 type LoadingCardProps = {

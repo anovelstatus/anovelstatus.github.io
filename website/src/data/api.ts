@@ -1,7 +1,7 @@
-import { ChapterContext } from "@/providers";
 import { useQuery, type UseQueryResult } from "@tanstack/react-query";
 import { orderBy } from "es-toolkit";
 import { useContext } from "react";
+import { ChapterContext } from "./ChapterContext";
 
 /** Make data not optional because we can guarantee a placeholder */
 type GuaranteedQueryResult<T> = UseQueryResult<T> & {

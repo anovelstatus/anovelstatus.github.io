@@ -5,6 +5,7 @@ import { useTalents } from "@/data/api";
 import LoadingCard from "@/components/LoadingCard";
 import { RichTextSpan } from "@/components/RichTextSpan";
 import TalentButton from "./TalentButton";
+import type { PropsWithStyle } from "@/types";
 
 export type TalentCardProps = { id: TieredId } & PropsWithStyle;
 

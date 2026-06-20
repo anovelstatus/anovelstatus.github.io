@@ -6,6 +6,7 @@ import { popupCardStyles } from "@/styles";
 import { useRaces } from "@/data/api";
 import { RichTextSpan } from "@/components/RichTextSpan";
 import TalentButton from "@/features/talents/TalentButton";
+import type { PropsWithStyle } from "@/types";
 
 export type RaceCardProps = {
 	race?: Race;

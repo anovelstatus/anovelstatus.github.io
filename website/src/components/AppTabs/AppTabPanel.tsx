@@ -1,11 +1,12 @@
+import type { PropsWithStyle } from "@/types";
 import { Box } from "@mui/material";
 import type { PropsWithChildren } from "react";
 
-export type TabPanelProps = PropsWithChildren<{
-	index: number;
-	selectedIndex: number;
-}> &
-	PropsWithStyle;
+export type TabPanelProps = PropsWithChildren &
+	PropsWithStyle & {
+		index: number;
+		selectedIndex: number;
+	};
 
 export function AppTabPanel({ children, selectedIndex, index, sx, ...other }: TabPanelProps) {
 	return (

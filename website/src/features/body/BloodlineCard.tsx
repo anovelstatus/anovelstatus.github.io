@@ -6,6 +6,7 @@ import { useChapter } from "@/data/api";
 import { RichTextSpan } from "@/components/RichTextSpan";
 import { LoreSection } from "@/components/LoreSection";
 import { useMemo } from "react";
+import type { PropsWithStyle } from "@/types";
 
 export type BloodlineProps = { bloodline: Bloodline } & PropsWithStyle;
 
