@@ -31,7 +31,7 @@ export const useColumns = () => {
 						{row.depth > 0 ? <SubdirectoryArrowRight fontSize="small" /> : null}
 						<Typography variant="subtitle1">{row.original.name}</Typography>
 						<RarityChip name={row.original.tier} growth={row.original.growth} />
-						<ChaptersChip chapters={[row.original.chapterGained]} />
+						<ChaptersChip chapters={row.original.chapterGained} />
 					</Stack>
 					{row.getCanExpand() ? (
 						<Button

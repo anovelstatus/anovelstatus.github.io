@@ -43,7 +43,7 @@ function parseOptionalBoolean(value: SpreadsheetValue): boolean | undefined {
 	return parseBoolean(value);
 }
 
-export function parseString(value: SpreadsheetValue): string {
+function parseString(value: SpreadsheetValue): string {
 	if (typeof value !== "string") throw new Error("expected string");
 	return value.trim();
 }
@@ -70,7 +70,7 @@ function parseOptionalNumber(value: SpreadsheetValue): number | undefined {
 }
 
 /** Parse something like `Name - Tier` into a name and tier */
-export function parseId(fullName: SpreadsheetValue): TieredId {
+function parseId(fullName: SpreadsheetValue): TieredId {
 	fullName = parseString(fullName);
 	const parts = fullName.split(" - ").map((x) => x.trim());
 	// Get the last segment instead of assuming only 2 parts because at least one Talent has a dash in its name

@@ -1,5 +1,5 @@
-import { toPlainText } from "@/components/RichTextSpan";
 import { useChapter } from "@/data/api";
+import { toPlainText } from "@/data/helpers";
 import { useMemo } from "react";
 
 export function useFilteredItems<T>(

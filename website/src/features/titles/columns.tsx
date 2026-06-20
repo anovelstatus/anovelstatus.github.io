@@ -28,7 +28,7 @@ export const useColumns = () => {
 						<RarityChip name={row.original.tier} />
 						<ChaptersChip chapters={row.original.chapter} />
 					</Grid>
-					{row.getCanExpand() && row.depth == 0 ? (
+					{row.getCanExpand() ? (
 						<Button
 							startIcon={row.getIsExpanded() ? <ExpandLess /> : <ExpandMore />}
 							onClick={row.getToggleExpandedHandler()}

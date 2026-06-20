@@ -1,7 +1,6 @@
 import { LoreCard } from "@/components/LoreCard";
-import { toPlainText } from "@/components/RichTextSpan";
 import { useAchievements, useLore, useSkills, useTalents, useTitles } from "@/data/api";
-import { toIdString } from "@/data/helpers";
+import { toIdString, toPlainText } from "@/data/helpers";
 import AchievementCard from "@/features/achievements/AchievementCard";
 import { ResultSection } from "@/features/search/ResultSection";
 import { SkillCard } from "@/features/skills";

@@ -7,7 +7,7 @@ import { useState, useEffect } from "react";
 import { useColumns } from "./columns";
 import AchievementCard from "./AchievementCard";
 import { LoreSection } from "@/components/LoreSection";
-import { toPlainText } from "@/components/RichTextSpan";
+import { toPlainText } from "@/data/helpers";
 
 export default function AchievementTable() {
 	const chapter = useChapter();

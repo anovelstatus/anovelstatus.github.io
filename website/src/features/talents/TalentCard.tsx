@@ -24,7 +24,7 @@ export default function TalentCard({ id, sx }: TalentCardProps) {
 				title={
 					<Stack direction="row" sx={{ flexWrap: "wrap", alignItems: "center" }}>
 						{talent.name} <RarityChip name={talent.tier} />
-						<ChaptersChip chapters={[talent.chapterGained]} />
+						<ChaptersChip chapters={talent.chapterGained} />
 					</Stack>
 				}
 			/>
