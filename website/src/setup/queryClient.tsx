@@ -1,11 +1,10 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import type { PropsWithChildren } from "react";
+import { QueryClient } from "@tanstack/react-query";
 import { getPatreonKey } from "@/data/localStorage";
 
 const API_URL = import.meta.env.VITE_API_URL;
 const oneHour = 1 * 60 * 60 * 1_000;
 
-const queryClient = new QueryClient({
+export const queryClient = new QueryClient({
 	defaultOptions: {
 		queries: {
 			queryFn: async ({ queryKey }) => {
@@ -22,7 +21,3 @@ const queryClient = new QueryClient({
 		},
 	},
 });
-
-export function AppQueryProvider({ children }: PropsWithChildren) {
-	return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
-}

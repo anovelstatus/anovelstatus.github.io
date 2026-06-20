@@ -1,6 +1,7 @@
 import { Card, CardHeader, CardContent, Stack, Grid, Typography } from "@mui/material";
 import { ChaptersChip, RarityChip } from "@/components/chips";
 import { hasNote, RichTextSpan } from "@/components/RichTextSpan";
+import type { PropsWithStyle } from "@/types";
 
 type AchievementCardProps = { achievement: Achievement } & PropsWithStyle;
 

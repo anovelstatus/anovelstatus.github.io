@@ -8,6 +8,7 @@ import { getLevelOnChapter, getMaxLevel, getProgressGradient } from "./helpers";
 import LoadingCard from "@/components/LoadingCard";
 import { RichTextSpan } from "@/components/RichTextSpan";
 import { PrerequisiteList } from "./PrerequisiteList";
+import type { PropsWithStyle } from "@/types";
 
 type SkillCardProps = { id: TieredId } & PropsWithStyle;
 

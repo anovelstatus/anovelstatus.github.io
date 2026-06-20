@@ -61,14 +61,14 @@ function EvolutionDisplay({ attribute }: { attribute: Attribute.Details }) {
 		);
 	return (
 		<Stack>
-			<Stack direction="row" sx={{ alignItems: "center" }}>
+			<Stack direction="row" sx={{ alignItems: "center", flexWrap: "wrap" }}>
 				<Typography variant="subtitle1">
 					<span style={{ fontWeight: "bold" }}>{attribute.name}</span> - {evolution.name || "None"}
 				</Typography>
 				<ChaptersChip chapters={evolution.chapter} />
+				<ItemLinkButton link={evolution.link} />
 			</Stack>
 			<RichTextSpan data={evolution.note} />
-			<ItemLinkButton link={evolution.link} />
 		</Stack>
 	);
 }

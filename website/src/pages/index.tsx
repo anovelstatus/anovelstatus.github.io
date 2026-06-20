@@ -1,3 +1,4 @@
+export * from "./_root";
 export * from "./AchievementPage";
 export * from "./AttributePage";
 export * from "./BodyPage";

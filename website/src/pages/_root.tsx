@@ -1,14 +1,15 @@
 import { Outlet } from "@tanstack/react-router";
 import { Container, Stack } from "@mui/material";
-import { ChapterContext } from "@/providers";
+import { ChapterContext } from "@/data/ChapterContext";
 import { useEffect, useState } from "react";
 import NavBar from "@/components/header/NavBar";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { useIsUnlocked, useLatestChapter } from "@/data/api";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { useQueryClient } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
-export default function App() {
+export function App() {
 	const [chapter, setChapter] = useState(1);
 	const unlocked = useIsUnlocked();
 	const latest = useLatestChapter();
@@ -42,6 +43,7 @@ export default function App() {
 						<>
 							<Outlet />
 							<TanStackRouterDevtools />
+							<ReactQueryDevtools />
 						</>
 					</ErrorBoundary>
 				</Container>

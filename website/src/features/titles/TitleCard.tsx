@@ -6,6 +6,7 @@ import { getPreviousTitle } from "./helpers";
 import LoadingCard from "@/components/LoadingCard";
 import TitleButton from "./TitleButton";
 import { RichTextSpan } from "@/components/RichTextSpan";
+import type { PropsWithStyle } from "@/types";
 
 type TitleCardProps = { id: TieredId } & PropsWithStyle;
 

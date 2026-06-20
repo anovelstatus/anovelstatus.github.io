@@ -1,6 +1,6 @@
 import { Box, Input, Typography } from "@mui/material";
 import { useContext } from "react";
-import { ChapterContext } from "@/providers/ChapterContext";
+import { ChapterContext } from "@/data/ChapterContext";
 import { useLatestChapter } from "@/data/api";
 
 export default function ChapterPicker() {

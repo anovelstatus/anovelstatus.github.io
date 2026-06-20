@@ -3,6 +3,7 @@ import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import { useState, type SyntheticEvent } from "react";
 import { AppTabPanel } from "./AppTabPanel";
+import type { PropsWithStyle } from "@/types";
 
 export type AppTabsProps = {
 	title: string;

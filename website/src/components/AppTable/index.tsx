@@ -25,6 +25,7 @@ import BodyCell from "./BodyCell";
 import { ClassNameFeature } from "./ClassNameFeature";
 import { SxFeature } from "./SxFeature";
 import { HoverTitleFeature } from "./HoverTitleFeature";
+import type { PropsWithStyle } from "@/types";
 
 type TableProps<T> = {
 	table: Table<T>;
