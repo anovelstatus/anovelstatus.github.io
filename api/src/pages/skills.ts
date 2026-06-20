@@ -10,6 +10,13 @@ export function getSkills(info: SpreadsheetInfo) {
 		{ key: "name|tier", source: { type: "exact", name: "Name" }, parse: "tiered_id" },
 		{ key: "previous", source: { type: "contains", contains: "Previous" }, parse: "split_tiered_id" },
 		{ key: "replaced", source: { type: "contains", contains: "Replaced" }, parse: "bool", optional: true },
+		{
+			key: "chReplaced",
+			source: { type: "exact", name: "Chapter Replaced" },
+			parse: "number",
+			optional: true,
+			limited: true,
+		},
 		{ key: "description", source: { type: "exact", name: "Description" }, parse: "rich" },
 		{ key: "prerequisites", source: { type: "exact", name: "Prerequisites" }, parse: "string", optional: true },
 		{ key: "quality", source: { type: "exact", name: "Quality" }, parse: "string" },

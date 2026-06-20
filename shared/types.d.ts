@@ -233,6 +233,7 @@ declare type Talent = TieredId &
 declare type SkillDetails = {
 	attributes: number[];
 	replaced: boolean;
+	chReplaced?: number;
 	gains: SkillGain[];
 	description: RichTextSpans;
 	prerequisites: string | undefined;
