@@ -15,7 +15,7 @@ export default function BloodlineButton({ name, ...props }: BloodlineButtonProps
 			id={name}
 			trigger={
 				<Button variant="outlined" {...props}>
-					{bloodline.name}
+					{bloodline.name} Bloodline
 				</Button>
 			}
 			popover={() => <BloodlineCard bloodline={bloodline} sx={popupCardStyles} />}

@@ -5,17 +5,20 @@ import { orderBy } from "es-toolkit";
 import { useChapter } from "@/data/api";
 import { RichTextSpan } from "@/components/RichTextSpan";
 import { LoreSection } from "@/components/LoreSection";
+import { useMemo } from "react";
 
 export type BloodlineProps = { bloodline: Bloodline } & PropsWithStyle;
 
 export function BloodlineCard({ bloodline, sx }: BloodlineProps) {
 	const chapter = useChapter();
 	// In case there are multiple gains in the same chapter, display the one with the highest purity first
-	const updates = orderBy(
-		bloodline.updates.filter((x) => x.chapter <= chapter),
-		["chapter", (x) => (typeof x.purity === "number" ? x.purity : 0)],
-		["desc", "desc"],
-	);
+	const updates = useMemo(() => {
+		return orderBy(
+			bloodline.updates.filter((x) => x.chapter <= chapter),
+			["chapter", (x) => (typeof x.purity === "number" ? x.purity : 0)],
+			["desc", "desc"],
+		);
+	}, [bloodline, chapter]);
 	if (!updates || updates.length === 0) {
 		return null;
 	}
