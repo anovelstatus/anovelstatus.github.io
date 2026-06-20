@@ -44,15 +44,23 @@ export default function TitleTable() {
 		data: titles,
 		columns,
 		getRowId: (row, _, parent) => toIdString(row) + toIdString(parent?.original),
+
 		initialState: {
 			sorting: [
 				{ id: "tier", desc: true },
 				{ id: "name", desc: false },
 			],
 		},
+		state: { globalFilter: filters, expanded },
+
 		narrowBreakpoint: "md",
 		renderNarrowRow: ({ original }) => <TitleCard key={toIdString(original)} id={original} />,
+
 		getFilteredRowModel: getFilteredRowModel(),
+		globalFilterFn: (row, _, filterValue: FilterOptions) => {
+			return showTitle(row.original, filterValue);
+		},
+
 		getExpandedRowModel: getExpandedRowModel(),
 		maxLeafRowFilterDepth: 0,
 		getRowCanExpand: (row) => !row.parentId && row.subRows.length > 0,
@@ -60,11 +68,7 @@ export default function TitleTable() {
 		getSubRows: (row) => {
 			return getPreviousTitleChain(titles, row);
 		},
-		state: { globalFilter: filters, expanded },
 		onExpandedChange: setExpanded,
-		globalFilterFn: (row, _, filterValue: FilterOptions) => {
-			return showTitle(row.original, filterValue);
-		},
 	});
 
 	return (
@@ -106,7 +110,7 @@ export default function TitleTable() {
 				</Button>
 			</Stack>
 			<Typography>
-				Showing {table.getRowCount()}/{titles.length} skills
+				Showing {table.getRowCount()}/{titles.length} titles
 			</Typography>
 			<AppTable table={table} isLoading={isLoading} sx={columnstyles} />
 		</>
