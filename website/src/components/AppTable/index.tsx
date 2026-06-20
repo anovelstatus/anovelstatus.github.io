@@ -18,13 +18,13 @@ import {
 	type Table,
 	type TableOptions,
 } from "@tanstack/react-table";
-import { ColSpanFeature } from "./ColSpanFeature";
-import { NarrowFeature } from "./NarrowFeature";
-import HeaderCell from "./HeaderCell";
-import BodyCell from "./BodyCell";
-import { ClassNameFeature } from "./ClassNameFeature";
-import { SxFeature } from "./SxFeature";
-import { HoverTitleFeature } from "./HoverTitleFeature";
+import { ColSpanFeature } from "./features/ColSpanFeature";
+import { NarrowFeature } from "./features/NarrowFeature";
+import HeaderCell from "./components/HeaderCell";
+import BodyCell from "./components/BodyCell";
+import { ClassNameFeature } from "./features/ClassNameFeature";
+import { SxFeature } from "./features/SxFeature";
+import { HoverTitleFeature } from "./features/HoverTitleFeature";
 import type { PropsWithStyle } from "@/types";
 
 type TableProps<T> = {
