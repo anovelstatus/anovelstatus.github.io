@@ -1,4 +1,4 @@
-import { chapterFilter, getEntireSheet, mapTable } from "./shared";
+import { chapterFilter, getEntireSheet, mapTable } from "../parser";
 
 export function getTalents(info: SpreadsheetInfo) {
 	const range = getEntireSheet(info, "Talents");

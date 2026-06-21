@@ -1,4 +1,4 @@
-import { chapterFilter, getEntireSheet, mapTable } from "./shared";
+import { chapterFilter, getEntireSheet, mapTable } from "../parser";
 
 type InternalSkillGain = SkillGain & { id: string };
 

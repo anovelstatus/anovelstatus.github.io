@@ -1,5 +1,5 @@
 import * as parsers from "./pages";
-import { parseNumber } from "./pages/shared";
+import { parseNumber } from "./parser";
 
 export function updateSpecificFiles(ss: Spreadsheet, pages: ApiPage[]) {
 	const rrFolder = DriveApp.getFolderById(RR_FOLDER);
@@ -15,11 +15,25 @@ export function updateSpecificFiles(ss: Spreadsheet, pages: ApiPage[]) {
 
 	const errors = [];
 
+	const rrLimiter: LimiterInfo = { chapterLimit: chapters.rr, includePatreon: false };
+	const patreonLimiter: LimiterInfo = { chapterLimit: chapters.patreon, includePatreon: true };
+
 	for (const page of pages) {
 		try {
 			console.log("Updating " + page);
-			updatePageJson(rrFolder, rrFiles[page], rrInfo, page);
-			updatePageJson(patreonFolder, patreonFiles[page], patreonInfo, page);
+			const parser = getPageParser(page);
+			const limiter = getChapterLimiter(page);
+			let rrData, patreonData;
+			if (limiter) {
+				const data = parser(patreonInfo);
+				rrData = limiter(data, rrLimiter);
+				patreonData = limiter(data, patreonLimiter);
+			} else {
+				rrData = parser(rrInfo);
+				patreonData = parser(patreonInfo);
+			}
+			updatePageJson(rrFolder, rrFiles[page], rrData, page);
+			updatePageJson(patreonFolder, patreonFiles[page], patreonData, page);
 		} catch (e) {
 			errors.push(e);
 			console.log("Failed to update " + page);
@@ -68,16 +82,26 @@ function getPageParser(page: ApiPage): (info: SpreadsheetInfo) => unknown {
 	}
 }
 
+// todo: figure out generic type here
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function getChapterLimiter(page: ApiPage): undefined | ((data: any, info: LimiterInfo) => any) {
+	switch (page) {
+		case "achievements":
+			return parsers.limitAchievements;
+		case "chapters":
+			return parsers.limitConfiguration;
+		default:
+			return;
+	}
+}
+
 function updatePageJson(
 	folder: Folder,
 	existingFile: GoogleAppsScript.Drive.File | undefined,
-	info: SpreadsheetInfo,
+	data: unknown,
 	page: ApiPage,
 ) {
-	const parser = getPageParser(page);
-	const data = parser(info);
 	const json = JSON.stringify(data);
-
 	if (existingFile) existingFile.setContent(json);
 	else folder.createFile(page + ".json", json, MimeType.PLAIN_TEXT);
 }

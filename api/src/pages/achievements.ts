@@ -1,4 +1,4 @@
-import { chapterFilter, getEntireSheet, mapTable } from "./shared";
+import { chapterFilter, getEntireSheet, mapTable } from "../parser";
 
 export function getAchievements(info: SpreadsheetInfo) {
 	const range = getEntireSheet(info, "Achievements");
@@ -11,5 +11,9 @@ export function getAchievements(info: SpreadsheetInfo) {
 		{ key: "rewards", source: { type: "exact", name: "Rewards" }, parse: "rich" },
 		{ key: "note", source: { type: "exact", name: "Other Notes" }, parse: "rich" },
 	];
-	return mapTable(info, range, fields).filter(chapterFilter(info.chapterLimit, "chapter"));
+	return mapTable(info, range, fields);
+}
+
+export function limitAchievements(achievements: Achievement[], info: LimiterInfo) {
+	return achievements.filter(chapterFilter(info.chapterLimit, "chapter"));
 }

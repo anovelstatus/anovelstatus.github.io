@@ -1,4 +1,4 @@
-import { chapterFilter, getEntireSheet, mapTable } from "./shared";
+import { chapterFilter, getEntireSheet, mapTable } from "../parser";
 
 export function getLore(info: SpreadsheetInfo): LoreEntry[] {
 	const range = getEntireSheet(info, "Lore");

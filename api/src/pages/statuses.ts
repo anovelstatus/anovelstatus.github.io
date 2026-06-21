@@ -1,4 +1,4 @@
-import { mapTable } from "./shared";
+import { mapTable } from "../parser";
 
 export function getOfficialStatuses(info: SpreadsheetInfo): OfficialStatus[] {
 	// Not using entire sheet because this sheet still has all the calculated numbers

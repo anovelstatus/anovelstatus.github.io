@@ -1,4 +1,4 @@
-import { chapterFilter, getEntireSheet, mapTable } from "./shared";
+import { chapterFilter, getEntireSheet, mapTable } from "../parser";
 
 /** Get list of Titles and their metadata. This does NOT include metadata for attribute boosts. That is loaded separately. */
 export function getTitles(info: SpreadsheetInfo) {

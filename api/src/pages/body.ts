@@ -1,4 +1,4 @@
-import { chapterFilter, getEntireSheet, getRangeData, mapTableInPage } from "./shared";
+import { chapterFilter, getEntireSheet, getRangeData, mapTableInPage } from "../parser";
 
 export function getBody(info: SpreadsheetInfo): Body.Details {
 	const range = getEntireSheet(info, "Body");

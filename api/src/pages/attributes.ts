@@ -1,4 +1,4 @@
-import { chapterFilter, getEntireSheet, getRangeData, mapTable, mapTableInPage } from "./shared";
+import { chapterFilter, getEntireSheet, getRangeData, mapTable, mapTableInPage } from "../parser";
 
 type HasAttribute = { attribute: string };
 type InternalBoost = Attribute.Boost & HasAttribute;

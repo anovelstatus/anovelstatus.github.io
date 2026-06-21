@@ -18,6 +18,18 @@ declare type SpreadsheetInfo = {
 	includePatreon: boolean;
 };
 
+declare type ParserInfo = {
+	ss: Spreadsheet;
+	chapterLimit: number;
+	attributes: Attribute.Details[];
+	includePatreon: boolean;
+};
+
+declare type LimiterInfo = {
+	chapterLimit: number;
+	includePatreon: boolean;
+};
+
 type NamedSource = { type: "exact"; name: string };
 type ContainsSource = { type: "contains"; contains: string };
 
@@ -53,7 +65,10 @@ type Field<T, TKey extends keyof T & string> = {
 		| ((context: CustomContext<T>) => T[TKey]);
 	/** Only applies to tiered_id, string, bool, number, and split_number */
 	optional?: boolean;
-	/** Only applies to numbers */
+	/**
+	 * Only applies to numbers
+	 *  @deprecated
+	 */
 	limited?: boolean;
 };
 
