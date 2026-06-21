@@ -15,6 +15,17 @@ export function getRangeData(range: Range, getRichValues: boolean, getNotes: boo
 	return { values, richValues, notes };
 }
 
+export function limitValue(value: number | undefined, chapterLimit: number) {
+	if (!value) return;
+	if (value <= chapterLimit) return value;
+	return;
+}
+
+export function limitValues(values: number[] | undefined, chapterLimit: number) {
+	if (!values) return;
+	return values.filter((x) => x <= chapterLimit);
+}
+
 /** Parse a value that might be a single number or a comma-separated list of numbers into a number array */
 function parseNumbersLessThanLimit(value: SpreadsheetValue, chapterLimit: number): number[] {
 	return parseNumbers(value).filter((x) => x <= chapterLimit);

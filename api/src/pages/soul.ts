@@ -25,3 +25,17 @@ function getSupremacies(info: SpreadsheetInfo): Supremacies {
 	}
 	return grouped;
 }
+
+export function limitSoul(data: SoulDetails, info: LimiterInfo): SoulDetails {
+	return {
+		supremacies: limitSupremacies(data.supremacies, info),
+	};
+}
+
+function limitSupremacies(data: Supremacies, info: LimiterInfo) {
+	return Object.fromEntries(
+		Object.entries(data)
+			.map((x) => [x[0], x[1].filter(chapterFilter(info.chapterLimit, "chapter"))])
+			.filter((x) => x[1].length > 0),
+	);
+}

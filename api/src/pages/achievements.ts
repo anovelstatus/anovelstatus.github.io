@@ -14,6 +14,6 @@ export function getAchievements(info: SpreadsheetInfo) {
 	return mapTable(info, range, fields);
 }
 
-export function limitAchievements(achievements: Achievement[], info: LimiterInfo) {
-	return achievements.filter(chapterFilter(info.chapterLimit, "chapter"));
+export function limitAchievements(data: Achievement[], info: LimiterInfo) {
+	return data.filter(chapterFilter(info.chapterLimit, "chapter"));
 }

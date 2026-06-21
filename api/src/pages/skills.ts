@@ -1,4 +1,4 @@
-import { chapterFilter, getEntireSheet, mapTable } from "../parser";
+import { chapterFilter, getEntireSheet, limitValue, mapTable } from "../parser";
 
 type InternalSkillGain = SkillGain & { id: string };
 
@@ -9,13 +9,7 @@ export function getSkills(info: SpreadsheetInfo) {
 	const fields: Fields<Skill> = [
 		{ key: "name|tier", source: { type: "exact", name: "Name" }, parse: "tiered_id" },
 		{ key: "previous", source: { type: "contains", contains: "Previous" }, parse: "split_tiered_id" },
-		{
-			key: "chReplaced",
-			source: { type: "exact", name: "Chapter Replaced" },
-			parse: "number",
-			optional: true,
-			limited: true,
-		},
+		{ key: "chReplaced", source: { type: "exact", name: "Chapter Replaced" }, parse: "number", optional: true },
 		{ key: "description", source: { type: "exact", name: "Description" }, parse: "rich" },
 		{ key: "prerequisites", source: { type: "exact", name: "Prerequisites" }, parse: "string", optional: true },
 		{ key: "quality", source: { type: "exact", name: "Quality" }, parse: "string" },
@@ -36,7 +30,7 @@ export function getSkills(info: SpreadsheetInfo) {
 		},
 	];
 
-	return mapTable(info, range, fields).filter((x) => !!x.name && x.gains.length > 0);
+	return mapTable(info, range, fields);
 }
 
 function getLevels(info: SpreadsheetInfo) {
@@ -47,5 +41,17 @@ function getLevels(info: SpreadsheetInfo) {
 		{ key: "count", source: { type: "exact", name: "# of Levels" }, parse: "number" },
 		{ key: "note", source: { type: "contains", contains: "Levels gained" }, parse: "string" },
 	];
-	return mapTable(info, range, fields, 1).filter(chapterFilter(info.chapterLimit, "chapter"));
+	return mapTable(info, range, fields, 1);
+}
+
+export function limitSkills(data: Skill[], info: LimiterInfo) {
+	return data.map((x) => limitSkill(x, info)).filter((x) => !!x.name && x.gains.length > 0);
+}
+
+function limitSkill(skill: Skill, info: LimiterInfo): Skill {
+	return {
+		...skill,
+		chReplaced: limitValue(skill.chReplaced, info.chapterLimit),
+		gains: skill.gains.filter(chapterFilter(info.chapterLimit, "chapter")),
+	};
 }

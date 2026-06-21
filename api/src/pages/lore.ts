@@ -12,3 +12,7 @@ export function getLore(info: SpreadsheetInfo): LoreEntry[] {
 
 	return mapTable(info, range, fields).filter(chapterFilter(info.chapterLimit, "chapter"));
 }
+
+export function limitLore(data: LoreEntry[], info: LimiterInfo) {
+	return data.filter(chapterFilter(info.chapterLimit, "chapter"));
+}

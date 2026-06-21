@@ -13,12 +13,15 @@ export function getOfficialStatuses(info: SpreadsheetInfo): OfficialStatus[] {
 
 	return (
 		mapTable(info, range, fields)
-			// Assume the sheet is ordered by chapter
-			.slice(0, info.chapterLimit)
 			// Keep entry but save bytes on chapters missing an official status
 			.map((status) => {
 				if (status.attributes?.every((a) => a === 0)) status.attributes = undefined;
 				return status;
 			})
 	);
+}
+
+export function limitStatuses(data: OfficialStatus[], info: LimiterInfo) {
+	// Assume the sheet is ordered by chapter
+	return data.slice(0, info.chapterLimit);
 }

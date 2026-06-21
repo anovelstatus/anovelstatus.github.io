@@ -10,8 +10,7 @@ export function updateSpecificFiles(ss: Spreadsheet, pages: ApiPage[]) {
 
 	const chapters = getChapters(ss);
 
-	const rrInfo = getSpreadsheetInfo(ss, chapters.rr, false);
-	const patreonInfo = getSpreadsheetInfo(ss, chapters.patreon, true);
+	const baseInfo = getSpreadsheetInfo(ss, chapters.patreon, true);
 
 	const errors = [];
 
@@ -23,15 +22,11 @@ export function updateSpecificFiles(ss: Spreadsheet, pages: ApiPage[]) {
 			console.log("Updating " + page);
 			const parser = getPageParser(page);
 			const limiter = getChapterLimiter(page);
-			let rrData, patreonData;
-			if (limiter) {
-				const data = parser(patreonInfo);
-				rrData = limiter(data, rrLimiter);
-				patreonData = limiter(data, patreonLimiter);
-			} else {
-				rrData = parser(rrInfo);
-				patreonData = parser(patreonInfo);
-			}
+
+			const data = parser(baseInfo);
+			const rrData = limiter(data, rrLimiter);
+			const patreonData = limiter(data, patreonLimiter);
+
 			updatePageJson(rrFolder, rrFiles[page], rrData, page);
 			updatePageJson(patreonFolder, patreonFiles[page], patreonData, page);
 		} catch (e) {
@@ -84,14 +79,30 @@ function getPageParser(page: ApiPage): (info: SpreadsheetInfo) => unknown {
 
 // todo: figure out generic type here
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function getChapterLimiter(page: ApiPage): undefined | ((data: any, info: LimiterInfo) => any) {
+function getChapterLimiter(page: ApiPage): (data: any, info: LimiterInfo) => any {
 	switch (page) {
 		case "achievements":
 			return parsers.limitAchievements;
+		case "attributes":
+			return parsers.limitAttributes;
+		case "body":
+			return parsers.limitBody;
 		case "chapters":
 			return parsers.limitConfiguration;
+		case "lore":
+			return parsers.limitLore;
+		case "skills":
+			return parsers.limitSkills;
+		case "soul":
+			return parsers.limitSoul;
+		case "statuses":
+			return parsers.limitStatuses;
+		case "talents":
+			return parsers.limitTalents;
+		case "titles":
+			return parsers.limitTitles;
 		default:
-			return;
+			throw new Error("Unexpected page requested: " + page);
 	}
 }
 
