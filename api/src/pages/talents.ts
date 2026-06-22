@@ -6,7 +6,12 @@ export function getTalents(info: SpreadsheetInfo) {
 		{ key: "name|tier", source: { type: "exact", name: "Talent" }, parse: "tiered_id" },
 		{ key: "chapterGained", source: { type: "exact", name: "Chapter Gained" }, parse: "number" },
 		{ key: "chapterUndone", source: { type: "exact", name: "Chapter Undone" }, parse: "number", optional: true },
-		{ key: "chapterReplaced", source: { type: "exact", name: "Chapters Replaced" }, parse: "split_number" },
+		{
+			key: "chapterReplaced",
+			source: { type: "exact", name: "Chapters Replaced" },
+			parse: "split_number",
+			optional: true,
+		},
 		{ key: "note", source: { type: "exact", name: "Description" }, parse: "rich" },
 		{ key: "previous", source: { type: "exact", name: "Previous" }, parse: "split_tiered_id" },
 		{ key: "type", source: { type: "exact", name: "Type" }, parse: "string" },
