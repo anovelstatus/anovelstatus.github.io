@@ -2,7 +2,7 @@ import { chapterFilter, getEntireSheet, mapTable } from "../parser";
 
 export function getConfiguration(info: SpreadsheetInfo): BasicInfo {
 	return {
-		latest: info.chapterLimit,
+		latest: Number.POSITIVE_INFINITY,
 		tiers: getTiers(info),
 		unlocked: true,
 		patreonSheetLink: PATREON_SHEET,

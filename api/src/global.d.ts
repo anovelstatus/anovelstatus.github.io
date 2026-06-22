@@ -13,16 +13,7 @@ declare type RangeData = {
 
 declare type SpreadsheetInfo = {
 	ss: Spreadsheet;
-	chapterLimit: number;
 	attributes: Attribute.Details[];
-	includePatreon: boolean;
-};
-
-declare type ParserInfo = {
-	ss: Spreadsheet;
-	chapterLimit: number;
-	attributes: Attribute.Details[];
-	includePatreon: boolean;
 };
 
 declare type LimiterInfo = {

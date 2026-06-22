@@ -9,26 +9,28 @@ export function updateSpecificFiles(ss: Spreadsheet, pages: ApiPage[]) {
 	const patreonFiles = getExistingFiles(patreonFolder);
 
 	const chapters = getChapters(ss);
-
-	const baseInfo = getSpreadsheetInfo(ss, chapters.patreon, true);
+	const parserInfo = getParserInfo(ss);
 
 	const errors = [];
 
-	const rrLimiter: LimiterInfo = { chapterLimit: chapters.rr, includePatreon: false };
-	const patreonLimiter: LimiterInfo = { chapterLimit: chapters.patreon, includePatreon: true };
+	const rrInfo: LimiterInfo = { chapterLimit: chapters.rr, includePatreon: false };
+	const patreonInfo: LimiterInfo = { chapterLimit: chapters.patreon, includePatreon: true };
 
 	for (const page of pages) {
 		try {
 			console.log("Updating " + page);
-			const parser = getPageParser(page);
-			const limiter = getChapterLimiter(page);
+			const parser = getParser(page);
+			const limiter = getLimiter(page);
 
-			const data = parser(baseInfo);
-			const rrData = limiter(data, rrLimiter);
-			const patreonData = limiter(data, patreonLimiter);
+			const data = parser(parserInfo);
 
-			updatePageJson(rrFolder, rrFiles[page], rrData, page);
+			// In case there's ever a bug where data is modified in place rather
+			// than making a new object - do Patreon first since it deletes less.
+			const patreonData = limiter(data, patreonInfo);
 			updatePageJson(patreonFolder, patreonFiles[page], patreonData, page);
+
+			const rrData = limiter(data, rrInfo);
+			updatePageJson(rrFolder, rrFiles[page], rrData, page);
 		} catch (e) {
 			errors.push(e);
 			console.log("Failed to update " + page);
@@ -39,17 +41,12 @@ export function updateSpecificFiles(ss: Spreadsheet, pages: ApiPage[]) {
 	if (errors.length > 0) throw errors;
 }
 
-function getSpreadsheetInfo(ss: Spreadsheet, chapterLimit: number, includePatreon: boolean): SpreadsheetInfo {
-	const attributes = parsers.getAttributes({
-		ss,
-		chapterLimit,
-		includePatreon,
-		attributes: [],
-	});
-	return { ss, chapterLimit, attributes, includePatreon };
+function getParserInfo(ss: Spreadsheet): SpreadsheetInfo {
+	const attributes = parsers.getAttributes({ ss, attributes: [] });
+	return { ss, attributes };
 }
 
-function getPageParser(page: ApiPage): (info: SpreadsheetInfo) => unknown {
+function getParser(page: ApiPage): (info: SpreadsheetInfo) => unknown {
 	switch (page) {
 		case "achievements":
 			return parsers.getAchievements;
@@ -79,7 +76,7 @@ function getPageParser(page: ApiPage): (info: SpreadsheetInfo) => unknown {
 
 // todo: figure out generic type here
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function getChapterLimiter(page: ApiPage): (data: any, info: LimiterInfo) => any {
+function getLimiter(page: ApiPage): (data: any, info: LimiterInfo) => any {
 	switch (page) {
 		case "achievements":
 			return parsers.limitAchievements;

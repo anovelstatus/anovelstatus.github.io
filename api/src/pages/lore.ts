@@ -10,7 +10,7 @@ export function getLore(info: SpreadsheetInfo): LoreEntry[] {
 		{ key: "permanent", source: { type: "contains", contains: "Permanent" }, parse: "bool", optional: true },
 	];
 
-	return mapTable(info, range, fields).filter(chapterFilter(info.chapterLimit, "chapter"));
+	return mapTable(info, range, fields);
 }
 
 export function limitLore(data: LoreEntry[], info: LimiterInfo) {

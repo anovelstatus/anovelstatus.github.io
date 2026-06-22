@@ -17,7 +17,7 @@ function getSupremacies(info: SpreadsheetInfo): Supremacies {
 		{ key: "bonus", source: { type: "exact", name: "Bonus" }, parse: "string" },
 		{ key: "note", source: { type: "exact", name: "Note" }, parse: "rich" },
 	];
-	const data = mapTable(info, range, fields).filter(chapterFilter(info.chapterLimit, "chapter"));
+	const data = mapTable(info, range, fields);
 	const grouped = {} as Supremacies;
 	for (const row of data) {
 		if (!grouped[row.supremacy]) grouped[row.supremacy] = [];
