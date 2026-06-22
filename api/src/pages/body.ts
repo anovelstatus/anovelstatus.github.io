@@ -82,9 +82,9 @@ function getBloodlines(info: SpreadsheetInfo, rangeData: RangeData) {
 
 export function limitBody(data: Body.Details, info: LimiterInfo): Body.Details {
 	return {
-		bloodlines: limitBloodlines(data.bloodlines, info),
 		mutations: limitMutations(data.mutations, info),
 		races: limitRaces(data.races, info),
+		bloodlines: limitBloodlines(data.bloodlines, info),
 		tempering: limitTempering(data.tempering, info),
 	};
 }
