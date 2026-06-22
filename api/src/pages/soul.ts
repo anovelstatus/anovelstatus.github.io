@@ -1,4 +1,4 @@
-import { chapterFilter, getEntireSheet, mapTable } from "./shared";
+import { chapterFilter, getEntireSheet, mapTable } from "../parser";
 
 type InternalSupremacy = SupremacyStage & { supremacy: string };
 
@@ -17,11 +17,29 @@ function getSupremacies(info: SpreadsheetInfo): Supremacies {
 		{ key: "bonus", source: { type: "exact", name: "Bonus" }, parse: "string" },
 		{ key: "note", source: { type: "exact", name: "Note" }, parse: "rich" },
 	];
-	const data = mapTable(info, range, fields).filter(chapterFilter(info.chapterLimit, "chapter"));
+	const data = mapTable(info, range, fields);
 	const grouped = {} as Supremacies;
 	for (const row of data) {
 		if (!grouped[row.supremacy]) grouped[row.supremacy] = [];
 		grouped[row.supremacy].push({ ...row, supremacy: undefined } as SupremacyStage);
 	}
 	return grouped;
+}
+
+export function limitSoul(data: SoulDetails, info: LimiterInfo): SoulDetails {
+	return {
+		supremacies: limitSupremacies(data.supremacies, info),
+	};
+}
+
+function limitSupremacies(data: Supremacies, info: LimiterInfo) {
+	// Go back to object from leftover array
+	return Object.fromEntries(
+		// Convert map to array
+		Object.entries(data)
+			// remove future stages
+			.map((x) => [x[0], x[1].filter(chapterFilter(info.chapterLimit, "chapter"))])
+			// then remove any supremacy without any stages
+			.filter((x) => x[1].length > 0),
+	);
 }

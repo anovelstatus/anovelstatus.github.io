@@ -1,5 +1,5 @@
 import * as parsers from "./pages";
-import { parseNumber } from "./pages/shared";
+import { parseNumber } from "./parser";
 
 export function updateSpecificFiles(ss: Spreadsheet, pages: ApiPage[]) {
 	const rrFolder = DriveApp.getFolderById(RR_FOLDER);
@@ -9,17 +9,28 @@ export function updateSpecificFiles(ss: Spreadsheet, pages: ApiPage[]) {
 	const patreonFiles = getExistingFiles(patreonFolder);
 
 	const chapters = getChapters(ss);
-
-	const rrInfo = getSpreadsheetInfo(ss, chapters.rr, false);
-	const patreonInfo = getSpreadsheetInfo(ss, chapters.patreon, true);
+	const parserInfo = getParserInfo(ss);
 
 	const errors = [];
+
+	const rrInfo: LimiterInfo = { chapterLimit: chapters.rr, includePatreon: false };
+	const patreonInfo: LimiterInfo = { chapterLimit: chapters.patreon, includePatreon: true };
 
 	for (const page of pages) {
 		try {
 			console.log("Updating " + page);
-			updatePageJson(rrFolder, rrFiles[page], rrInfo, page);
-			updatePageJson(patreonFolder, patreonFiles[page], patreonInfo, page);
+			const parser = getParser(page);
+			const limiter = getLimiter(page);
+
+			const data = parser(parserInfo);
+
+			// In case there's ever a bug where data is modified in place rather
+			// than making a new object - do Patreon first since it deletes less.
+			const patreonData = limiter(data, patreonInfo);
+			updatePageJson(patreonFolder, patreonFiles[page], patreonData, page);
+
+			const rrData = limiter(data, rrInfo);
+			updatePageJson(rrFolder, rrFiles[page], rrData, page);
 		} catch (e) {
 			errors.push(e);
 			console.log("Failed to update " + page);
@@ -30,17 +41,12 @@ export function updateSpecificFiles(ss: Spreadsheet, pages: ApiPage[]) {
 	if (errors.length > 0) throw errors;
 }
 
-function getSpreadsheetInfo(ss: Spreadsheet, chapterLimit: number, includePatreon: boolean): SpreadsheetInfo {
-	const attributes = parsers.getAttributes({
-		ss,
-		chapterLimit,
-		includePatreon,
-		attributes: [],
-	});
-	return { ss, chapterLimit, attributes, includePatreon };
+function getParserInfo(ss: Spreadsheet): SpreadsheetInfo {
+	const attributes = parsers.getAttributes({ ss, attributes: [] });
+	return { ss, attributes };
 }
 
-function getPageParser(page: ApiPage): (info: SpreadsheetInfo) => unknown {
+function getParser(page: ApiPage): (info: SpreadsheetInfo) => unknown {
 	switch (page) {
 		case "achievements":
 			return parsers.getAchievements;
@@ -68,16 +74,42 @@ function getPageParser(page: ApiPage): (info: SpreadsheetInfo) => unknown {
 	}
 }
 
+// todo: figure out generic type here
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function getLimiter(page: ApiPage): (data: any, info: LimiterInfo) => any {
+	switch (page) {
+		case "achievements":
+			return parsers.limitAchievements;
+		case "attributes":
+			return parsers.limitAttributes;
+		case "body":
+			return parsers.limitBody;
+		case "chapters":
+			return parsers.limitConfiguration;
+		case "lore":
+			return parsers.limitLore;
+		case "skills":
+			return parsers.limitSkills;
+		case "soul":
+			return parsers.limitSoul;
+		case "statuses":
+			return parsers.limitStatuses;
+		case "talents":
+			return parsers.limitTalents;
+		case "titles":
+			return parsers.limitTitles;
+		default:
+			throw new Error("Unexpected page requested: " + page);
+	}
+}
+
 function updatePageJson(
 	folder: Folder,
 	existingFile: GoogleAppsScript.Drive.File | undefined,
-	info: SpreadsheetInfo,
+	data: unknown,
 	page: ApiPage,
 ) {
-	const parser = getPageParser(page);
-	const data = parser(info);
 	const json = JSON.stringify(data);
-
 	if (existingFile) existingFile.setContent(json);
 	else folder.createFile(page + ".json", json, MimeType.PLAIN_TEXT);
 }

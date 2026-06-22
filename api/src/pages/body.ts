@@ -1,4 +1,4 @@
-import { chapterFilter, getEntireSheet, getRangeData, mapTableInPage } from "./shared";
+import { chapterFilter, getEntireSheet, getRangeData, limitValue, limitValues, mapTableInPage } from "../parser";
 
 export function getBody(info: SpreadsheetInfo): Body.Details {
 	const range = getEntireSheet(info, "Body");
@@ -15,13 +15,13 @@ export function getBody(info: SpreadsheetInfo): Body.Details {
 function getMutations(info: SpreadsheetInfo, rangeData: RangeData) {
 	const fields: Fields<Body.Modification> = [
 		{ key: "name", source: { type: "exact", name: "Mutation" }, parse: "string" },
-		{ key: "chapters", source: { type: "exact", name: "Chapters" }, parse: "split_number", limited: true },
+		{ key: "chapters", source: { type: "exact", name: "Chapters" }, parse: "split_number" },
 		{ key: "tier", source: { type: "exact", name: "Rarity" }, parse: "string", optional: true },
 		{ key: "type", source: { type: "exact", name: "Type" }, parse: "string" },
 		{ key: "note", source: { type: "exact", name: "Description" }, parse: "string", optional: true },
 		{ key: "source", source: { type: "exact", name: "Source" }, parse: "rich" },
 	];
-	return mapTableInPage(info, rangeData, fields).filter((x) => x.chapters.length > 0);
+	return mapTableInPage(info, rangeData, fields);
 }
 
 function getRaces(info: SpreadsheetInfo, rangeData: RangeData) {
@@ -33,7 +33,7 @@ function getRaces(info: SpreadsheetInfo, rangeData: RangeData) {
 		{ key: "freeSlots", source: { type: "exact", name: "Free Slots" }, parse: "number" },
 		{ key: "note", source: { type: "exact", name: "Description" }, parse: "rich" },
 	];
-	return mapTableInPage(info, rangeData, fields).filter(chapterFilter(info.chapterLimit, "chapter"));
+	return mapTableInPage(info, rangeData, fields);
 }
 
 function getTempering(info: SpreadsheetInfo, rangeData: RangeData) {
@@ -41,12 +41,11 @@ function getTempering(info: SpreadsheetInfo, rangeData: RangeData) {
 		{ key: "stage", source: { type: "exact", name: "Stage" }, parse: "string" },
 		{ key: "category", source: { type: "exact", name: "Step" }, parse: "string" },
 		{ key: "started", source: { type: "exact", name: "Started" }, parse: "number" },
-		// If the step is completed in the future, treat it as not completed
-		{ key: "completed", source: { type: "exact", name: "Finished" }, parse: "number", limited: true },
+		{ key: "completed", source: { type: "exact", name: "Finished" }, parse: "number", optional: true },
 		{ key: "link", parse: "link", optional: true },
 		{ key: "note", source: { type: "exact", name: "Update" }, parse: "rich" },
 	];
-	const steps = mapTableInPage(info, rangeData, stepFields).filter(chapterFilter(info.chapterLimit, "started"));
+	const steps = mapTableInPage(info, rangeData, stepFields);
 
 	const fields: Fields<TemperingStage> = [
 		{ key: "name", source: { type: "exact", name: "Stage" }, parse: "string" },
@@ -57,7 +56,7 @@ function getTempering(info: SpreadsheetInfo, rangeData: RangeData) {
 		// Must process after name
 		{ key: "updates", parse: ({ rowSoFar }) => steps.filter((x) => x.stage === rowSoFar.name) },
 	];
-	return mapTableInPage(info, rangeData, fields).filter((x) => x.updates.length > 0);
+	return mapTableInPage(info, rangeData, fields);
 }
 
 function getBloodlines(info: SpreadsheetInfo, rangeData: RangeData) {
@@ -69,7 +68,7 @@ function getBloodlines(info: SpreadsheetInfo, rangeData: RangeData) {
 		{ key: "note", source: { type: "exact", name: "Cause" }, parse: "rich" },
 		{ key: "title", source: { type: "exact", name: "Title" }, parse: "tiered_id", optional: true },
 	];
-	const updates = mapTableInPage(info, rangeData, updateFields).filter(chapterFilter(info.chapterLimit, "chapter"));
+	const updates = mapTableInPage(info, rangeData, updateFields);
 
 	const bloodlineFields: Fields<Bloodline> = [
 		{ key: "name", source: { type: "exact", name: "Bloodline" }, parse: "string" },
@@ -78,5 +77,55 @@ function getBloodlines(info: SpreadsheetInfo, rangeData: RangeData) {
 		// Must process after name
 		{ key: "updates", parse: ({ rowSoFar }) => updates.filter((x) => x.name === rowSoFar.name) },
 	];
-	return mapTableInPage(info, rangeData, bloodlineFields).filter((x) => x.updates.length > 0);
+	return mapTableInPage(info, rangeData, bloodlineFields);
+}
+
+export function limitBody(data: Body.Details, info: LimiterInfo): Body.Details {
+	return {
+		bloodlines: limitBloodlines(data.bloodlines, info),
+		mutations: limitMutations(data.mutations, info),
+		races: limitRaces(data.races, info),
+		tempering: limitTempering(data.tempering, info),
+	};
+}
+
+function limitBloodlines(data: Bloodline[], info: LimiterInfo) {
+	return data
+		.map((x) => {
+			return {
+				...x,
+				updates: x.updates.filter(chapterFilter(info.chapterLimit, "chapter")),
+			};
+		})
+		.filter((x) => x.updates.length > 0);
+}
+
+function limitMutations(data: Body.Modification[], info: LimiterInfo) {
+	return data
+		.map((x) => {
+			return {
+				...x,
+				chapters: limitValues(x.chapters, info.chapterLimit)!,
+			};
+		})
+		.filter((x) => x.chapters.length > 0);
+}
+
+function limitRaces(data: Race[], info: LimiterInfo) {
+	return data.filter(chapterFilter(info.chapterLimit, "chapter"));
+}
+
+function limitTempering(data: TemperingStage[], info: LimiterInfo) {
+	return data
+		.map((x) => {
+			return {
+				...x,
+				updates: x.updates
+					// If the step is completed in the future, treat it as not completed
+					.map((update) => ({ ...update, completed: limitValue(update.completed, info.chapterLimit) }))
+					.filter(chapterFilter(info.chapterLimit, "started")),
+			};
+		})
+		.filter(chapterFilter(info.chapterLimit, "chapter"))
+		.filter((x) => x.updates.length > 0);
 }

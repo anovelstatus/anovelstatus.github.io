@@ -1,4 +1,4 @@
-import { chapterFilter, getEntireSheet, getRangeData, mapTable, mapTableInPage } from "./shared";
+import { chapterFilter, getEntireSheet, getRangeData, mapTable, mapTableInPage } from "../parser";
 
 type HasAttribute = { attribute: string };
 type InternalBoost = Attribute.Boost & HasAttribute;
@@ -63,7 +63,7 @@ function getBoosts(info: SpreadsheetInfo) {
 		{ key: "title", source: { type: "exact", name: "Title" }, parse: "tiered_id" },
 		{ key: "note", source: { type: "exact", name: "Note" }, parse: "rich" },
 	];
-	return mapTable(info, range, boostFields).filter(chapterFilter(info.chapterLimit, "chapter"));
+	return mapTable(info, range, boostFields);
 }
 
 function getGains(info: SpreadsheetInfo) {
@@ -74,5 +74,18 @@ function getGains(info: SpreadsheetInfo) {
 		{ key: "gain", source: { type: "exact", name: "Gain" }, parse: "number" },
 		{ key: "note", source: { type: "exact", name: "How / Why" }, parse: "rich" },
 	];
-	return mapTable(info, range, fields).filter(chapterFilter(info.chapterLimit, "chapter"));
+	return mapTable(info, range, fields);
+}
+
+export function limitAttributes(attributes: Attribute.Details[], info: LimiterInfo) {
+	return attributes.map((x) => limitAttribute(x, info));
+}
+
+function limitAttribute(attribute: Attribute.Details, info: LimiterInfo): Attribute.Details {
+	return {
+		...attribute,
+		boosts: attribute.boosts.filter(chapterFilter(info.chapterLimit, "chapter")),
+		gains: attribute.gains.filter(chapterFilter(info.chapterLimit, "chapter")),
+		evolutions: attribute.evolutions.filter(chapterFilter(info.chapterLimit, "chapter")),
+	};
 }
