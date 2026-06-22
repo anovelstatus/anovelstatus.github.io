@@ -51,9 +51,9 @@ export function limitConfiguration(data: BasicInfo, info: LimiterInfo): BasicInf
 	};
 }
 
-function limitTierNames(table: TierInfo[], chapter: number) {
+function limitTierNames(table: TierInfo[], chapterLimit: number) {
 	return table.map((row) => {
-		const revealed = row.chapterRevealed && row.chapterRevealed > chapter;
+		const revealed = !row.chapterRevealed || row.chapterRevealed <= chapterLimit;
 		return {
 			...row,
 			metalName: revealed ? row.metalName : "?",
