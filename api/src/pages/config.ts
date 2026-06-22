@@ -44,10 +44,10 @@ export function limitConfiguration(data: BasicInfo, info: LimiterInfo): BasicInf
 	return {
 		latest: info.chapterLimit,
 		tiers: limitTierNames(data.tiers, info.chapterLimit),
-		attributes: data.attributes,
-		shortcuts: data.shortcuts.filter(chapterFilter(info.chapterLimit, "chapter")),
-		patreonSheetLink: info.includePatreon ? data.patreonSheetLink : undefined,
 		unlocked: info.includePatreon,
+		patreonSheetLink: info.includePatreon ? data.patreonSheetLink : undefined,
+		shortcuts: data.shortcuts.filter(chapterFilter(info.chapterLimit, "chapter")),
+		attributes: data.attributes,
 	};
 }
 
