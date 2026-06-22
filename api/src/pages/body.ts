@@ -41,7 +41,7 @@ function getTempering(info: SpreadsheetInfo, rangeData: RangeData) {
 		{ key: "stage", source: { type: "exact", name: "Stage" }, parse: "string" },
 		{ key: "category", source: { type: "exact", name: "Step" }, parse: "string" },
 		{ key: "started", source: { type: "exact", name: "Started" }, parse: "number" },
-		{ key: "completed", source: { type: "exact", name: "Finished" }, parse: "number" },
+		{ key: "completed", source: { type: "exact", name: "Finished" }, parse: "number", optional: true },
 		{ key: "link", parse: "link", optional: true },
 		{ key: "note", source: { type: "exact", name: "Update" }, parse: "rich" },
 	];

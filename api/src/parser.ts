@@ -26,6 +26,11 @@ export function limitValues(values: number[] | undefined, chapterLimit: number) 
 	return values.filter((x) => x <= chapterLimit);
 }
 
+function parseOptionalNumbers(value: SpreadsheetValue): number[] | undefined {
+	if (!value) return;
+	return parseNumbers(value);
+}
+
 function parseNumbers(value: SpreadsheetValue): number[] {
 	if (typeof value === "number") return [value];
 	if (typeof value === "string") return parseSplitString(value).map((x) => parseInt(x));
@@ -254,7 +259,7 @@ function mapRow<T>(
 					item[key] = parseSplitString(value);
 					break;
 				case "split_number":
-					item[key] = parseNumbers(value);
+					item[key] = optional ? parseOptionalNumbers(value) : parseNumbers(value);
 					break;
 				case "string_number":
 					item[key] = value as string | number; // no great, but only used by one column
