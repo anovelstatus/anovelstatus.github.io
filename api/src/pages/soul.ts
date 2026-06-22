@@ -33,9 +33,13 @@ export function limitSoul(data: SoulDetails, info: LimiterInfo): SoulDetails {
 }
 
 function limitSupremacies(data: Supremacies, info: LimiterInfo) {
+	// Go back to object from leftover array
 	return Object.fromEntries(
+		// Convert map to array
 		Object.entries(data)
+			// remove future stages
 			.map((x) => [x[0], x[1].filter(chapterFilter(info.chapterLimit, "chapter"))])
+			// then remove any supremacy without any stages
 			.filter((x) => x[1].length > 0),
 	);
 }
