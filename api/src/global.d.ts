@@ -65,11 +65,6 @@ type Field<T, TKey extends keyof T & string> = {
 		| ((context: CustomContext<T>) => T[TKey]);
 	/** Only applies to tiered_id, string, bool, number, and split_number */
 	optional?: boolean;
-	/**
-	 * Only applies to numbers
-	 *  @deprecated
-	 */
-	limited?: boolean;
 };
 
 type Fields<T> = Field<T, (keyof T & string) | "name|tier">[];

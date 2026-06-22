@@ -26,20 +26,10 @@ export function limitValues(values: number[] | undefined, chapterLimit: number) 
 	return values.filter((x) => x <= chapterLimit);
 }
 
-/** Parse a value that might be a single number or a comma-separated list of numbers into a number array */
-function parseNumbersLessThanLimit(value: SpreadsheetValue, chapterLimit: number): number[] {
-	return parseNumbers(value).filter((x) => x <= chapterLimit);
-}
-
 function parseNumbers(value: SpreadsheetValue): number[] {
 	if (typeof value === "number") return [value];
 	if (typeof value === "string") return parseSplitString(value).map((x) => parseInt(x));
 	return [];
-}
-
-function parseOptionalNumberLessThanLimit(value: SpreadsheetValue, chapterLimit: number) {
-	if (typeof value === "number" && value <= chapterLimit) return value;
-	return undefined;
 }
 
 function parseBoolean(value: SpreadsheetValue): boolean {
@@ -137,15 +127,7 @@ export function mapTableInPage<T>(info: SpreadsheetInfo, rangeData: RangeData, f
 	for (let i = start + 1; i < end; i++) {
 		if (rowHasNoData(values[i])) continue;
 		data.push(
-			mapRow(
-				values[i],
-				richValues[hasRichValues ? i : 0],
-				notes[usesNotes ? i : 0],
-				columns,
-				info.chapterLimit,
-				fields,
-				info.attributes,
-			),
+			mapRow(values[i], richValues[hasRichValues ? i : 0], notes[usesNotes ? i : 0], columns, fields, info.attributes),
 		);
 	}
 	return data;
@@ -176,15 +158,7 @@ export function mapTable<T>(info: SpreadsheetInfo, range: Range, fields: Fields<
 	for (let i = skipRows + 1; i < values.length; i++) {
 		if (rowHasNoData(values[i])) continue;
 		data.push(
-			mapRow(
-				values[i],
-				richValues[hasRichValues ? i : 0],
-				notes[usesNotes ? i : 0],
-				headers,
-				info.chapterLimit,
-				fields,
-				info.attributes,
-			),
+			mapRow(values[i], richValues[hasRichValues ? i : 0], notes[usesNotes ? i : 0], headers, fields, info.attributes),
 		);
 	}
 	return data;
@@ -237,14 +211,13 @@ function mapRow<T>(
 	richValues: RichValue[],
 	notes: string[],
 	headers: Record<string, number>,
-	chapterLimit: number,
 	fields: Fields<T>,
 	attributes: Attribute.Details[],
 ) {
 	const item: Record<string, unknown> = {};
 
 	for (const field of fields) {
-		const { key, parse, limited, optional } = field;
+		const { key, parse, optional } = field;
 		const value = headers[key] !== undefined ? values[headers[key]] : undefined;
 		try {
 			switch (parse) {
@@ -258,11 +231,7 @@ function mapRow<T>(
 					item[key] = notes[headers[key]] ? notes[headers[key]] : undefined;
 					break;
 				case "number":
-					item[key] = limited
-						? parseOptionalNumberLessThanLimit(value, chapterLimit)
-						: optional
-							? parseOptionalNumber(value)
-							: parseNumber(value);
+					item[key] = optional ? parseOptionalNumber(value) : parseNumber(value);
 					break;
 				case "string":
 					item[key] = optional ? parseOptionalString(value) : parseString(value);
@@ -285,7 +254,7 @@ function mapRow<T>(
 					item[key] = parseSplitString(value);
 					break;
 				case "split_number":
-					item[key] = limited ? parseNumbersLessThanLimit(value, chapterLimit) : parseNumbers(value);
+					item[key] = parseNumbers(value);
 					break;
 				case "string_number":
 					item[key] = value as string | number; // no great, but only used by one column
