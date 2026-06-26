@@ -15,6 +15,8 @@ export function getRangeData(range: Range, getRichValues: boolean, getNotes: boo
 	return { values, richValues, notes };
 }
 
+export const sameId = <T extends TieredId>(a: T, b: T) => a.name == b.name && a.tier == b.tier;
+
 export function limitValue(value: number | undefined, chapterLimit: number) {
 	if (!value) return;
 	if (value <= chapterLimit) return value;
@@ -24,6 +26,12 @@ export function limitValue(value: number | undefined, chapterLimit: number) {
 export function limitValues(values: number[] | undefined, chapterLimit: number) {
 	if (!values) return;
 	return values.filter((x) => x <= chapterLimit);
+}
+
+// todo: better generic to remove cast
+export function limitObjects<T>(values: T[] | undefined, chapterLimit: number, key: keyof T) {
+	if (!values) return;
+	return values.filter((x) => (x[key] as unknown as number) <= chapterLimit);
 }
 
 function parseOptionalNumbers(value: SpreadsheetValue): number[] | undefined {
@@ -63,6 +71,16 @@ function parseSplitString(value: SpreadsheetValue): string[] {
 	if (!value) return [];
 	if (typeof value !== "string") throw new Error("expected string");
 	return value.split(",").map((x) => x.trim());
+}
+
+function parseChapterNotes(value: SpreadsheetValue): ChapterNote[] {
+	const lines = parseSplitString(value);
+	return lines.map((line): ChapterNote => {
+		const split = line.split("-");
+		const chapter = parseInt(split[0]);
+		const note = split.slice(1).join("-").trim();
+		return { ch: chapter, t: note };
+	});
 }
 
 export function parseNumber(value: SpreadsheetValue): number {
@@ -258,6 +276,11 @@ function mapRow<T>(
 				case "split_string":
 					item[key] = parseSplitString(value);
 					break;
+				case "chapter_note": {
+					const notes = parseChapterNotes(value);
+					if (notes.length > 0) item[key] = notes;
+					break;
+				}
 				case "split_number":
 					item[key] = optional ? parseOptionalNumbers(value) : parseNumbers(value);
 					break;

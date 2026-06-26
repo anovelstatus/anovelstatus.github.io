@@ -22,7 +22,7 @@ function doGet(e: GoogleAppsScript.Events.DoGet) {
 /** Used for testing getting data from the API */
 /* @ts-expect-error no-unused-local */
 function debug() {
-	const test = getFile(true, "statuses");
+	const test = getFile(true, "titles");
 	console.log(test);
 }
 
@@ -30,7 +30,7 @@ function debug() {
 /* @ts-expect-error no-unused-local */
 function debugUpdateFile() {
 	const ss = SpreadsheetApp.openByUrl(SS_LINK);
-	updateSpecificFiles(ss, ["statuses"]);
+	updateSpecificFiles(ss, ["titles"]);
 }
 
 /** Used in trigger to update pre-generated responses */

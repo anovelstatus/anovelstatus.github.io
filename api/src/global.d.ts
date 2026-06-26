@@ -46,6 +46,7 @@ type Field<T, TKey extends keyof T & string> = {
 		| "rich"
 		| "note"
 		| "split_string"
+		| "chapter_note"
 		| "string_number"
 		| "tiered_id"
 		| "string"
