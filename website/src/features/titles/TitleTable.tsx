@@ -1,4 +1,4 @@
-import { Button, Chip, Typography } from "@mui/material";
+import { Button, Stack, Typography } from "@mui/material";
 import { toIdString } from "@/data/helpers";
 import { useState, useEffect } from "react";
 import TitleCard from "./TitleCard";
@@ -8,7 +8,6 @@ import { useColumns, columnstyles } from "./columns";
 import { getExpandedRowModel, getFilteredRowModel, type ExpandedState } from "@tanstack/react-table";
 import { getPreviousTitleChain } from "./helpers";
 import { RarityButtonChip } from "@/components/chips";
-import { LoreSection } from "@/components/LoreSection";
 import { WrappedRow } from "@/components/WrappedRow";
 
 export default function TitleTable() {
@@ -73,11 +72,7 @@ export default function TitleTable() {
 	});
 
 	return (
-		<>
-			<Typography variant="h4" gutterBottom>
-				Priam's Titles <Chip label={currentTitles.length} sx={{ fontWeight: "bold" }} />
-			</Typography>
-			<LoreSection topic="Titles" />
+		<Stack>
 			<WrappedRow>
 				{metalTiers
 					.filter((x) => totals[x])
@@ -114,7 +109,7 @@ export default function TitleTable() {
 				Showing {table.getRowCount()}/{titles.length} titles
 			</Typography>
 			<AppTable table={table} isLoading={isLoading} sx={columnstyles} />
-		</>
+		</Stack>
 	);
 }
 
