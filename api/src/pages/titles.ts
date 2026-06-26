@@ -33,6 +33,7 @@ export function getMerits(info: SpreadsheetInfo) {
 	const fields: Fields<InternalMerit> = [
 		{ key: "tier", source: { type: "exact", name: "Merit Tier" }, parse: "number" },
 		{ key: "title", source: { type: "exact", name: "Title" }, parse: "tiered_id" },
+		{ key: "text", source: { type: "exact", name: "Description" }, parse: "rich" },
 		{ key: "chReveal", source: { type: "exact", name: "Chapter Revealed" }, parse: "number" },
 		{ key: "chBought", source: { type: "exact", name: "Chapter Bought" }, parse: "number", optional: true },
 		{ key: "notes", source: { type: "exact", name: "Note" }, parse: "chapter_note", optional: true },
