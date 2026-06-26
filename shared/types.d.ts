@@ -34,6 +34,8 @@ declare type ItemLink = {
 	type: "Talent" | "Skill" | "Title" | "Bloodline";
 };
 
+declare type ChapterNote = { ch: number; t: string };
+
 declare type RichTextSpans = RichText[] | undefined;
 /** Get keys from type T where T has a string or rich text metadata */
 declare type PlainOrRichTextKeys<T> = KeysMatching<T, string | RichTextSpans>;
@@ -261,6 +263,15 @@ declare type Title = TieredId & {
 	replaced?: number;
 	previous?: TieredId;
 	note: RichTextSpans;
+	merits: TitleMerit[];
+};
+
+declare type TitleMerit = {
+	tier: number;
+	text: RichTextSpans;
+	chReveal: number;
+	chBought?: number;
+	notes: ChapterNote[];
 };
 
 declare type Achievement = {
