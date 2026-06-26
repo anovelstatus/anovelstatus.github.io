@@ -17,6 +17,9 @@ export const columnstyles: SxProps<Theme> = {
 		textAlign: "center",
 		color: "#666",
 	},
+	".MuiTable-root": {
+		width: 150 + 100 + 200 * 10 + "px",
+	},
 };
 
 export const useColumns = () => {
@@ -50,7 +53,7 @@ export const useColumns = () => {
 				size: 200,
 				cell: ({ row }) => {
 					const chain = useTitleChain(row.original);
-					const merit = getMerit(chain, i);
+					const merit = getMerit(chain, i, chapter);
 					// todo: Locked until title is Tier XYZ
 					if (!merit) return "?";
 
@@ -64,11 +67,14 @@ export const useColumns = () => {
 				meta: {
 					bodyClassName: (cell): string => {
 						const chain = useTitleChain(cell.row.original);
-						const merit = getMerit(chain, i);
+						const merit = getMerit(chain, i, chapter);
 						if (!merit) return "unknown";
-						if (merit.chBought && merit.chBought <= chapter) return "bought";
+						if (merit.chBought && merit.chBought <= chapter) {
+							return "bought";
+						}
 						return "";
 					},
+					headerSx: { textAlign: "center" },
 				},
 			}),
 		);
@@ -89,9 +95,9 @@ function toChain(title: Title, titles: Title[]) {
 	return [title, ...previous];
 }
 
-function getMerit(chain: Title[], meritTier: number): TitleMerit | undefined {
+function getMerit(chain: Title[], meritTier: number, chapter: number): TitleMerit | undefined {
 	for (const title of chain) {
-		const titleMerits = (title.merits ?? []).filter((x) => x.tier === meritTier);
+		const titleMerits = (title.merits ?? []).filter((x) => x.tier === meritTier && x.chReveal <= chapter);
 		if (titleMerits.length === 0) continue;
 		return maxBy(titleMerits, (x) => x.chReveal);
 	}

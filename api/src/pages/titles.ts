@@ -9,7 +9,7 @@ export function getTitles(info: SpreadsheetInfo) {
 	const range = getEntireSheet(info, "Titles");
 	const fields: Fields<Title> = [
 		{ key: "name|tier", source: { type: "exact", name: "Title" }, parse: "tiered_id" },
-		{ key: "note", source: { type: "exact", name: "Description" }, parse: "chapter_note" },
+		{ key: "note", source: { type: "exact", name: "Description" }, parse: "string" },
 		{ key: "chapter", source: { type: "exact", name: "Chapter" }, parse: "number" },
 		{ key: "previous", source: { type: "exact", name: "Previous" }, parse: "tiered_id", optional: true },
 		{ key: "replaced", source: { type: "exact", name: "Chapter Replaced" }, parse: "number", optional: true },
@@ -47,6 +47,7 @@ export function limitTitles(data: Title[], info: LimiterInfo) {
 		return {
 			...x,
 			replaced: limitValue(x.replaced, info.chapterLimit),
+			merits: limitMerits(x.merits, info),
 		};
 	});
 }

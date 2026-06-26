@@ -41,7 +41,9 @@ export default function TreesOfMerit() {
 	return (
 		<Stack>
 			<LoreSection topic="Titles" subtopic="Merits" />
-			<Typography variant="h4">🚧 Under Construction, there's still a lot of bugs and missing info.</Typography>
+			<Typography variant="h4" color="error">
+				🚧 Under Construction. MANY THINGS WILL APPEAR INCORRECTLY.
+			</Typography>
 			<AppTable table={table} isLoading={isLoading} sx={{ overflowX: "scroll", ...columnstyles }} />
 		</Stack>
 	);
@@ -49,15 +51,12 @@ export default function TreesOfMerit() {
 
 type FilterOptions = {
 	chapter: number;
-	tier?: string;
 };
 
-function showTitle(x: Title, { chapter, tier }: FilterOptions) {
+function showTitle(x: Title, { chapter }: FilterOptions) {
 	if (x.chapter > chapter) return false;
 
 	if (x.replaced && x.replaced <= chapter) return false;
-
-	if (tier && x.tier !== tier) return false;
 
 	return true;
 }
