@@ -144,7 +144,7 @@ export const useColumns = () => {
 	return columns;
 };
 
-function useTitleChain(title: Title) {
+export function useTitleChain(title: Title) {
 	const { data: titles } = useTitles();
 	return useMemo(() => {
 		const chain = toChain(title, titles);
@@ -157,7 +157,7 @@ function toChain(title: Title, titles: Title[]) {
 	return [title, ...previous];
 }
 
-function getMerit(chain: Title[], meritTier: number, chapter: number): TitleMerit | undefined {
+export function getMerit(chain: Title[], meritTier: number, chapter: number): TitleMerit | undefined {
 	for (const title of chain) {
 		const titleMerits = (title.merits ?? []).filter((x) => x.tier === meritTier && x.chReveal <= chapter);
 		if (titleMerits.length === 0) continue;

@@ -27,6 +27,7 @@ import { SxFeature } from "./features/SxFeature";
 import { HoverTitleFeature } from "./features/HoverTitleFeature";
 import type { PropsWithStyle } from "@/types";
 import { HideHeaderFeature } from "./features/HideHeaderFeature";
+import { TableSlotFeature } from "./features/TableSlotFeature";
 
 type TableProps<T> = {
 	table: Table<T>;
@@ -42,6 +43,7 @@ export function useAppTable<T>(options: Partial<TableOptions<T>>) {
 		HoverTitleFeature,
 		HideHeaderFeature,
 		SxFeature,
+		TableSlotFeature,
 		...(options._features ?? []),
 	];
 	return useReactTable({
@@ -69,40 +71,46 @@ export default function AppTable<T>({ sx, table, isLoading, size = "medium" }: T
 
 	if (isNarrow && table.options.renderNarrowRow)
 		return (
-			<>
+			<Stack>
+				{table.getBeforeSlot()}
 				{table
 					.getRowModel()
 					.rows.filter((x) => x.depth == 0)
 					.map((row) => table.options.renderNarrowRow!(row))}
-			</>
+				{table.getAfterSlot()}
+			</Stack>
 		);
 
 	return (
-		<TableContainer sx={sx} component={Paper}>
-			<TableComponent className="w-full " size={size}>
-				{showHeader && (
-					<TableHead>
-						{table.getHeaderGroups().map((headerGroup) => (
-							<TableRow key={headerGroup.id}>
-								{headerGroup.headers.map((header) => {
-									return <HeaderCell key={header.id} header={header} />;
-								})}
-							</TableRow>
-						))}
-					</TableHead>
-				)}
-				<TableBody>
-					{table.getRowModel().rows.map((row) => {
-						return (
-							<TableRow key={row.id}>
-								{row.getVisibleCells().map((cell) => {
-									return <BodyCell key={cell.id} cell={cell} />;
-								})}
-							</TableRow>
-						);
-					})}
-				</TableBody>
-			</TableComponent>
-		</TableContainer>
+		<Stack>
+			{table.getBeforeSlot()}
+			<TableContainer sx={sx} component={Paper}>
+				<TableComponent className="w-full " size={size}>
+					{showHeader && (
+						<TableHead>
+							{table.getHeaderGroups().map((headerGroup) => (
+								<TableRow key={headerGroup.id}>
+									{headerGroup.headers.map((header) => {
+										return <HeaderCell key={header.id} header={header} />;
+									})}
+								</TableRow>
+							))}
+						</TableHead>
+					)}
+					<TableBody>
+						{table.getRowModel().rows.map((row) => {
+							return (
+								<TableRow key={row.id}>
+									{row.getVisibleCells().map((cell) => {
+										return <BodyCell key={cell.id} cell={cell} />;
+									})}
+								</TableRow>
+							);
+						})}
+					</TableBody>
+				</TableComponent>
+			</TableContainer>
+			{table.getAfterSlot()}
+		</Stack>
 	);
 }

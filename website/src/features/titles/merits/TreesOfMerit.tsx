@@ -3,10 +3,11 @@ import { useChapter, useTitles } from "@/data/api";
 import { LoreSection } from "@/components/LoreSection";
 import AppTable, { useAppTable } from "@/components/AppTable";
 import { toIdString } from "@/data/helpers";
-import { columnstyles, useColumns } from "./columns";
+import { columnstyles, getMerit, useColumns, useTitleChain } from "./columns";
 import { useEffect, useState } from "react";
 import { getFilteredRowModel } from "@tanstack/react-table";
 import { WrappedRow } from "@/components/WrappedRow";
+import { range } from "es-toolkit";
 
 export default function TreesOfMerit() {
 	const chapter = useChapter();
@@ -16,11 +17,6 @@ export default function TreesOfMerit() {
 	useEffect(() => {
 		setFilters((filters) => ({ ...filters, chapter: chapter }));
 	}, [chapter]);
-
-	const currentTitles = titles.filter((x) => showTitle(x, filters));
-	const totalMerits = currentTitles.length;
-	const totalTrees = currentTitles.filter((x) => !x.noTreeReason).length;
-	const meritsSpent = "TBD, formula isn't implemented yet";
 
 	const table = useAppTable<Title>({
 		data: titles,
@@ -39,6 +35,26 @@ export default function TreesOfMerit() {
 		globalFilterFn: (row, _, filterValue: FilterOptions) => {
 			return showTitle(row.original, filterValue);
 		},
+
+		slots: {
+			before: (table) => {
+				const rows = table.getRowModel().rows;
+
+				const totalMerits = rows.length;
+				const totalTrees = rows.filter((x) => !x.original.noTreeReason).length;
+				const meritsSpent = rows
+					.map((x) => useTitleChain(x.original))
+					.flatMap((x) => range(10).map((i) => getMerit(x, i, chapter)))
+					.filter((merit) => merit?.chBought && merit.chBought <= chapter).length;
+				return (
+					<WrappedRow spacing={2}>
+						<Chip label={`Total Trees: ${totalTrees}`} />
+						<Chip label={`Merit Points Earned: ${totalMerits}`} />
+						<Chip label={`Merits Acquired: ${meritsSpent}`} />
+					</WrappedRow>
+				);
+			},
+		},
 		// todo: narrow layout
 		//narrowBreakpoint: "md",
 		//renderNarrowRow: ({ original }) => <TitleCard key={toIdString(original)} id={original} />,
@@ -50,11 +66,6 @@ export default function TreesOfMerit() {
 			<Typography variant="h4" color="error">
 				🚧 Under Construction. 1 tree is missing for 168-195. Other things could be wrong!
 			</Typography>
-			<WrappedRow spacing={2}>
-				<Chip label={`Total Trees: ${totalTrees}`} />
-				<Chip label={`Merit Points Earned: ${totalMerits}`} />
-				<Chip label={`Merits Acquired: ${meritsSpent}`} />
-			</WrappedRow>
 			<AppTable table={table} isLoading={isLoading} sx={{ overflowX: "scroll", ...columnstyles }} />
 		</Stack>
 	);
