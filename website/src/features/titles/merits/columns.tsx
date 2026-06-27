@@ -68,7 +68,7 @@ export const useColumns = () => {
 		columns.push(
 			columnHelper.display({
 				id: "tier-" + i,
-				header: (context) => (
+				header: (_context) => (
 					<Stack>
 						<Box>Tier {i}</Box>
 						<Box sx={{ fontSize: "0.95em" }}>Requires {columnTier} Title</Box>
@@ -79,7 +79,12 @@ export const useColumns = () => {
 					const chain = useTitleChain(row.original);
 					const merit = getMerit(chain, i, chapter);
 					// todo: Locked until title is Tier XYZ
-					if (!merit) return "?";
+					if (!merit) {
+						const isFirstLockedCell = getIsFirstLockedCell(row, metalTiers, columnTierNumber);
+						if (isFirstLockedCell && getMerit(chain, i - 1, chapter)?.chBought)
+							return `LOCKED. Requires ${columnTier} Title.`;
+						return "?";
+					}
 
 					return (
 						<Stack>
@@ -95,7 +100,11 @@ export const useColumns = () => {
 					bodyClassName: (cell): string => {
 						const chain = useTitleChain(cell.row.original);
 						const merit = getMerit(chain, i, chapter);
-						if (!merit) return "unknown";
+						if (!merit) {
+							const isFirstLockedCell = getIsFirstLockedCell(cell.row, metalTiers, columnTierNumber);
+							if (isFirstLockedCell && getMerit(chain, i - 1, chapter)?.chBought) return "";
+							return "unknown";
+						}
 						if (merit.chBought && merit.chBought <= chapter) {
 							return "bought";
 						}
@@ -107,8 +116,8 @@ export const useColumns = () => {
 							//borderTopColor: tierTheme.palette.primary.main,
 							//borderBottomColor: tierTheme.palette.primary.main,
 						};
-						const titleTier = metalTiers.indexOf(cell.row.original.tier);
-						if (titleTier + 1 == columnTierNumber) {
+						const isFirstLockedCell = getIsFirstLockedCell(cell.row, metalTiers, columnTierNumber);
+						if (isFirstLockedCell) {
 							style.borderLeftColor = "rgb(182, 0, 0)";
 							style.borderLeftWidth = 4;
 
@@ -120,7 +129,7 @@ export const useColumns = () => {
 						}
 						return style;
 					},
-					headerSx: (column: Header<Title, unknown>): SxProps => {
+					headerSx: (_column: Header<Title, unknown>): SxProps => {
 						return {
 							backgroundColor: tierTheme.palette.primary.dark,
 							//borderTopColor: tierTheme.palette.primary.main,
@@ -155,6 +164,11 @@ function getMerit(chain: Title[], meritTier: number, chapter: number): TitleMeri
 		return maxBy(titleMerits, (x) => x.chReveal);
 	}
 	return;
+}
+
+function getIsFirstLockedCell(row: Row<Title>, tiers: string[], columnTierNumber: number) {
+	const titleTier = tiers.indexOf(row.original.tier);
+	return titleTier + 1 == columnTierNumber;
 }
 
 function getPreviousRow<T>(row: Row<T>, table: Table<T>) {

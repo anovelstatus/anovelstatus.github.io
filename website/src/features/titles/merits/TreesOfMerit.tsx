@@ -1,4 +1,4 @@
-import { Box, Chip, Stack, Typography } from "@mui/material";
+import { Chip, Stack, Typography } from "@mui/material";
 import { useChapter, useTitles } from "@/data/api";
 import { LoreSection } from "@/components/LoreSection";
 import AppTable, { useAppTable } from "@/components/AppTable";
@@ -48,7 +48,7 @@ export default function TreesOfMerit() {
 		<Stack>
 			<LoreSection topic="Titles" subtopic="Merits" />
 			<Typography variant="h4" color="error">
-				🚧 Under Construction. MANY THINGS WILL APPEAR INCORRECTLY.
+				🚧 Under Construction. 1 tree is missing for 168-195. Other things could be wrong!
 			</Typography>
 			<WrappedRow spacing={2}>
 				<Chip label={`Total Trees: ${totalTrees}`} />
