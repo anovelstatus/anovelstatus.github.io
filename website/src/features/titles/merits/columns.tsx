@@ -146,13 +146,10 @@ export const useColumns = () => {
 
 export function useTitleChain(title: Title) {
 	const { data: titles } = useTitles();
-	return useMemo(() => {
-		const chain = toChain(title, titles);
-		return chain;
-	}, [title, titles]);
+	return useMemo(() => toChain(title, titles), [title, titles]);
 }
 
-function toChain(title: Title, titles: Title[]) {
+export function toChain(title: Title, titles: Title[]) {
 	const previous = getPreviousTitleChain(titles, title, true);
 	return [title, ...previous];
 }
