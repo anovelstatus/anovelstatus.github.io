@@ -16,7 +16,6 @@ import { useMemo } from "react";
 import { getPreviousTitleChain } from "../helpers";
 import { maxBy } from "es-toolkit";
 import { useTheme } from "@/data/useTheme";
-import { sameId, toIdString } from "@/data/helpers";
 
 export const columnstyles: SxProps<Theme> = {
 	".bought": {
@@ -27,7 +26,9 @@ export const columnstyles: SxProps<Theme> = {
 		color: "#666",
 	},
 	".MuiTable-root": {
+		// Title + Tier + 10xTiers
 		width: 150 + 100 + 200 * 10 + "px",
+		minWidth: "100%",
 	},
 };
 
@@ -42,16 +43,13 @@ export const useColumns = () => {
 			size: 150,
 			enableSorting: true,
 			cell: ({ row }) => (
-				<WrappedRow sx={{ paddingLeft: `${row.depth}rem` }}>
-					<Typography variant="subtitle1">{row.original.name}</Typography>
-					<RarityChip name={row.original.tier} />
-					{row.original.noTreeReason && (
-						<>
-							{" - "}
-							<RichTextSpan data={row.original.noTreeReason} />
-						</>
-					)}
-				</WrappedRow>
+				<Stack>
+					<WrappedRow sx={{ paddingLeft: `${row.depth}rem` }}>
+						<Typography variant="subtitle1">{row.original.name}</Typography>
+						<RarityChip name={row.original.tier} />
+					</WrappedRow>
+					<RichTextSpan data={row.original.noTreeReason} />
+				</Stack>
 			),
 			meta: {
 				bodyColSpan: (row) => {
@@ -146,7 +144,7 @@ function useTitleChain(title: Title) {
 }
 
 function toChain(title: Title, titles: Title[]) {
-	const previous = getPreviousTitleChain(titles, title);
+	const previous = getPreviousTitleChain(titles, title, true);
 	return [title, ...previous];
 }
 
