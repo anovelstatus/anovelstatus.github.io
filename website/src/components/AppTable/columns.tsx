@@ -28,6 +28,6 @@ function getRank(tiers: string[], tier: string): number {
 }
 
 /** Rank the given tiers, for sorting in a table */
-function tierSortComparator(tiers: string[], a: string, b: string) {
+export function tierSortComparator(tiers: string[], a: string, b: string) {
 	return getRank(tiers, a) - getRank(tiers, b);
 }

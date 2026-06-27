@@ -1,5 +1,5 @@
 import { useQuery, type UseQueryResult } from "@tanstack/react-query";
-import { orderBy } from "es-toolkit";
+import { orderBy, range } from "es-toolkit";
 import { useContext } from "react";
 import { ChapterContext } from "./ChapterContext";
 
@@ -46,7 +46,10 @@ export function useBasicInfo() {
 		placeholderData: {
 			latest: 1,
 			unlocked: false,
-			tiers: [],
+			// Placeholder tiers for when page data is loaded before this, somehow
+			tiers: range(10).map(
+				(i): TierInfo => ({ metalName: "?", skillName: "?", tier: i, bgColor: "#000", fgColor: "#fff" }),
+			),
 			shortcuts: [],
 			attributes: [],
 		},

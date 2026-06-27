@@ -1,39 +1,41 @@
 import { Chip, Stack, Typography } from "@mui/material";
-import { useChapter, useTitles } from "@/data/api";
+import { useChapter, useMetalTiers, useTitles } from "@/data/api";
 import { LoreSection } from "@/components/LoreSection";
 import AppTable, { useAppTable } from "@/components/AppTable";
 import { toIdString } from "@/data/helpers";
-import { columnstyles, getMerit, toChain, useColumns } from "./columns";
-import { useEffect, useState } from "react";
+import { columnstyles, getColumns } from "./columns";
+import { useEffect, useMemo, useState } from "react";
 import { getFilteredRowModel } from "@tanstack/react-table";
 import { WrappedRow } from "@/components/WrappedRow";
+import { getMeritForChapter, getTitleForChapter, getMeritTrees } from "./helpers";
 import { range } from "es-toolkit";
+import { useTheme } from "@/data/useTheme";
 
 export default function TreesOfMerit() {
 	const chapter = useChapter();
 	const { data: titles, isLoading } = useTitles();
-	const columns = useColumns();
+	const tiers = useMetalTiers();
+	const trees = useMemo(() => getMeritTrees(titles, tiers), [titles, tiers]);
+	const themes = range(10).map((x) => useTheme(x));
+	const columns = useMemo(() => getColumns(chapter, tiers, themes), [chapter, tiers, themes]);
 	const [filters, setFilters] = useState<FilterOptions>({ chapter });
 	useEffect(() => {
 		setFilters((filters) => ({ ...filters, chapter: chapter }));
 	}, [chapter]);
 
-	const table = useAppTable<Title>({
-		data: titles,
+	const table = useAppTable<MeritTree>({
+		data: trees,
 		columns,
-		getRowId: (row) => toIdString(row),
+		getRowId: (row) => toIdString(row.titles[0]),
 
 		initialState: {
-			sorting: [
-				{ id: "tier", desc: true },
-				{ id: "name", desc: false },
-			],
+			sorting: [{ id: "title", desc: true }],
 		},
 		state: { globalFilter: filters },
 
 		getFilteredRowModel: getFilteredRowModel(),
 		globalFilterFn: (row, _, filterValue: FilterOptions) => {
-			return showTitle(row.original, filterValue);
+			return showTree(row.original, filterValue);
 		},
 
 		// todo: narrow layout
@@ -44,10 +46,9 @@ export default function TreesOfMerit() {
 	const rows = table.getRowModel().rows;
 
 	const totalMerits = rows.length;
-	const totalTrees = rows.filter((x) => !x.original.noTreeReason).length;
+	const totalTrees = totalMerits - rows.filter((x) => getTitleForChapter(x.original, chapter)?.noTreeReason).length;
 	const meritsSpent = rows
-		.map((x) => toChain(x.original, titles))
-		.flatMap((x) => range(10).map((i) => getMerit(x, i, chapter)))
+		.flatMap((x) => range(10).map((tier) => getMeritForChapter(x.original, tier, chapter)))
 		.filter((merit) => merit?.chBought && merit.chBought <= chapter).length;
 
 	return (
@@ -70,10 +71,6 @@ type FilterOptions = {
 	chapter: number;
 };
 
-function showTitle(x: Title, { chapter }: FilterOptions) {
-	if (x.chapter > chapter) return false;
-
-	if (x.replaced && x.replaced <= chapter) return false;
-
-	return true;
+function showTree(x: MeritTree, { chapter }: FilterOptions): boolean {
+	return getTitleForChapter(x, chapter) !== undefined;
 }
