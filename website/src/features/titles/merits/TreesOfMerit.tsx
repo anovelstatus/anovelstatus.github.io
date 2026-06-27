@@ -36,29 +36,19 @@ export default function TreesOfMerit() {
 			return showTitle(row.original, filterValue);
 		},
 
-		slots: {
-			before: (table) => {
-				const rows = table.getRowModel().rows;
-
-				const totalMerits = rows.length;
-				const totalTrees = rows.filter((x) => !x.original.noTreeReason).length;
-				const meritsSpent = rows
-					.map((x) => useTitleChain(x.original))
-					.flatMap((x) => range(10).map((i) => getMerit(x, i, chapter)))
-					.filter((merit) => merit?.chBought && merit.chBought <= chapter).length;
-				return (
-					<WrappedRow spacing={2}>
-						<Chip label={`Total Trees: ${totalTrees}`} />
-						<Chip label={`Merit Points Earned: ${totalMerits}`} />
-						<Chip label={`Merits Acquired: ${meritsSpent}`} />
-					</WrappedRow>
-				);
-			},
-		},
 		// todo: narrow layout
 		//narrowBreakpoint: "md",
 		//renderNarrowRow: ({ original }) => <TitleCard key={toIdString(original)} id={original} />,
 	});
+
+	const rows = table.getRowModel().rows;
+
+	const totalMerits = rows.length;
+	const totalTrees = rows.filter((x) => !x.original.noTreeReason).length;
+	const meritsSpent = rows
+		.map((x) => useTitleChain(x.original))
+		.flatMap((x) => range(10).map((i) => getMerit(x, i, chapter)))
+		.filter((merit) => merit?.chBought && merit.chBought <= chapter).length;
 
 	return (
 		<Stack>
@@ -66,6 +56,11 @@ export default function TreesOfMerit() {
 			<Typography variant="h4" color="error">
 				🚧 Under Construction. 1 tree is missing for 168-195. Other things could be wrong!
 			</Typography>
+			<WrappedRow spacing={2}>
+				<Chip label={`Total Trees: ${totalTrees}`} />
+				<Chip label={`Merit Points Earned: ${totalMerits}`} />
+				<Chip label={`Merits Acquired: ${meritsSpent}`} />
+			</WrappedRow>
 			<AppTable table={table} isLoading={isLoading} sx={{ overflowX: "scroll", ...columnstyles }} />
 		</Stack>
 	);
