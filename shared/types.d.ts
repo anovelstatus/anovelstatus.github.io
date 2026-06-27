@@ -264,6 +264,8 @@ declare type Title = TieredId & {
 	previous?: TieredId;
 	note: RichTextSpans;
 	merits: TitleMerit[];
+	treeOverride?: TieredId;
+	noTreeReason?: string;
 };
 
 declare type TitleMerit = {

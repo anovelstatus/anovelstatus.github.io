@@ -3,14 +3,17 @@ import { useBasicInfo } from "./api";
 import { useMemo } from "react";
 
 /** Get appropriate theme colors for given tier */
-export function useTheme(label: string): Theme {
+export function useTheme(labelOrNumber: string | number): Theme {
 	const { data } = useBasicInfo();
-	const tier = data.tiers.find((x) => label.startsWith(x.metalName) || label.startsWith(x.skillName));
 
 	return useMemo(() => {
+		const tier =
+			typeof labelOrNumber === "number"
+				? data.tiers[labelOrNumber]
+				: data.tiers.find((x) => labelOrNumber.startsWith(x.metalName) || labelOrNumber.startsWith(x.skillName));
 		if (!tier) return createTierTheme("#434343", "#0cf");
 		return createTierTheme(tier.bgColor, tier.fgColor);
-	}, [label, data]);
+	}, [labelOrNumber, data]);
 }
 
 function createTierTheme(primary: string, text: string = "#000"): Theme {

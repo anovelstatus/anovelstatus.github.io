@@ -1,6 +1,13 @@
-import { Stack, Typography, type SxProps, type Theme } from "@mui/material";
+import { Box, Stack, Typography, type SxProps, type Theme } from "@mui/material";
 import { ChaptersChip, RarityChip } from "@/components/chips";
-import { createColumnHelper, type ColumnDef } from "@tanstack/react-table";
+import {
+	createColumnHelper,
+	type Cell,
+	type ColumnDef,
+	type Header,
+	type Row,
+	type Table,
+} from "@tanstack/react-table";
 import { createCollapsedTierColumn } from "@/components/AppTable/columns";
 import { useChapter, useMetalTiers, useTitles } from "@/data/api";
 import { RichTextSpan } from "@/components/RichTextSpan";
@@ -8,6 +15,7 @@ import { WrappedRow } from "@/components/WrappedRow";
 import { useMemo } from "react";
 import { getPreviousTitleChain } from "../helpers";
 import { maxBy } from "es-toolkit";
+import { useTheme } from "@/data/useTheme";
 
 export const columnstyles: SxProps<Theme> = {
 	".bought": {
@@ -18,7 +26,9 @@ export const columnstyles: SxProps<Theme> = {
 		color: "#666",
 	},
 	".MuiTable-root": {
+		// Title + Tier + 10xTiers
 		width: 150 + 100 + 200 * 10 + "px",
+		minWidth: "100%",
 	},
 };
 
@@ -33,29 +43,48 @@ export const useColumns = () => {
 			size: 150,
 			enableSorting: true,
 			cell: ({ row }) => (
-				<WrappedRow sx={{ paddingLeft: `${row.depth}rem` }}>
-					<Typography variant="subtitle1">{row.original.name}</Typography>
-					<RarityChip name={row.original.tier} />
-				</WrappedRow>
+				<Stack>
+					<WrappedRow sx={{ paddingLeft: `${row.depth}rem` }}>
+						<Typography variant="subtitle1">{row.original.name}</Typography>
+						<RarityChip name={row.original.tier} />
+					</WrappedRow>
+					<RichTextSpan data={row.original.noTreeReason} />
+				</Stack>
 			),
 			meta: {
-				bodyColSpan: 2,
+				bodyColSpan: (row) => {
+					if (row.original.noTreeReason) return 12;
+					return 2;
+				},
 			},
 		},
 		createCollapsedTierColumn<Title>(metalTiers),
 	] as ColumnDef<Title>[];
 
 	for (let i = 0; i < 10; i++) {
+		const columnTierNumber = Math.max(0, i - 2);
+		const columnTier = metalTiers[columnTierNumber]!;
+		const tierTheme = useTheme(columnTierNumber);
 		columns.push(
 			columnHelper.display({
 				id: "tier-" + i,
-				header: "Tier " + i,
+				header: (_context) => (
+					<Stack>
+						<Box>Tier {i}</Box>
+						<Box sx={{ fontSize: "0.95em" }}>Requires {columnTier} Title</Box>
+					</Stack>
+				),
 				size: 200,
 				cell: ({ row }) => {
 					const chain = useTitleChain(row.original);
 					const merit = getMerit(chain, i, chapter);
 					// todo: Locked until title is Tier XYZ
-					if (!merit) return "?";
+					if (!merit) {
+						const isFirstLockedCell = getIsFirstLockedCell(row, metalTiers, columnTierNumber);
+						if (isFirstLockedCell && getMerit(chain, i - 1, chapter)?.chBought)
+							return `LOCKED. Requires ${columnTier} Title.`;
+						return "?";
+					}
 
 					return (
 						<Stack>
@@ -65,16 +94,49 @@ export const useColumns = () => {
 					);
 				},
 				meta: {
+					bodyColSpan: (row) => {
+						return row.original.noTreeReason ? 0 : 1;
+					},
 					bodyClassName: (cell): string => {
 						const chain = useTitleChain(cell.row.original);
 						const merit = getMerit(chain, i, chapter);
-						if (!merit) return "unknown";
+						if (!merit) {
+							const isFirstLockedCell = getIsFirstLockedCell(cell.row, metalTiers, columnTierNumber);
+							if (isFirstLockedCell && getMerit(chain, i - 1, chapter)?.chBought) return "";
+							return "unknown";
+						}
 						if (merit.chBought && merit.chBought <= chapter) {
 							return "bought";
 						}
 						return "";
 					},
-					headerSx: { textAlign: "center" },
+					bodySx: (cell: Cell<Title, unknown>, table: Table<Title>): SxProps => {
+						const style: SxProps = {
+							backgroundColor: tierTheme.palette.primary.dark,
+							//borderTopColor: tierTheme.palette.primary.main,
+							//borderBottomColor: tierTheme.palette.primary.main,
+						};
+						const isFirstLockedCell = getIsFirstLockedCell(cell.row, metalTiers, columnTierNumber);
+						if (isFirstLockedCell) {
+							style.borderLeftColor = "rgb(182, 0, 0)";
+							style.borderLeftWidth = 4;
+
+							const previousRow = getPreviousRow(cell.row, table);
+							if (previousRow && previousRow.original.tier !== cell.row.original.tier) {
+								style.borderTopColor = "rgb(182, 0, 0)";
+								style.borderTopWidth = 4;
+							}
+						}
+						return style;
+					},
+					headerSx: (_column: Header<Title, unknown>): SxProps => {
+						return {
+							backgroundColor: tierTheme.palette.primary.dark,
+							//borderTopColor: tierTheme.palette.primary.main,
+							borderBottomColor: tierTheme.palette.primary.main,
+							textAlign: "center",
+						};
+					},
 				},
 			}),
 		);
@@ -82,24 +144,32 @@ export const useColumns = () => {
 	return columns;
 };
 
-function useTitleChain(title: Title) {
+export function useTitleChain(title: Title) {
 	const { data: titles } = useTitles();
-	return useMemo(() => {
-		const chain = toChain(title, titles);
-		return chain;
-	}, [title, titles]);
+	return useMemo(() => toChain(title, titles), [title, titles]);
 }
 
-function toChain(title: Title, titles: Title[]) {
-	const previous = getPreviousTitleChain(titles, title);
+export function toChain(title: Title, titles: Title[]) {
+	const previous = getPreviousTitleChain(titles, title, true);
 	return [title, ...previous];
 }
 
-function getMerit(chain: Title[], meritTier: number, chapter: number): TitleMerit | undefined {
+export function getMerit(chain: Title[], meritTier: number, chapter: number): TitleMerit | undefined {
 	for (const title of chain) {
 		const titleMerits = (title.merits ?? []).filter((x) => x.tier === meritTier && x.chReveal <= chapter);
 		if (titleMerits.length === 0) continue;
 		return maxBy(titleMerits, (x) => x.chReveal);
 	}
 	return;
+}
+
+function getIsFirstLockedCell(row: Row<Title>, tiers: string[], columnTierNumber: number) {
+	const titleTier = tiers.indexOf(row.original.tier);
+	return titleTier + 1 == columnTierNumber;
+}
+
+function getPreviousRow<T>(row: Row<T>, table: Table<T>) {
+	const allRows = table.getRowModel().rows;
+	const index = allRows.findIndex((x) => x.id == row.id);
+	return allRows[index - 1];
 }

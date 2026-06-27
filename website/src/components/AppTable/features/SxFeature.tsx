@@ -5,9 +5,9 @@ import type { TableFeature, RowData, Cell, Column, Row, Table, Header } from "@t
 // define types for our new feature's table options
 interface ClassNameOptions<T> {
 	/** Styles to add to the table body cell */
-	bodySx?: SxProps | ((cell: Cell<T, unknown>) => SxProps);
+	bodySx?: SxProps | ((cell: Cell<T, unknown>, table: Table<T>) => SxProps);
 	/** Styles to add to the table header cell */
-	headerSx?: SxProps | ((header: Header<T, unknown>) => SxProps);
+	headerSx?: SxProps | ((header: Header<T, unknown>, table: Table<T>) => SxProps);
 }
 
 interface ClassNameCell {
@@ -28,21 +28,21 @@ export const SxFeature: TableFeature = {
 		cell: Cell<TData, unknown>,
 		column: Column<TData>,
 		_row: Row<TData>,
-		_table: Table<TData>,
+		table: Table<TData>,
 	): void => {
 		cell.getSx = () => {
 			const value = column.columnDef.meta?.bodySx;
 			if (typeof value === "object") return value;
-			if (typeof value === "function") return value(cell);
+			if (typeof value === "function") return value(cell, table);
 			return {};
 		};
 	},
 	// if you need to add header instance APIs...
-	createHeader: <TData extends RowData>(header: Header<TData, unknown>, _table: Table<TData>): void => {
+	createHeader: <TData extends RowData>(header: Header<TData, unknown>, table: Table<TData>): void => {
 		header.getSx = () => {
 			const value = header.column.columnDef.meta?.headerSx;
 			if (typeof value === "object") return value;
-			if (typeof value === "function") return value(header);
+			if (typeof value === "function") return value(header, table);
 			return {};
 		};
 	},

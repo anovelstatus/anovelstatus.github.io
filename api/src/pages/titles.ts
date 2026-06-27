@@ -14,6 +14,18 @@ export function getTitles(info: SpreadsheetInfo) {
 		{ key: "previous", source: { type: "exact", name: "Previous" }, parse: "tiered_id", optional: true },
 		{ key: "replaced", source: { type: "exact", name: "Chapter Replaced" }, parse: "number", optional: true },
 		{
+			key: "treeOverride",
+			source: { type: "contains", contains: "Title Override" },
+			parse: "tiered_id",
+			optional: true,
+		},
+		{
+			key: "noTreeReason",
+			source: { type: "exact", name: "Reason for no Merit Tree" },
+			parse: "rich",
+			optional: true,
+		},
+		{
 			key: "merits",
 			parse: ({ rowSoFar }) =>
 				merits
