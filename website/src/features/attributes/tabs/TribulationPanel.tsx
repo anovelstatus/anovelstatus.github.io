@@ -47,8 +47,9 @@ export function TribulationPanel() {
 	return (
 		<Stack spacing={2}>
 			<Typography variant="body2" component="div">
-				This displays a calculated status for <ChaptersChip chapters={[chapter]} /> based on total skill levels and
-				title boosts. Then you can add any hypothetical gains to see if Priam would reach new Tribulation thresholds.
+				This displays the latest official status from <ChaptersChip chapters={officialStatus!.chapter} /> and a
+				calculated status for <ChaptersChip chapters={[chapter]} /> based on total skill levels and title boosts. Then
+				you can add any hypothetical gains to see if Priam would reach new Tribulation thresholds.
 			</Typography>
 			<Typography variant="body2" component="div" sx={{ fontStyle: "italic" }}>
 				Title boosts will be added for you. Just add what is gained directly from a skill level or other source.
