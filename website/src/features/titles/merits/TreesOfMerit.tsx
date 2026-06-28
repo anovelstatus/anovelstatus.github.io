@@ -58,7 +58,7 @@ export default function TreesOfMerit() {
 				<Chip label={`Merit Points Earned: ${totalMerits}`} />
 				<Chip label={`Merits Acquired: ${meritsSpent}`} />
 			</WrappedRow>
-			<AppTable table={table} isLoading={isLoading} sx={{ overflowX: "scroll", ...columnstyles }} />
+			<AppTable table={table} isLoading={isLoading} sx={{ overflowX: "auto", ...columnstyles }} />
 		</Stack>
 	);
 }
