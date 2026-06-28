@@ -23,3 +23,10 @@ function createTierTheme(primary: string, text: string = "#000"): Theme {
 		},
 	});
 }
+
+export function useTierThemes() {
+	const { data } = useBasicInfo();
+	return useMemo(() => {
+		return data.tiers.map((tier) => createTierTheme(tier.bgColor, tier.fgColor));
+	}, [data]);
+}

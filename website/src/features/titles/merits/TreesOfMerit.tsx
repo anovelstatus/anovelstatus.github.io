@@ -2,25 +2,28 @@ import { Chip, Stack, Typography } from "@mui/material";
 import { useChapter, useMetalTiers, useTitles } from "@/data/api";
 import { LoreSection } from "@/components/LoreSection";
 import AppTable, { useAppTable } from "@/components/AppTable";
-import { toIdString } from "@/data/helpers";
-import { columnstyles, getColumns } from "./columns";
+import { getTierRank, toIdString } from "@/data/helpers";
+import { columnstyles, useColumns } from "./columns";
 import { useMemo } from "react";
 import { WrappedRow } from "@/components/WrappedRow";
 import { getMeritTrees, getTreeForChapter, type TableTree } from "./helpers";
-import { range } from "es-toolkit";
-import { useTheme } from "@/data/useTheme";
+import { orderBy, range } from "es-toolkit";
 
 export default function TreesOfMerit() {
 	const chapter = useChapter();
 	const { data: titles, isLoading } = useTitles();
 	const tiers = useMetalTiers();
-	const themes = range(10).map((x) => useTheme(x));
 
+	const trees = useMemo(() => {
+		console.log("creating trees");
+		return getMeritTrees(titles, tiers);
+	}, [titles, tiers]);
 	const data = useMemo(() => {
-		const trees = getMeritTrees(titles, tiers);
-		return trees.map((x) => getTreeForChapter(x, chapter)).filter((x) => x) as TableTree[];
-	}, [titles, tiers, chapter]);
-	const columns = useMemo(() => getColumns(tiers, themes), [tiers, themes]);
+		console.log("creating data");
+		const data = trees.map((x) => getTreeForChapter(x, chapter)).filter((x) => x) as TableTree[];
+		return orderBy(data, [(x) => getTierRank(tiers, x.title.tier), (x) => x.title.name], ["desc", "asc"]);
+	}, [trees, chapter]);
+	const columns = useColumns();
 
 	const table = useAppTable<TableTree>({
 		data,

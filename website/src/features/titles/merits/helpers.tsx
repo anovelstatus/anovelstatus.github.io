@@ -16,7 +16,9 @@ export function getTitleForChapter(tree: MeritTree, chapter: number): Title | un
 
 export function getMeritForChapter(tree: MeritTree, tier: number, chapter: number): TitleMerit | undefined {
 	const meritHistory = tree.merits[tier];
-	return meritHistory?.find((x) => x.chReveal <= chapter);
+	const merit = meritHistory?.find((x) => x.chReveal <= chapter);
+	if (!merit?.chBought || merit.chBought <= chapter) return merit;
+	return { ...merit, chBought: undefined };
 }
 
 export function getMeritTrees(titles: Title[], tiers: string[]): MeritTree[] {
