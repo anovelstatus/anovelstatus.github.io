@@ -1,6 +1,6 @@
 import { Box, Stack, Typography, type SxProps, type Theme } from "@mui/material";
 import { ChaptersChip, RarityChip } from "@/components/chips";
-import { createColumnHelper, type ColumnDef, type Row, type Table } from "@tanstack/react-table";
+import { createColumnHelper, type ColumnDef, type ColumnHelper, type Row, type Table } from "@tanstack/react-table";
 import { RichTextSpan } from "@/components/RichTextSpan";
 import { WrappedRow } from "@/components/WrappedRow";
 import { type MeritFilterOptions, type TableTree } from "./helpers";
@@ -47,9 +47,9 @@ export function useStyles(): SxProps<Theme> {
 	return styles;
 }
 
-export function getColumns(tiers: string[]) {
+export function getColumns(tiers: string[]): ColumnDef<TableTree>[] {
 	const columnHelper = createColumnHelper<TableTree>();
-	const columns: ColumnDef<TableTree>[] = [
+	return [
 		columnHelper.display({
 			id: "title",
 			header: "Title",
@@ -57,14 +57,13 @@ export function getColumns(tiers: string[]) {
 			enableSorting: true,
 			sortingFn: (a, b) => tierSortComparator(tiers, a.original.tier, b.original.tier),
 			cell: ({ row }) => {
-				const title = row.original;
 				return (
 					<Stack>
-						<WrappedRow sx={{ paddingLeft: `${row.depth}rem` }}>
-							<Typography variant="subtitle1">{title.name}</Typography>
-							<RarityChip name={title.tier} />
+						<WrappedRow>
+							<Typography variant="subtitle1">{row.original.name}</Typography>
+							<RarityChip name={row.original.tier} />
 						</WrappedRow>
-						<RichTextSpan data={title.noTreeReason} />
+						<RichTextSpan data={row.original.noTreeReason} />
 					</Stack>
 				);
 			},
@@ -75,72 +74,70 @@ export function getColumns(tiers: string[]) {
 				},
 			},
 		}),
+		...tiers.map((_, index, tiers) => createTierColumn(columnHelper, index, tiers)),
 	];
+}
 
-	for (let i = 0; i < tiers.length; i++) {
-		const columnTierNumber = Math.max(0, i - 2);
-		const columnTier = tiers[columnTierNumber]!;
-		columns.push(
-			columnHelper.display({
-				id: "tier-" + i,
-				header: (_context) => (
-					<Stack>
-						<Box>Tier {i}</Box>
-						<Box sx={{ fontSize: "0.95em" }}>Requires {columnTier} Title</Box>
-					</Stack>
-				),
-				size: 200,
-				cell: ({ row }) => {
-					const merit = row.original.merits[i];
-					if (!merit) {
-						const isFirstLockedCell = getIsFirstLockedCell(row, tiers, columnTierNumber);
-						if (isFirstLockedCell && row.original.merits[i - 1]?.chBought)
-							return `LOCKED. Requires ${columnTier} Title.`;
-						return "?";
-					}
+function createTierColumn(columnHelper: ColumnHelper<TableTree>, i: number, tiers: string[]): ColumnDef<TableTree> {
+	const columnTierNumber = Math.max(0, i - 2);
+	const columnTier = tiers[columnTierNumber]!;
+	return columnHelper.display({
+		id: "tier-" + i,
+		header: (_context) => (
+			<Stack>
+				<Box>Tier {i}</Box>
+				<Box sx={{ fontSize: "0.95em" }}>Requires {columnTier} Title</Box>
+			</Stack>
+		),
+		size: 200,
+		cell: ({ row }) => {
+			const merit = row.original.merits[i];
+			if (!merit) {
+				const isFirstLockedCell = getIsFirstLockedCell(row, tiers, columnTierNumber);
+				if (isFirstLockedCell && row.original.merits[i - 1]?.chBought) return `LOCKED. Requires ${columnTier} Title.`;
+				return "?";
+			}
 
-					return (
-						<Stack>
-							<RichTextSpan data={merit.text} />
-							{merit.chBought && <ChaptersChip chapters={merit.chBought} />}
-						</Stack>
-					);
-				},
-				meta: {
-					bodyColSpan: (row) => {
-						return row.original.noTreeReason ? 0 : 1;
-					},
-					bodyClassName: (cell, table): string => {
-						const classes: string[] = ["tier-" + columnTierNumber];
-						const merit = cell.row.original.merits[i];
-						if (!merit) {
-							const isFirstLockedCell = getIsFirstLockedCell(cell.row, tiers, columnTierNumber);
-							if (isFirstLockedCell) {
-								classes.push("red-border-left");
-								const title = cell.row.original;
-								const previousRow = getPreviousRow(cell.row, table);
-								if (previousRow) {
-									const previousTitle = previousRow.original;
-									if (previousTitle.tier !== title.tier) {
-										classes.push("red-border-top");
-									}
-								}
+			return (
+				<Stack>
+					<RichTextSpan data={merit.text} />
+					{merit.chBought && <ChaptersChip chapters={merit.chBought} />}
+				</Stack>
+			);
+		},
+		meta: {
+			bodyColSpan: (row) => {
+				return row.original.noTreeReason ? 0 : 1;
+			},
+			headerClassName: () => "tier-" + columnTierNumber,
+			bodyClassName: (cell, table): string => {
+				const classes: string[] = ["tier-" + columnTierNumber];
+				const merit = cell.row.original.merits[i];
+				if (!merit) {
+					const isFirstLockedCell = getIsFirstLockedCell(cell.row, tiers, columnTierNumber);
+					if (isFirstLockedCell) {
+						classes.push("red-border-left");
+						const title = cell.row.original;
+						const previousRow = getPreviousRow(cell.row, table);
+						if (previousRow) {
+							const previousTitle = previousRow.original;
+							if (previousTitle.tier !== title.tier) {
+								classes.push("red-border-top");
 							}
-							if (isFirstLockedCell && cell.row.original.merits[i - 1]?.chBought) return "";
-							else classes.push("unknown");
 						}
-						// todo: kinda terrible
-						else if (merit.chBought) {
-							classes.push("bought");
-						}
-						return classes.join(" ");
-					},
-					headerClassName: () => "tier-" + columnTierNumber,
-				},
-			}),
-		);
-	}
-	return columns;
+					}
+					if (isFirstLockedCell && cell.row.original.merits[i - 1]?.chBought) return "";
+					else classes.push("unknown");
+				}
+
+				// todo: kinda terrible
+				else if (merit.chBought) {
+					classes.push("bought");
+				}
+				return classes.join(" ");
+			},
+		},
+	});
 }
 
 function getIsFirstLockedCell(row: Row<TableTree>, tiers: string[], columnTierNumber: number) {
