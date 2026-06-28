@@ -28,29 +28,25 @@ import { HoverTitleFeature } from "./features/HoverTitleFeature";
 import type { PropsWithStyle } from "@/types";
 import { HideHeaderFeature } from "./features/HideHeaderFeature";
 
+const features = [NarrowFeature, ColSpanFeature, ClassNameFeature, HoverTitleFeature, HideHeaderFeature, SxFeature];
+
 type TableProps<T> = {
 	table: Table<T>;
 	isLoading?: boolean;
 	size?: "small" | "medium";
 } & PropsWithStyle;
 
-export function useAppTable<T>(options: Partial<TableOptions<T>>) {
-	const features = [
-		NarrowFeature,
-		ColSpanFeature,
-		ClassNameFeature,
-		HoverTitleFeature,
-		HideHeaderFeature,
-		SxFeature,
-		...(options._features ?? []),
-	];
+/** Options for Table, with only data and columns being required since others have defaults */
+type PartialTableOptions<T> = Omit<Partial<TableOptions<T>> & Pick<TableOptions<T>, "data" | "columns">, "_features">;
+
+export function useAppTable<T>(options: PartialTableOptions<T>) {
 	return useReactTable({
 		debugTable: true,
 		getCoreRowModel: getCoreRowModel(),
 		getSortedRowModel: getSortedRowModel(),
 		...options,
 		_features: features,
-	} as TableOptions<T>);
+	});
 }
 
 export default function AppTable<T>({ sx, table, isLoading, size = "medium" }: TableProps<T>): ReactElement {
