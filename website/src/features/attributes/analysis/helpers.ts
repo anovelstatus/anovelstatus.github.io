@@ -1,6 +1,6 @@
 import { formatNumber } from "@/data/helpers";
 import type { AttributeAnalysis, AttributeAnalysisRow } from "./types";
-import { useSkills, useAttributes, useStatuses } from "@/data/api";
+import { useSkills, useAttributes, useStatuses, useLatestChapter } from "@/data/api";
 import { useMemo } from "react";
 import { calculateBaseAttributeValue, getCurrentBoost } from "..";
 import { orderBy } from "es-toolkit";
@@ -20,6 +20,7 @@ export function useAttributeAnalysis(): AttributeAnalysisRow[] {
 	const { data: skills, isLoading: isLoadingSkills } = useSkills();
 	const { data: attributes, isLoading: isLoadingAttributes } = useAttributes();
 	const { data: statuses, isLoading: isLoadingStatuses } = useStatuses();
+	const maxChapter = useLatestChapter();
 
 	return useMemo(() => {
 		if (isLoadingAttributes || isLoadingStatuses || isLoadingSkills) {
@@ -28,9 +29,9 @@ export function useAttributeAnalysis(): AttributeAnalysisRow[] {
 		const data: AttributeAnalysisRow[] = [];
 		let previousStatus = statuses[0] as Required<OfficialStatus>;
 		let lastOfficialStatus = previousStatus;
-		for (let index = 0; index < statuses.length; index++) {
+		for (let index = 0; index < maxChapter; index++) {
 			const chapter = index + 1;
-			const status = statuses[index]!;
+			const status = statuses[index] || {};
 			if (status.attributes?.length) {
 				lastOfficialStatus = status as Required<OfficialStatus>;
 			}
