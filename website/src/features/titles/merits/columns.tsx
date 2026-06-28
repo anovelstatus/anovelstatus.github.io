@@ -5,10 +5,11 @@ import { RichTextSpan } from "@/components/RichTextSpan";
 import { WrappedRow } from "@/components/WrappedRow";
 import { type MeritFilterOptions, type TableTree } from "./helpers";
 import { tierSortComparator } from "@/components/AppTable/columns";
-import { useTierThemes } from "@/data/useTheme";
+import { useTheme } from "@/data/useTheme";
+
+const LIMIT = 10;
 
 export function useStyles(): SxProps<Theme> {
-	const tierThemes = useTierThemes();
 	const styles: SxProps<Theme> = {
 		".bought": {
 			backgroundColor: "#408d40",
@@ -22,7 +23,7 @@ export function useStyles(): SxProps<Theme> {
 		},
 		".MuiTable-root": {
 			// Title + 10xTiers
-			width: 250 + 200 * 10 + "px",
+			width: 250 + 200 * LIMIT + "px",
 			minWidth: "100%",
 		},
 		".red-border-left": {
@@ -34,8 +35,8 @@ export function useStyles(): SxProps<Theme> {
 			borderTopWidth: 4,
 		},
 	};
-	for (let i = 0; i < 9; i++) {
-		const tierTheme = tierThemes[i]!;
+	for (let i = 0; i < LIMIT; i++) {
+		const tierTheme = useTheme(i);
 		styles["th.tier-" + i] = {
 			backgroundColor: tierTheme.palette.primary.dark,
 			borderBottomColor: tierTheme.palette.primary.main,
@@ -74,7 +75,7 @@ export function getColumns(tiers: string[]): ColumnDef<TableTree>[] {
 				},
 			},
 		}),
-		...tiers.map((_, index, tiers) => createTierColumn(columnHelper, index, tiers)),
+		...tiers.slice(0, LIMIT).map((_, index, tiers) => createTierColumn(columnHelper, index, tiers)),
 	];
 }
 
