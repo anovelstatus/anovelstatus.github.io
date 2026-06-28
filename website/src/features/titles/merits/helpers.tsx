@@ -11,8 +11,8 @@ export function getMeritForChapter(tree: MeritTree, tier: number, chapter: numbe
 }
 
 export function getMeritTrees(titles: Title[], tiers: string[]): MeritTree[] {
+	console.log("getMeritTrees", tiers);
 	const chains = getTitleChains(titles, tiers);
-	console.log(chains);
 	const trees: MeritTree[] = [];
 
 	for (const chain of chains) {
@@ -24,8 +24,6 @@ export function getMeritTrees(titles: Title[], tiers: string[]): MeritTree[] {
 		const merits = range(10).map((x) => allMerits.filter((merit) => merit.tier === x));
 		trees.push({ titles: chain, merits });
 	}
-	console.log(trees);
-
 	return trees;
 }
 

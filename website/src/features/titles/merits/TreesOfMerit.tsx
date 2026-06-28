@@ -11,6 +11,10 @@ import { getMeritForChapter, getTitleForChapter, getMeritTrees } from "./helpers
 import { range } from "es-toolkit";
 import { useTheme } from "@/data/useTheme";
 
+type MeritTreeFilters = {
+	chapter: number;
+};
+
 export default function TreesOfMerit() {
 	const chapter = useChapter();
 	const { data: titles, isLoading } = useTitles();
@@ -18,7 +22,7 @@ export default function TreesOfMerit() {
 	const trees = useMemo(() => getMeritTrees(titles, tiers), [titles, tiers]);
 	const themes = range(10).map((x) => useTheme(x));
 	const columns = useMemo(() => getColumns(chapter, tiers, themes), [chapter, tiers, themes]);
-	const [filters, setFilters] = useState<FilterOptions>({ chapter });
+	const [filters, setFilters] = useState<MeritTreeFilters>({ chapter });
 	useEffect(() => {
 		setFilters((filters) => ({ ...filters, chapter: chapter }));
 	}, [chapter]);
@@ -34,8 +38,10 @@ export default function TreesOfMerit() {
 		state: { globalFilter: filters },
 
 		getFilteredRowModel: getFilteredRowModel(),
-		globalFilterFn: (row, _, filterValue: FilterOptions) => {
-			return showTree(row.original, filterValue);
+		globalFilterFn: (row, _, filterValue: MeritTreeFilters) => {
+			console.log(row.original);
+			console.log(getTitleForChapter(row.original, filterValue.chapter));
+			return getTitleForChapter(row.original, filterValue.chapter) !== undefined;
 		},
 
 		// todo: narrow layout
@@ -65,12 +71,4 @@ export default function TreesOfMerit() {
 			<AppTable table={table} isLoading={isLoading} sx={{ overflowX: "scroll", ...columnstyles }} />
 		</Stack>
 	);
-}
-
-type FilterOptions = {
-	chapter: number;
-};
-
-function showTree(x: MeritTree, { chapter }: FilterOptions): boolean {
-	return getTitleForChapter(x, chapter) !== undefined;
 }
