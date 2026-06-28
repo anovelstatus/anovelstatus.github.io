@@ -1,13 +1,29 @@
 import { getTierRank, sameId } from "@/data/helpers";
 import { orderBy, range } from "es-toolkit";
 
-export type TableTree = { title: Title; merits: (TitleMerit | undefined)[] };
+export type MeritFilterOptions = { chapter: number };
+export type TableTree = TieredId & {
+	chapterRange: [number, number];
+	noTreeReason?: string;
+	// 10 tiers of merits
+	merits: (TitleMerit | undefined)[];
+};
 
-export function getTreeForChapter(tree: MeritTree, chapter: number): TableTree | undefined {
+// todo: refactor to give each row a chapter range, then use global filter fn again
+export function getTableTrees(titles: Title[], tiers: string[]): TableTree[] {
+	const trees = getCombinedTrees(titles, tiers);
+	return trees.flatMap(splitTreeByChapter);
+}
+
+function splitTreeByChapter(fullTree: MeritTree): TableTree[] {
+	return [];
+}
+
+export function getTreeForChapter(tree: MeritTree, chapter: number) {
 	const title = getTitleForChapter(tree, chapter);
 	if (!title) return;
 	const merits = range(10).map((i) => getMeritForChapter(tree, i, chapter));
-	return { title, merits };
+	return { title, merits, chapterRange: [1, chapter] };
 }
 
 export function getTitleForChapter(tree: MeritTree, chapter: number): Title | undefined {
@@ -21,8 +37,7 @@ export function getMeritForChapter(tree: MeritTree, tier: number, chapter: numbe
 	return { ...merit, chBought: undefined };
 }
 
-export function getMeritTrees(titles: Title[], tiers: string[]): MeritTree[] {
-	console.log("getMeritTrees", tiers);
+export function getCombinedTrees(titles: Title[], tiers: string[]) {
 	const chains = getTitleChains(titles, tiers);
 	const trees: MeritTree[] = [];
 
