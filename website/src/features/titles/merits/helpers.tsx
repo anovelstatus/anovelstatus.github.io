@@ -1,6 +1,15 @@
 import { getTierRank, sameId } from "@/data/helpers";
 import { orderBy, range } from "es-toolkit";
 
+export type TableTree = { title: Title; merits: (TitleMerit | undefined)[] };
+
+export function getTreeForChapter(tree: MeritTree, chapter: number): TableTree | undefined {
+	const title = getTitleForChapter(tree, chapter);
+	if (!title) return;
+	const merits = range(10).map((i) => getMeritForChapter(tree, i, chapter));
+	return { title, merits };
+}
+
 export function getTitleForChapter(tree: MeritTree, chapter: number): Title | undefined {
 	return tree.titles.find((title) => title.chapter <= chapter);
 }

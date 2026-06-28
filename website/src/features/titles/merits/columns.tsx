@@ -3,7 +3,7 @@ import { ChaptersChip, RarityChip } from "@/components/chips";
 import { createColumnHelper, type ColumnDef, type Header, type Row, type Table } from "@tanstack/react-table";
 import { RichTextSpan } from "@/components/RichTextSpan";
 import { WrappedRow } from "@/components/WrappedRow";
-import { getMeritForChapter, getTitleForChapter } from "./helpers";
+import { type TableTree } from "./helpers";
 import { tierSortComparator } from "@/components/AppTable/columns";
 
 export const columnstyles: SxProps<Theme> = {
@@ -24,22 +24,17 @@ export const columnstyles: SxProps<Theme> = {
 	},
 };
 
-export const getColumns = (chapter: number, metalTiers: string[], themes: Theme[]) => {
-	const columnHelper = createColumnHelper<MeritTree>();
-	const columns = [
+export const getColumns = (metalTiers: string[], themes: Theme[]) => {
+	const columnHelper = createColumnHelper<TableTree>();
+	const columns: ColumnDef<TableTree>[] = [
 		columnHelper.display({
 			id: "title",
 			header: "Title",
 			size: 250,
 			enableSorting: true,
-			sortingFn: (a, b) => {
-				const aTitle = getTitleForChapter(a.original, chapter)!;
-				const bTitle = getTitleForChapter(b.original, chapter)!;
-				return tierSortComparator(metalTiers, aTitle.tier, bTitle.tier);
-			},
+			sortingFn: (a, b) => tierSortComparator(metalTiers, a.original.title.tier, b.original.title.tier),
 			cell: ({ row }) => {
-				const title = getTitleForChapter(row.original, chapter);
-				if (!title) return;
+				const title = row.original.title;
 				return (
 					<Stack>
 						<WrappedRow sx={{ paddingLeft: `${row.depth}rem` }}>
@@ -52,14 +47,12 @@ export const getColumns = (chapter: number, metalTiers: string[], themes: Theme[
 			},
 			meta: {
 				bodyColSpan: (row) => {
-					const title = getTitleForChapter(row.original, chapter);
-					if (!title) return 1;
-					if (title.noTreeReason) return 11;
+					if (row.original.title.noTreeReason) return 11;
 					return 1;
 				},
 			},
 		}),
-	] as ColumnDef<MeritTree>[];
+	];
 
 	for (let i = 0; i < 10; i++) {
 		const columnTierNumber = Math.max(0, i - 2);
@@ -76,10 +69,10 @@ export const getColumns = (chapter: number, metalTiers: string[], themes: Theme[
 				),
 				size: 200,
 				cell: ({ row }) => {
-					const merit = getMeritForChapter(row.original, i, chapter);
+					const merit = row.original.merits[i];
 					if (!merit) {
-						const isFirstLockedCell = getIsFirstLockedCell(row, metalTiers, columnTierNumber, chapter);
-						if (isFirstLockedCell && getMeritForChapter(row.original, i - 1, chapter)?.chBought)
+						const isFirstLockedCell = getIsFirstLockedCell(row, metalTiers, columnTierNumber);
+						if (isFirstLockedCell && row.original.merits[i - 1]?.chBought)
 							return `LOCKED. Requires ${columnTier} Title.`;
 						return "?";
 					}
@@ -93,34 +86,35 @@ export const getColumns = (chapter: number, metalTiers: string[], themes: Theme[
 				},
 				meta: {
 					bodyColSpan: (row) => {
-						return getTitleForChapter(row.original, chapter)?.noTreeReason ? 0 : 1;
+						return row.original.title?.noTreeReason ? 0 : 1;
 					},
 					bodyClassName: (cell): string => {
-						const merit = getMeritForChapter(cell.row.original, i, chapter);
+						const merit = cell.row.original.merits[i];
 						if (!merit) {
-							const isFirstLockedCell = getIsFirstLockedCell(cell.row, metalTiers, columnTierNumber, chapter);
-							if (isFirstLockedCell && getMeritForChapter(cell.row.original, i - 1, chapter)?.chBought) return "";
+							const isFirstLockedCell = getIsFirstLockedCell(cell.row, metalTiers, columnTierNumber);
+							if (isFirstLockedCell && cell.row.original.merits[i - 1]?.chBought) return "";
 							return "unknown";
 						}
-						if (merit.chBought && merit.chBought <= chapter) {
-							return "bought";
-						}
+						// todo: bring back
+						// if (merit.chBought && merit.chBought <= chapter) {
+						// 	return "bought";
+						// }
 						return "";
 					},
 					bodySx: (cell, table): SxProps => {
 						const style: SxProps = {
 							backgroundColor: tierTheme.palette.primary.dark,
 						};
-						const isFirstLockedCell = getIsFirstLockedCell(cell.row, metalTiers, columnTierNumber, chapter);
+						const isFirstLockedCell = getIsFirstLockedCell(cell.row, metalTiers, columnTierNumber);
 						if (isFirstLockedCell) {
 							style.borderLeftColor = "rgb(182, 0, 0)";
 							style.borderLeftWidth = 4;
 
-							const title = getTitleForChapter(cell.row.original, chapter);
+							const title = cell.row.original.title;
 							const previousRow = getPreviousRow(cell.row, table);
 							if (previousRow) {
-								const previousTitle = getTitleForChapter(previousRow.original, chapter);
-								if (previousTitle?.tier !== title?.tier) {
+								const previousTitle = previousRow.original.title;
+								if (previousTitle.tier !== title.tier) {
 									style.borderTopColor = "rgb(182, 0, 0)";
 									style.borderTopWidth = 4;
 								}
@@ -128,7 +122,7 @@ export const getColumns = (chapter: number, metalTiers: string[], themes: Theme[
 						}
 						return style;
 					},
-					headerSx: (_column: Header<MeritTree, unknown>): SxProps => {
+					headerSx: (_column: Header<TableTree, unknown>): SxProps => {
 						return {
 							backgroundColor: tierTheme.palette.primary.dark,
 							borderBottomColor: tierTheme.palette.primary.main,
@@ -141,10 +135,8 @@ export const getColumns = (chapter: number, metalTiers: string[], themes: Theme[
 	return columns;
 };
 
-function getIsFirstLockedCell(row: Row<MeritTree>, tiers: string[], columnTierNumber: number, chapter: number) {
-	const title = getTitleForChapter(row.original, chapter);
-	if (!title) return false;
-	const titleTier = tiers.indexOf(title!.tier);
+function getIsFirstLockedCell(row: Row<TableTree>, tiers: string[], columnTierNumber: number) {
+	const titleTier = tiers.indexOf(row.original.title.tier);
 	return titleTier + 1 == columnTierNumber;
 }
 
