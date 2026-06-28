@@ -1,6 +1,6 @@
 import { useQuery, type UseQueryResult } from "@tanstack/react-query";
 import { orderBy, range } from "es-toolkit";
-import { useContext } from "react";
+import { useContext, useMemo } from "react";
 import { ChapterContext } from "./ChapterContext";
 
 /** Make data not optional because we can guarantee a placeholder */
@@ -27,17 +27,17 @@ export function useLatestChapter() {
 
 export function useSkillTiers() {
 	const { data } = useBasicInfo();
-	return data.tiers.map((x) => x.skillName);
+	return useMemo(() => data.tiers.map((x) => x.skillName), [data]);
 }
 
 export function useMetalTiers() {
 	const { data } = useBasicInfo();
-	return data.tiers.map((x) => x.metalName);
+	return useMemo(() => data.tiers.map((x) => x.metalName), [data]);
 }
 
 export function useTimelineShortcuts(): LoadableData<Shortcut[]> {
 	const { data } = useBasicInfo();
-	return { data: data.shortcuts, isLoading: data.shortcuts.length == 0 };
+	return useMemo(() => ({ data: data.shortcuts, isLoading: data.shortcuts.length == 0 }), [data]);
 }
 
 export function useBasicInfo() {

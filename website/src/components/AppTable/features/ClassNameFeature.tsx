@@ -4,7 +4,7 @@ import type { TableFeature, RowData, Cell, Column, Row, Table, Header } from "@t
 // define types for our new feature's table options
 interface ClassNameOptions<T> {
 	/** ColSpan to use for header cell of column */
-	bodyClassName?: string | ((cell: Cell<T, unknown>) => string);
+	bodyClassName?: string | ((cell: Cell<T, unknown>, table: Table<T>) => string);
 	/** ColSpan to use for body cell of column */
 	headerClassName?: string | ((header: Header<T, unknown>) => string);
 }
@@ -27,12 +27,12 @@ export const ClassNameFeature: TableFeature = {
 		cell: Cell<TData, unknown>,
 		column: Column<TData>,
 		_row: Row<TData>,
-		_table: Table<TData>,
+		table: Table<TData>,
 	): void => {
 		cell.getClassName = () => {
 			const value = column.columnDef.meta?.bodyClassName;
 			if (typeof value === "string") return value;
-			if (typeof value === "function") return value(cell);
+			if (typeof value === "function") return value(cell, table);
 			return "";
 		};
 	},
