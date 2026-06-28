@@ -32,12 +32,11 @@ export const getColumns = (chapter: number, metalTiers: string[], themes: Theme[
 			header: "Title",
 			size: 250,
 			enableSorting: true,
-			sortingFn: (a, b) =>
-				tierSortComparator(
-					metalTiers,
-					getTitleForChapter(a.original, chapter)!.tier,
-					getTitleForChapter(b.original, chapter)!.tier,
-				),
+			sortingFn: (a, b) => {
+				const aTitle = getTitleForChapter(a.original, chapter)!;
+				const bTitle = getTitleForChapter(b.original, chapter)!;
+				return tierSortComparator(metalTiers, aTitle.tier, bTitle.tier);
+			},
 			cell: ({ row }) => {
 				const title = getTitleForChapter(row.original, chapter);
 				if (!title) return;
