@@ -9,7 +9,6 @@ import {
 	rowExpandingFeature,
 	columnVisibilityFeature,
 	columnFilteringFeature,
-	filterFns,
 	createFilteredRowModel,
 	createExpandedRowModel,
 } from "@tanstack/react-table";
@@ -24,7 +23,6 @@ export const features = tableFeatures({
 	columnFilteringFeature,
 	globalFilteringFeature,
 	filteredRowModel: createFilteredRowModel(),
-	filterFns, // todo: individual fns
 
 	// Sorting
 	rowSortingFeature,
