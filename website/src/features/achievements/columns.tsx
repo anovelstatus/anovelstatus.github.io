@@ -1,17 +1,20 @@
 import { createCollapsedChapterColumn, createCollapsedTierColumn } from "@/components/AppTable/columns";
+import { type AppTableFeatures } from "@/components/AppTable";
 import { ChaptersChip, RarityChip } from "@/components/chips";
 import { RichTextSpan } from "@/components/RichTextSpan";
 import { useMetalTiers } from "@/data/api";
 import { Typography, Stack } from "@mui/material";
 import { createColumnHelper, type ColumnDef } from "@tanstack/react-table";
 
-export const useColumns = () => {
+export const useColumns = (): ColumnDef<AppTableFeatures, Achievement>[] => {
 	const tiers = useMetalTiers();
-	return [
-		createColumnHelper<Achievement>().accessor("description", {
+	const columnHelper = createColumnHelper<AppTableFeatures, Achievement>();
+	return columnHelper.columns([
+		columnHelper.accessor("description", {
 			header: "Description",
 			size: 300,
 			enableSorting: false,
+			spanColumns: 3,
 			cell: ({ row }) => (
 				<Stack>
 					<RichTextSpan data={row.original.description} />
@@ -21,15 +24,13 @@ export const useColumns = () => {
 					</Stack>
 				</Stack>
 			),
-			meta: {
-				bodyColSpan: 3,
-			},
 		}),
-		createCollapsedChapterColumn<Achievement>((row) => row.chapter),
-		createCollapsedTierColumn<Achievement>(tiers),
-		createColumnHelper<Achievement>().display({
+		createCollapsedChapterColumn(columnHelper, (row) => row.chapter),
+		createCollapsedTierColumn(columnHelper, tiers),
+		columnHelper.display({
 			header: "Message",
 			size: 300,
+			spanColumns: 0,
 			cell: ({ row }) => (
 				<Stack>
 					<RichTextSpan data={row.original.message} />
@@ -39,17 +40,19 @@ export const useColumns = () => {
 				</Stack>
 			),
 		}),
-		createColumnHelper<Achievement>().accessor("rewards", {
+		columnHelper.accessor("rewards", {
 			header: "Rewards",
 			size: 300,
 			enableSorting: false,
+			spanColumns: 0,
 			cell: ({ row }) => <RichTextSpan data={row.original.rewards} />,
 		}),
-		createColumnHelper<Achievement>().accessor("note", {
+		columnHelper.accessor("note", {
 			header: "Other Notes",
 			size: 300,
 			enableSorting: false,
+			spanColumns: 0,
 			cell: ({ row }) => <RichTextSpan data={row.original.note} />,
 		}),
-	] as ColumnDef<Achievement>[];
+	]);
 };

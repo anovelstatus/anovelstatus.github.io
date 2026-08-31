@@ -11,45 +11,36 @@ import {
 	useMediaQuery,
 } from "@mui/material";
 import { type ReactElement } from "react";
-import {
-	getCoreRowModel,
-	getSortedRowModel,
-	useReactTable,
-	type Table,
-	type TableOptions,
-} from "@tanstack/react-table";
-import { ColSpanFeature } from "./features/ColSpanFeature";
-import { NarrowFeature } from "./features/NarrowFeature";
+import { useTable, type ReactTable, type RowData, type Table, type TableOptions } from "@tanstack/react-table";
 import HeaderCell from "./components/HeaderCell";
 import BodyCell from "./components/BodyCell";
-import { ClassNameFeature } from "./features/ClassNameFeature";
-import { SxFeature } from "./features/SxFeature";
-import { HoverTitleFeature } from "./features/HoverTitleFeature";
 import type { PropsWithStyle } from "@/types";
-import { HideHeaderFeature } from "./features/HideHeaderFeature";
+import { features, type AppTableFeatures } from "./features";
+export { type AppTableFeatures } from "./features";
 
-const features = [NarrowFeature, ColSpanFeature, ClassNameFeature, HoverTitleFeature, HideHeaderFeature, SxFeature];
-
-type TableProps<T> = {
-	table: Table<T>;
+type TableProps<T extends RowData> = {
+	table: Table<AppTableFeatures, T>;
 	isLoading?: boolean;
 	size?: "small" | "medium";
 } & PropsWithStyle;
 
-/** Options for Table, with only data and columns being required since others have defaults */
-type PartialTableOptions<T> = Omit<Partial<TableOptions<T>> & Pick<TableOptions<T>, "data" | "columns">, "_features">;
-
-export function useAppTable<T>(options: PartialTableOptions<T>) {
-	return useReactTable({
-		debugTable: true,
-		getCoreRowModel: getCoreRowModel(),
-		getSortedRowModel: getSortedRowModel(),
+// type PartialTableOptions<T> = Omit<Partial<TableOptions<T>> & Pick<TableOptions<T>, "data" | "columns">, "_features">;
+// todo: switch to tableOptions helper or createTableHook to provide a base but require columns + data?
+export function useAppTable<T extends RowData>(
+	options: Partial<TableOptions<AppTableFeatures, T>>,
+): ReactTable<AppTableFeatures, T> {
+	return useTable({
 		...options,
-		_features: features,
-	});
+		features: features,
+	} as TableOptions<AppTableFeatures, T>);
 }
 
-export default function AppTable<T>({ sx, table, isLoading, size = "medium" }: TableProps<T>): ReactElement {
+export default function AppTable<T extends RowData>({
+	sx,
+	table,
+	isLoading,
+	size = "medium",
+}: TableProps<T>): ReactElement {
 	const theme = useTheme();
 
 	const isNarrow = useMediaQuery(theme.breakpoints.down(table.getNarrowBreakpoint()));

@@ -1,14 +1,14 @@
 import { Chip, Stack, Typography } from "@mui/material";
 import { useChapter, useMetalTiers, useTitles } from "@/data/api";
 import { LoreSection } from "@/components/LoreSection";
-import AppTable, { useAppTable } from "@/components/AppTable";
+import AppTable, { useAppTable, type AppTableFeatures } from "@/components/AppTable";
 import { toIdString } from "@/data/helpers";
 import { getColumns, useStyles } from "./columns";
 import { useEffect, useMemo, useState } from "react";
 import { WrappedRow } from "@/components/WrappedRow";
 import { getTableTrees, type MeritFilterOptions, type TableTree } from "./helpers";
 import { range } from "es-toolkit";
-import { getFilteredRowModel, type Row } from "@tanstack/react-table";
+import { type Row } from "@tanstack/react-table";
 
 // $reactTemp1.getFilteredRowModel().rows.filter(x => $reactTemp1.getGlobalFilterFn()(x, undefined, $reactTemp1.getState().globalFilter))
 
@@ -50,7 +50,6 @@ export default function TreesOfMerit() {
 		initialState: { sorting: [{ id: "title", desc: true }] },
 
 		state: { globalFilter: filters },
-		getFilteredRowModel: getFilteredRowModel(),
 		globalFilterFn: (row, _, filterValue: MeritFilterOptions) => {
 			console.log("global filter");
 			const [start, end] = row.original.chapterRange;
@@ -81,7 +80,7 @@ export default function TreesOfMerit() {
 	);
 }
 
-function getTotals(rows: Row<TableTree>[], chapter: number) {
+function getTotals(rows: Row<AppTableFeatures, TableTree>[], chapter: number) {
 	const totalMerits = rows.length;
 	const totalTrees = totalMerits - rows.filter((x) => x.original.noTreeReason).length;
 	const meritsSpent = rows

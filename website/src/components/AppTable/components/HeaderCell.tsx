@@ -1,20 +1,19 @@
 import { useTheme, TableCell, TableSortLabel } from "@mui/material";
-import { flexRender, type Header } from "@tanstack/react-table";
+import { FlexRender, type Header, type RowData } from "@tanstack/react-table";
+import type { AppTableFeatures } from "../features";
 
-type HeaderCellProps<T> = {
-	header: Header<T, unknown>;
+type HeaderCellProps<T extends RowData> = {
+	header: Header<AppTableFeatures, T, unknown>;
 };
 
-export default function HeaderCell<T>({ header }: HeaderCellProps<T>) {
-	const { column, id, getContext } = header;
+export default function HeaderCell<T extends RowData>({ header }: HeaderCellProps<T>) {
+	const { column, id } = header;
 	const theme = useTheme();
 
 	const canSort = column.getCanSort();
 	const isSorted = column.getIsSorted();
 	const active = isSorted !== false;
 	const direction = isSorted || undefined;
-
-	const contents = flexRender(column.columnDef.header, getContext());
 
 	const size = column.getSize();
 
@@ -34,10 +33,10 @@ export default function HeaderCell<T>({ header }: HeaderCellProps<T>) {
 		>
 			{canSort ? (
 				<TableSortLabel active={active} direction={direction} onClick={column.getToggleSortingHandler()}>
-					{contents}
+					<FlexRender header={header} />
 				</TableSortLabel>
 			) : (
-				contents
+				<FlexRender header={header} />
 			)}
 		</TableCell>
 	);

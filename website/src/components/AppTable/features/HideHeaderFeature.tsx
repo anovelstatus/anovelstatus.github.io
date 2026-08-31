@@ -1,29 +1,36 @@
-/* eslint-disable @typescript-eslint/no-empty-object-type */
-import type { TableFeature, Table, RowData } from "@tanstack/react-table";
+import { type TableFeature, type RowData, type TableFeatures, assignTableAPIs } from "@tanstack/react-table";
 
-interface HideHeaderOptions {
+export interface TableOptions_HideHeader {
 	hideHeader?: boolean;
 }
 
-// Define types for our new feature's table APIs
-interface HideHeaderInstance {
+export interface Table_HideHeader {
 	getShowHeader: () => boolean;
 }
 
-// Use declaration merging to add our new feature APIs and state types to TanStack Table's existing types.
 declare module "@tanstack/react-table" {
-	interface TableOptionsResolved<TData extends RowData> extends HideHeaderOptions {}
-	interface Table<TData extends RowData> extends HideHeaderInstance {}
+	interface Plugins {
+		hideHeaderPlugin: TableFeature;
+	}
+	interface TableOptions_FeatureMap<TFeatures extends TableFeatures, TData extends RowData> {
+		hideHeaderPlugin: TableOptions_HideHeader;
+	}
+
+	interface Table_FeatureMap<TFeatures extends TableFeatures, TData extends RowData> {
+		hideHeaderPlugin: Table_HideHeader;
+	}
 }
 
 /** Adds ability to render something other than a table on narrow screens */
 export const HideHeaderFeature: TableFeature = {
-	getDefaultOptions: <TData extends RowData>(_table: Table<TData>): HideHeaderOptions => {
-		return { hideHeader: false } as HideHeaderOptions;
+	getDefaultTableOptions: (_table) => {
+		return { hideHeader: false };
 	},
-	createTable: <TData extends RowData>(table: Table<TData>): void => {
-		table.getShowHeader = () => {
-			return !table.options.hideHeader;
-		};
+	constructTableAPIs(table) {
+		assignTableAPIs("narrowPlugin", table, {
+			table_getShowHeader: {
+				fn: () => !(table.options as TableOptions_HideHeader).hideHeader,
+			},
+		});
 	},
 };
