@@ -1,8 +1,8 @@
-import { Box, Chip, Grid, Stack, Typography } from "@mui/material";
+import { Box, Chip, Grid, Stack, Typography, type SxProps } from "@mui/material";
 import { AttributeSummary } from "@/features/attributes";
 import { findByIds } from "@/data/helpers";
 import { ChaptersChip, IdealChip, RarityChip } from "@/components/chips";
-import { createColumnHelper, type Cell, type ColumnDef } from "@tanstack/react-table";
+import { createColumnHelper, type Cell } from "@tanstack/react-table";
 import { useChapter, useSkills, useSkillTiers } from "@/data/api";
 import { createCollapsedTierColumn } from "@/components/AppTable/columns";
 import SkillButton from "./SkillButton";
@@ -17,10 +17,8 @@ export const useColumns = () => {
 	const chapter = useChapter();
 	const columnHelper = createColumnHelper<AppTableFeatures, Skill>();
 
-	// todo: use columnHelper
-	return [
-		{
-			accessorKey: "name",
+	return columnHelper.columns([
+		columnHelper.accessor("name", {
 			header: "Skill",
 			size: 120,
 			enableSorting: true,
@@ -41,8 +39,9 @@ export const useColumns = () => {
 			},
 
 			spanColumns: 3,
-			// todo: use column helper to remove this type def
-			bodySx: (cell: Cell<AppTableFeatures, Skill>) => {
+			bodySx: (_cell: unknown): SxProps => {
+				// todo: fix typing
+				const cell = _cell as Cell<AppTableFeatures, Skill>;
 				const chapter = useChapter();
 				const row = cell.row.original;
 				const value = getLevelOnChapter(row, chapter);
@@ -56,19 +55,17 @@ export const useColumns = () => {
 					background: getProgressGradient(percent, "#333333"),
 				};
 			},
-		},
+		}),
 		createCollapsedTierColumn(columnHelper, skillTiers),
-		{
+		columnHelper.accessor((x) => getLevelOnChapter(x, chapter), {
 			id: "level",
-			accessorFn: (skill) => getLevelOnChapter(skill, chapter),
 			header: "Level",
 			size: 30,
 			enableSorting: true,
 			spanColumns: 0,
-			sortingFn: "basic",
-		},
-		{
-			accessorKey: "attributes",
+			sortFn: "basic",
+		}),
+		columnHelper.accessor("attributes", {
 			header: "Attributes",
 			size: 200,
 			enableSorting: false,
@@ -77,9 +74,8 @@ export const useColumns = () => {
 					<AttributeSummary gains={row.original.attributes} />
 				</Box>
 			),
-		},
-		{
-			accessorKey: "description",
+		}),
+		columnHelper.accessor("description", {
 			header: "Description",
 			enableSorting: false,
 			size: 1000,
@@ -103,9 +99,8 @@ export const useColumns = () => {
 					</Stack>
 				);
 			},
-		},
-		{
-			accessorKey: "gains",
+		}),
+		columnHelper.accessor("gains", {
 			header: "Levels Gained",
 			enableSorting: false,
 			cell: ({ row }) => {
@@ -123,6 +118,6 @@ export const useColumns = () => {
 					</Stack>
 				);
 			},
-		},
-	] as ColumnDef<AppTableFeatures, Skill>[];
+		}),
+	]);
 };

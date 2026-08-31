@@ -39,10 +39,10 @@ export const SxFeature: TableFeature = {
 	assignCellPrototype(prototype, table) {
 		assignPrototypeAPIs("sxPlugin", prototype, table, {
 			cell_getSx: {
-				fn: (cell) => {
+				fn: (cell: Cell<TableFeatures, RowData>) => {
 					const value = cell.column.columnDef.bodySx;
 					if (typeof value === "object") return value;
-					if (typeof value === "function") return value(cell, table);
+					if (typeof value === "function") return value(cell);
 					return {};
 				},
 			},
@@ -51,10 +51,10 @@ export const SxFeature: TableFeature = {
 	assignHeaderPrototype(prototype, table) {
 		assignPrototypeAPIs("sxPlugin", prototype, table, {
 			header_getSx: {
-				fn: (header) => {
+				fn: (header: Header<TableFeatures, RowData>) => {
 					const value = header.column.columnDef.headerSx;
 					if (typeof value === "object") return value;
-					if (typeof value === "function") return value(header, table);
+					if (typeof value === "function") return value(header);
 					return {};
 				},
 			},

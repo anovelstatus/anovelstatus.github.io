@@ -2,18 +2,17 @@ import {
 	type TableFeature,
 	type RowData,
 	type Cell,
-	type Table,
 	type TableFeatures,
 	assignPrototypeAPIs,
 	type CellData,
 } from "@tanstack/react-table";
 
-export interface ColumnDef_Title<TFeatures extends TableFeatures, TData extends RowData> {
+export interface ColumnDef_HoverTitle<TFeatures extends TableFeatures, TData extends RowData> {
 	/** Styles to add to the table body cell */
-	title?: (cell: Cell<TFeatures, TData>, table: Table<TFeatures, TData>) => string | undefined;
+	title?: (cell: Cell<TFeatures, TData>) => string | undefined;
 }
 
-export interface Cell_Title {
+export interface Cell_HoverTitle {
 	getTitle: () => string | undefined;
 }
 
@@ -22,18 +21,18 @@ declare module "@tanstack/react-table" {
 		titlePlugin: TableFeature;
 	}
 	interface Cell_FeatureMap {
-		titlePlugin: Cell_Title;
+		titlePlugin: Cell_HoverTitle;
 	}
 	interface ColumnDef_FeatureMap<TFeatures extends TableFeatures, TData extends RowData, TValue extends CellData> {
-		titlePlugin: ColumnDef_Title<TFeatures, TData>;
+		titlePlugin: ColumnDef_HoverTitle<TFeatures, TData>;
 	}
 }
 
 export const HoverTitleFeature: TableFeature = {
 	assignCellPrototype(prototype, table) {
-		assignPrototypeAPIs("sxPlugin", prototype, table, {
+		assignPrototypeAPIs("titlePlugin", prototype, table, {
 			cell_getTitle: {
-				fn: (cell) => {
+				fn: (cell: Cell<TableFeatures, RowData>) => {
 					const value = cell.column.columnDef.title;
 					if (typeof value === "function") return value(cell);
 					return "";

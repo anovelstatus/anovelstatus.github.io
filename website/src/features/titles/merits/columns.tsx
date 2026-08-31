@@ -1,13 +1,6 @@
 import { Box, Stack, Typography, type SxProps, type Theme } from "@mui/material";
 import { ChaptersChip, RarityChip } from "@/components/chips";
-import {
-	createColumnHelper,
-	type Cell,
-	type ColumnDef,
-	type Row,
-	type RowData,
-	type Table,
-} from "@tanstack/react-table";
+import { createColumnHelper, type Cell, type Row, type RowData, type Table } from "@tanstack/react-table";
 import { createCollapsedTierColumn } from "@/components/AppTable/columns";
 import { useChapter, useMetalTiers, useTitles } from "@/data/api";
 import { RichTextSpan } from "@/components/RichTextSpan";
@@ -37,7 +30,7 @@ export const useColumns = () => {
 	const columnHelper = createColumnHelper<AppTableFeatures, Title>();
 	const metalTiers = useMetalTiers();
 	const chapter = useChapter();
-	const columns = [
+	const columns = columnHelper.columns([
 		columnHelper.accessor("name", {
 			id: "name",
 			header: "Title",
@@ -58,7 +51,7 @@ export const useColumns = () => {
 			},
 		}),
 		createCollapsedTierColumn(columnHelper, metalTiers),
-	] as ColumnDef<AppTableFeatures, Title>[];
+	]);
 
 	for (let i = 0; i < 10; i++) {
 		const columnTierNumber = Math.max(0, i - 2);
@@ -108,21 +101,21 @@ export const useColumns = () => {
 					}
 					return "";
 				},
-				bodySx: (cell: unknown): SxProps => {
+				bodySx: (_cell: unknown): SxProps => {
 					// todo: figure out this type issue on cell
-					const realCell = cell as Cell<AppTableFeatures, Title>;
+					const cell = _cell as Cell<AppTableFeatures, Title>;
 					const style: SxProps = {
 						backgroundColor: tierTheme.palette.primary.dark,
 						//borderTopColor: tierTheme.palette.primary.main,
 						//borderBottomColor: tierTheme.palette.primary.main,
 					};
-					const isFirstLockedCell = getIsFirstLockedCell(realCell.row, metalTiers, columnTierNumber);
+					const isFirstLockedCell = getIsFirstLockedCell(cell.row, metalTiers, columnTierNumber);
 					if (isFirstLockedCell) {
 						style.borderLeftColor = "rgb(182, 0, 0)";
 						style.borderLeftWidth = 4;
 
-						const previousRow = getPreviousRow(realCell.row, realCell.table);
-						if (previousRow && previousRow.original.tier !== realCell.row.original.tier) {
+						const previousRow = getPreviousRow(cell.row, cell.table);
+						if (previousRow && previousRow.original.tier !== cell.row.original.tier) {
 							style.borderTopColor = "rgb(182, 0, 0)";
 							style.borderTopWidth = 4;
 						}

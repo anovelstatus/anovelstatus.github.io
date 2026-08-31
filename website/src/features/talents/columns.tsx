@@ -1,7 +1,7 @@
 import { Button, Stack, Typography, type SxProps, type Theme } from "@mui/material";
 import { SubdirectoryArrowRight, ExpandLess, ExpandMore } from "@mui/icons-material";
 import { ChaptersChip, RarityChip } from "@/components/chips";
-import { createColumnHelper, type ColumnDef } from "@tanstack/react-table";
+import { createColumnHelper } from "@tanstack/react-table";
 import { createCollapsedChapterColumn, createCollapsedTierColumn } from "@/components/AppTable/columns";
 import { useMetalTiers } from "@/data/api";
 import { RichTextSpan } from "@/components/RichTextSpan";
@@ -24,10 +24,8 @@ export const useColumns = () => {
 	const metalTiers = useMetalTiers();
 	const columnHelper = createColumnHelper<AppTableFeatures, Talent>();
 
-	// todo: use columnHelper
-	return [
-		{
-			accessorKey: "name",
+	return columnHelper.columns([
+		columnHelper.accessor("name", {
 			header: "Talent",
 			size: 150,
 			cell: ({ row }) => (
@@ -55,11 +53,10 @@ export const useColumns = () => {
 				return "";
 			},
 			bodySx: { verticalAlign: "top" },
-		},
+		}),
 		createCollapsedTierColumn(columnHelper, metalTiers),
 		createCollapsedChapterColumn(columnHelper, (x) => x.chapterGained),
-		{
-			accessorKey: "note",
+		columnHelper.accessor("note", {
 			header: "Description",
 			size: 800,
 			enableSorting: false,
@@ -69,6 +66,6 @@ export const useColumns = () => {
 				if (depth > 0) return `nested nested-${depth}`;
 				return "";
 			},
-		},
-	] as ColumnDef<AppTableFeatures, Talent>[];
+		}),
+	]);
 };

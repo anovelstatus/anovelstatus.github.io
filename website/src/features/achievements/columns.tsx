@@ -6,10 +6,10 @@ import { useMetalTiers } from "@/data/api";
 import { Typography, Stack } from "@mui/material";
 import { createColumnHelper, type ColumnDef } from "@tanstack/react-table";
 
-export const useColumns = () => {
+export const useColumns = (): ColumnDef<AppTableFeatures, Achievement>[] => {
 	const tiers = useMetalTiers();
 	const columnHelper = createColumnHelper<AppTableFeatures, Achievement>();
-	return [
+	return columnHelper.columns([
 		columnHelper.accessor("description", {
 			header: "Description",
 			size: 300,
@@ -54,5 +54,5 @@ export const useColumns = () => {
 			spanColumns: 0,
 			cell: ({ row }) => <RichTextSpan data={row.original.note} />,
 		}),
-	] as ColumnDef<AppTableFeatures, Achievement>[];
+	]);
 };

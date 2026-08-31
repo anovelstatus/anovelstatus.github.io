@@ -2,7 +2,6 @@ import {
 	type TableFeature,
 	type RowData,
 	type Cell,
-	type Table,
 	type Header,
 	type TableFeatures,
 	assignPrototypeAPIs,
@@ -11,9 +10,9 @@ import {
 
 export interface ColumnDef_ClassName<TFeatures extends TableFeatures, TData extends RowData> {
 	/** Styles to add to the table body cell */
-	bodyClassName?: string | ((cell: Cell<TFeatures, TData>, table: Table<TFeatures, TData>) => string);
+	bodyClassName?: string | ((cell: Cell<TFeatures, TData>) => string | undefined);
 	/** Styles to add to the table header cell */
-	headerClassName?: string | ((header: Header<TFeatures, TData>, table: Table<TFeatures, TData>) => string);
+	headerClassName?: string | ((header: Header<TFeatures, TData>) => string | undefined);
 }
 
 export interface CellHeader_ClassName {
@@ -39,10 +38,10 @@ export const ClassNameFeature: TableFeature = {
 	assignCellPrototype(prototype, table) {
 		assignPrototypeAPIs("sxPlugin", prototype, table, {
 			cell_getClassName: {
-				fn: (cell) => {
+				fn: (cell: Cell<TableFeatures, RowData>) => {
 					const value = cell.column.columnDef.bodyClassName;
 					if (typeof value === "string") return value;
-					if (typeof value === "function") return value(cell, table);
+					if (typeof value === "function") return value(cell);
 					return "";
 				},
 			},
@@ -51,10 +50,10 @@ export const ClassNameFeature: TableFeature = {
 	assignHeaderPrototype(prototype, table) {
 		assignPrototypeAPIs("sxPlugin", prototype, table, {
 			header_getClassName: {
-				fn: (header) => {
+				fn: (header: Header<TableFeatures, RowData>) => {
 					const value = header.column.columnDef.headerClassName;
 					if (typeof value === "string") return value;
-					if (typeof value === "function") return value(header, table);
+					if (typeof value === "function") return value(header);
 					return "";
 				},
 			},
