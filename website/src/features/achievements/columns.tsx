@@ -1,5 +1,5 @@
 import { createCollapsedChapterColumn, createCollapsedTierColumn } from "@/components/AppTable/columns";
-import { type TableFeatures } from "@/components/AppTable";
+import { type AppTableFeatures } from "@/components/AppTable";
 import { ChaptersChip, RarityChip } from "@/components/chips";
 import { RichTextSpan } from "@/components/RichTextSpan";
 import { useMetalTiers } from "@/data/api";
@@ -8,7 +8,7 @@ import { createColumnHelper, type ColumnDef } from "@tanstack/react-table";
 
 export const useColumns = () => {
 	const tiers = useMetalTiers();
-	const columnHelper = createColumnHelper<TableFeatures, Achievement>();
+	const columnHelper = createColumnHelper<AppTableFeatures, Achievement>();
 	return [
 		columnHelper.accessor("description", {
 			header: "Description",
@@ -54,5 +54,5 @@ export const useColumns = () => {
 			spanColumns: 0,
 			cell: ({ row }) => <RichTextSpan data={row.original.note} />,
 		}),
-	] as ColumnDef<TableFeatures, Achievement>[];
+	] as ColumnDef<AppTableFeatures, Achievement>[];
 };

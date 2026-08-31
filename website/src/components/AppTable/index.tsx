@@ -15,22 +15,22 @@ import { useTable, type ReactTable, type RowData, type Table, type TableOptions 
 import HeaderCell from "./components/HeaderCell";
 import BodyCell from "./components/BodyCell";
 import type { PropsWithStyle } from "@/types";
-import { features, type TableFeatures } from "./features";
-export { type TableFeatures as TableFeatures } from "./features";
+import { features, type AppTableFeatures } from "./features";
+export { type AppTableFeatures as AppTableFeatures } from "./features";
 
 type TableProps<T extends RowData> = {
-	table: Table<TableFeatures, T>;
+	table: Table<AppTableFeatures, T>;
 	isLoading?: boolean;
 	size?: "small" | "medium";
 } & PropsWithStyle;
 
 export function useAppTable<T extends RowData>(
-	options: Partial<TableOptions<TableFeatures, T>>,
-): ReactTable<TableFeatures, T> {
+	options: Partial<TableOptions<AppTableFeatures, T>>,
+): ReactTable<AppTableFeatures, T> {
 	return useTable({
 		...options,
 		features: features,
-	} as TableOptions<TableFeatures, T>);
+	} as TableOptions<AppTableFeatures, T>);
 }
 
 export default function AppTable<T extends RowData>({

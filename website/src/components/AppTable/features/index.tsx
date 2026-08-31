@@ -47,4 +47,4 @@ export const features = tableFeatures({
 	titlePlugin: HoverTitleFeature,
 	sxPlugin: SxFeature,
 });
-export type TableFeatures = typeof features;
+export type AppTableFeatures = typeof features;

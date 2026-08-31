@@ -1,4 +1,4 @@
-import AppTable, { useAppTable, type TableFeatures } from "@/components/AppTable";
+import AppTable, { useAppTable, type AppTableFeatures } from "@/components/AppTable";
 import { useAttributes, useChapter } from "@/data/api";
 import { Box, Grid, Stack, Typography } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
@@ -34,7 +34,7 @@ export function AnalysisPanel() {
 
 	const columns = useMemo(() => {
 		return [
-			createColumnHelper<TableFeatures, AttributeAnalysisRow>().accessor("chapter", {
+			createColumnHelper<AppTableFeatures, AttributeAnalysisRow>().accessor("chapter", {
 				header: "Chapter",
 				enableSorting: true,
 				bodySx: { textAlign: "center" },
@@ -42,7 +42,7 @@ export function AnalysisPanel() {
 				title: (cell) => cell.row.original.note,
 			}),
 			...attributes.map(createAttributeColumn),
-		] as ColumnDef<TableFeatures, AttributeAnalysisRow>[];
+		] as ColumnDef<AppTableFeatures, AttributeAnalysisRow>[];
 	}, [attributes]);
 
 	const tableData = useAttributeAnalysis();
@@ -82,7 +82,7 @@ export function AnalysisPanel() {
 }
 
 function createAttributeColumn(attribute: Attribute.Details) {
-	return createColumnHelper<TableFeatures, AttributeAnalysisRow>().display({
+	return createColumnHelper<AppTableFeatures, AttributeAnalysisRow>().display({
 		id: attribute.name,
 		header: attribute.name,
 		enableSorting: false,

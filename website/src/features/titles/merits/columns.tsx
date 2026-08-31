@@ -16,7 +16,7 @@ import { useMemo } from "react";
 import { getPreviousTitleChain } from "../helpers";
 import { maxBy } from "es-toolkit";
 import { useTheme } from "@/data/useTheme";
-import type { TableFeatures } from "@/components/AppTable";
+import type { AppTableFeatures } from "@/components/AppTable";
 
 export const columnstyles: SxProps<Theme> = {
 	".bought": {
@@ -34,7 +34,7 @@ export const columnstyles: SxProps<Theme> = {
 };
 
 export const useColumns = () => {
-	const columnHelper = createColumnHelper<TableFeatures, Title>();
+	const columnHelper = createColumnHelper<AppTableFeatures, Title>();
 	const metalTiers = useMetalTiers();
 	const chapter = useChapter();
 	const columns = [
@@ -58,7 +58,7 @@ export const useColumns = () => {
 			},
 		}),
 		createCollapsedTierColumn(columnHelper, metalTiers),
-	] as ColumnDef<TableFeatures, Title>[];
+	] as ColumnDef<AppTableFeatures, Title>[];
 
 	for (let i = 0; i < 10; i++) {
 		const columnTierNumber = Math.max(0, i - 2);
@@ -110,7 +110,7 @@ export const useColumns = () => {
 				},
 				bodySx: (cell: unknown): SxProps => {
 					// todo: figure out this type issue on cell
-					const realCell = cell as Cell<TableFeatures, Title>;
+					const realCell = cell as Cell<AppTableFeatures, Title>;
 					const style: SxProps = {
 						backgroundColor: tierTheme.palette.primary.dark,
 						//borderTopColor: tierTheme.palette.primary.main,
@@ -162,12 +162,12 @@ export function getMerit(chain: Title[], meritTier: number, chapter: number): Ti
 	return;
 }
 
-function getIsFirstLockedCell(row: Row<TableFeatures, Title>, tiers: string[], columnTierNumber: number) {
+function getIsFirstLockedCell(row: Row<AppTableFeatures, Title>, tiers: string[], columnTierNumber: number) {
 	const titleTier = tiers.indexOf(row.original.tier);
 	return titleTier + 1 == columnTierNumber;
 }
 
-function getPreviousRow<T extends RowData>(row: Row<TableFeatures, T>, table: Table<TableFeatures, T>) {
+function getPreviousRow<T extends RowData>(row: Row<AppTableFeatures, T>, table: Table<AppTableFeatures, T>) {
 	const allRows = table.getRowModel().rows;
 	const index = allRows.findIndex((x) => x.id == row.id);
 	return allRows[index - 1];

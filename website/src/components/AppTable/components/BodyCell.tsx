@@ -1,15 +1,13 @@
 import { useTheme, TableCell } from "@mui/material";
 import { FlexRender, type Cell, type RowData } from "@tanstack/react-table";
-import type { TableFeatures } from "../features";
+import type { AppTableFeatures } from "../features";
 
 type BodyCellProps<T extends RowData> = {
-	cell: Cell<TableFeatures, T, unknown>;
+	cell: Cell<AppTableFeatures, T, unknown>;
 };
 
 export default function BodyCell<T extends RowData>({ cell }: BodyCellProps<T>) {
 	const theme = useTheme();
-
-	const colSpan = cell.getColSpan();
 
 	if (cell.getIsCovered()) return null;
 
@@ -19,7 +17,7 @@ export default function BodyCell<T extends RowData>({ cell }: BodyCellProps<T>) 
 		<TableCell
 			valign="top"
 			variant="body"
-			colSpan={colSpan}
+			colSpan={cell.getColSpan()}
 			className={cell.getClassName()}
 			sx={{
 				borderWidth: 1,

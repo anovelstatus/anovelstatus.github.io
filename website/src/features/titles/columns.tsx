@@ -6,7 +6,7 @@ import { createCollapsedChapterColumn, createCollapsedTierColumn } from "@/compo
 import { useMetalTiers } from "@/data/api";
 import { RichTextSpan } from "@/components/RichTextSpan";
 import { WrappedRow } from "@/components/WrappedRow";
-import type { TableFeatures } from "@/components/AppTable";
+import type { AppTableFeatures } from "@/components/AppTable";
 
 export const columnstyles: SxProps<Theme> = {
 	".nested": {
@@ -16,7 +16,7 @@ export const columnstyles: SxProps<Theme> = {
 
 export const useColumns = () => {
 	const metalTiers = useMetalTiers();
-	const columnHelper = createColumnHelper<TableFeatures, Title>();
+	const columnHelper = createColumnHelper<AppTableFeatures, Title>();
 
 	// todo: use columnHelper
 	return [
@@ -62,5 +62,5 @@ export const useColumns = () => {
 				return;
 			},
 		},
-	] as ColumnDef<TableFeatures, Title>[];
+	] as ColumnDef<AppTableFeatures, Title>[];
 };

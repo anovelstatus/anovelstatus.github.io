@@ -1,10 +1,10 @@
 import { type ColumnDef, type ColumnHelper, type RowData } from "@tanstack/react-table";
-import type { TableFeatures } from "./features";
+import type { AppTableFeatures } from "./features";
 
 export function createCollapsedTierColumn<T extends HasTier & RowData>(
-	helper: ColumnHelper<TableFeatures, T>,
+	helper: ColumnHelper<AppTableFeatures, T>,
 	tiers: string[],
-): ColumnDef<TableFeatures, T, string> {
+): ColumnDef<AppTableFeatures, T, string> {
 	return helper.accessor((row) => row.tier, {
 		header: "Tier",
 		id: "tier",
@@ -15,9 +15,9 @@ export function createCollapsedTierColumn<T extends HasTier & RowData>(
 }
 
 export function createCollapsedChapterColumn<T extends RowData>(
-	helper: ColumnHelper<TableFeatures, T>,
+	helper: ColumnHelper<AppTableFeatures, T>,
 	accessor: (row: T) => number,
-): ColumnDef<TableFeatures, T, number> {
+): ColumnDef<AppTableFeatures, T, number> {
 	return helper.accessor(accessor, {
 		header: "Chapter",
 		id: "chapter",

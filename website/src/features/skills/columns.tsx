@@ -10,12 +10,12 @@ import { getLevelOnChapter, getMaxLevel, getProgressGradient } from "./helpers";
 import { RichTextSpan } from "@/components/RichTextSpan";
 import { PrerequisiteList } from "./PrerequisiteList";
 import { WrappedRow } from "@/components/WrappedRow";
-import type { TableFeatures } from "@/components/AppTable";
+import type { AppTableFeatures } from "@/components/AppTable";
 
 export const useColumns = () => {
 	const skillTiers = useSkillTiers();
 	const chapter = useChapter();
-	const columnHelper = createColumnHelper<TableFeatures, Skill>();
+	const columnHelper = createColumnHelper<AppTableFeatures, Skill>();
 
 	// todo: use columnHelper
 	return [
@@ -42,7 +42,7 @@ export const useColumns = () => {
 
 			spanColumns: 3,
 			// todo: use column helper to remove this type def
-			bodySx: (cell: Cell<TableFeatures, Skill>) => {
+			bodySx: (cell: Cell<AppTableFeatures, Skill>) => {
 				const chapter = useChapter();
 				const row = cell.row.original;
 				const value = getLevelOnChapter(row, chapter);
@@ -124,5 +124,5 @@ export const useColumns = () => {
 				);
 			},
 		},
-	] as ColumnDef<TableFeatures, Skill>[];
+	] as ColumnDef<AppTableFeatures, Skill>[];
 };

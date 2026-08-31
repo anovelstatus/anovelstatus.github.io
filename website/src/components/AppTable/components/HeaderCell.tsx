@@ -1,9 +1,9 @@
 import { useTheme, TableCell, TableSortLabel } from "@mui/material";
 import { FlexRender, type Header, type RowData } from "@tanstack/react-table";
-import type { TableFeatures } from "../features";
+import type { AppTableFeatures } from "../features";
 
 type HeaderCellProps<T extends RowData> = {
-	header: Header<TableFeatures, T, unknown>;
+	header: Header<AppTableFeatures, T, unknown>;
 };
 
 export default function HeaderCell<T extends RowData>({ header }: HeaderCellProps<T>) {
