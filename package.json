@@ -36,7 +36,7 @@
 		"@types/google-apps-script": "2.0.12",
 		"@types/node": "^24.13.3",
 		"@types/react": "^19.2.18",
-		"@types/react-dom": "^19.2.4",
+		"@types/react-dom": "^19.2.5",
 		"@vitejs/plugin-react": "^6.1.0",
 		"dotenv": "^17.4.2",
 		"es-toolkit": "^1.49.0",
