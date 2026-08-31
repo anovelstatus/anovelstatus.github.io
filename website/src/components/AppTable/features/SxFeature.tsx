@@ -9,11 +9,11 @@ import {
 	type CellData,
 } from "@tanstack/react-table";
 
-export interface ColumnDef_Sx {
+export interface ColumnDef_Sx<TFeatures extends TableFeatures, TData extends RowData> {
 	/** Styles to add to the table body cell */
-	bodySx?: SxProps | ((cell: Cell<TableFeatures, RowData>) => SxProps);
+	bodySx?: (cell: Cell<TFeatures, TData>) => SxProps;
 	/** Styles to add to the table header cell */
-	headerSx?: SxProps | ((header: Header<TableFeatures, RowData>) => SxProps);
+	headerSx?: (header: Header<TFeatures, TData>) => SxProps;
 }
 
 export interface CellHeader_Sx {
@@ -31,7 +31,7 @@ declare module "@tanstack/react-table" {
 		sxPlugin: CellHeader_Sx;
 	}
 	interface ColumnDef_FeatureMap<TFeatures extends TableFeatures, TData extends RowData, TValue extends CellData> {
-		sxPlugin: ColumnDef_Sx;
+		sxPlugin: ColumnDef_Sx<TFeatures, TData>;
 	}
 }
 
@@ -41,7 +41,6 @@ export const SxFeature: TableFeature = {
 			cell_getSx: {
 				fn: (cell: Cell<TableFeatures, RowData>) => {
 					const value = cell.column.columnDef.bodySx;
-					if (typeof value === "object") return value;
 					if (typeof value === "function") return value(cell);
 					return {};
 				},
@@ -53,7 +52,6 @@ export const SxFeature: TableFeature = {
 			header_getSx: {
 				fn: (header: Header<TableFeatures, RowData>) => {
 					const value = header.column.columnDef.headerSx;
-					if (typeof value === "object") return value;
 					if (typeof value === "function") return value(header);
 					return {};
 				},

@@ -16,7 +16,7 @@ import HeaderCell from "./components/HeaderCell";
 import BodyCell from "./components/BodyCell";
 import type { PropsWithStyle } from "@/types";
 import { features, type AppTableFeatures } from "./features";
-export { type AppTableFeatures as AppTableFeatures } from "./features";
+export { type AppTableFeatures } from "./features";
 
 type TableProps<T extends RowData> = {
 	table: Table<AppTableFeatures, T>;
@@ -24,6 +24,7 @@ type TableProps<T extends RowData> = {
 	size?: "small" | "medium";
 } & PropsWithStyle;
 
+// todo: switch to tableOptions helper or createTableHook to provide a base but require columns + data?
 export function useAppTable<T extends RowData>(
 	options: Partial<TableOptions<AppTableFeatures, T>>,
 ): ReactTable<AppTableFeatures, T> {

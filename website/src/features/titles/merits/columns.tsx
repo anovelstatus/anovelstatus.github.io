@@ -1,6 +1,6 @@
 import { Box, Stack, Typography, type SxProps, type Theme } from "@mui/material";
 import { ChaptersChip, RarityChip } from "@/components/chips";
-import { createColumnHelper, type Cell, type Row, type RowData, type Table } from "@tanstack/react-table";
+import { createColumnHelper, type Row, type RowData, type Table } from "@tanstack/react-table";
 import { createCollapsedTierColumn } from "@/components/AppTable/columns";
 import { useChapter, useMetalTiers, useTitles } from "@/data/api";
 import { RichTextSpan } from "@/components/RichTextSpan";
@@ -101,9 +101,7 @@ export const useColumns = () => {
 					}
 					return "";
 				},
-				bodySx: (_cell: unknown): SxProps => {
-					// todo: figure out this type issue on cell
-					const cell = _cell as Cell<AppTableFeatures, Title>;
+				bodySx: (cell) => {
 					const style: SxProps = {
 						backgroundColor: tierTheme.palette.primary.dark,
 						//borderTopColor: tierTheme.palette.primary.main,
@@ -122,14 +120,12 @@ export const useColumns = () => {
 					}
 					return style;
 				},
-				headerSx: (): SxProps => {
-					return {
-						backgroundColor: tierTheme.palette.primary.dark,
-						//borderTopColor: tierTheme.palette.primary.main,
-						borderBottomColor: tierTheme.palette.primary.main,
-						textAlign: "center",
-					};
-				},
+				headerSx: () => ({
+					backgroundColor: tierTheme.palette.primary.dark,
+					//borderTopColor: tierTheme.palette.primary.main,
+					borderBottomColor: tierTheme.palette.primary.main,
+					textAlign: "center",
+				}),
 			}),
 		);
 	}

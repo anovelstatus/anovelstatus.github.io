@@ -1,8 +1,8 @@
-import { Box, Chip, Grid, Stack, Typography, type SxProps } from "@mui/material";
+import { Box, Chip, Grid, Stack, Typography } from "@mui/material";
 import { AttributeSummary } from "@/features/attributes";
 import { findByIds } from "@/data/helpers";
 import { ChaptersChip, IdealChip, RarityChip } from "@/components/chips";
-import { createColumnHelper, type Cell } from "@tanstack/react-table";
+import { createColumnHelper } from "@tanstack/react-table";
 import { useChapter, useSkills, useSkillTiers } from "@/data/api";
 import { createCollapsedTierColumn } from "@/components/AppTable/columns";
 import SkillButton from "./SkillButton";
@@ -39,9 +39,7 @@ export const useColumns = () => {
 			},
 
 			spanColumns: 3,
-			bodySx: (_cell: unknown): SxProps => {
-				// todo: fix typing
-				const cell = _cell as Cell<AppTableFeatures, Skill>;
+			bodySx: (cell) => {
 				const chapter = useChapter();
 				const row = cell.row.original;
 				const value = getLevelOnChapter(row, chapter);

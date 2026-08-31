@@ -38,7 +38,7 @@ export function AnalysisPanel() {
 			columnHelper.accessor("chapter", {
 				header: "Chapter",
 				enableSorting: true,
-				bodySx: { textAlign: "center" },
+				bodySx: () => ({ textAlign: "center" }),
 				bodyClassName: (cell) => (cell.row.original.note ? "ch-note" : ""),
 				title: (cell) => cell.row.original.note,
 			}),

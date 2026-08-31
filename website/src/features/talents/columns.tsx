@@ -52,7 +52,7 @@ export const useColumns = () => {
 				if (depth > 0) return `nested nested-${depth}`;
 				return "";
 			},
-			bodySx: { verticalAlign: "top" },
+			bodySx: () => ({ verticalAlign: "top" }),
 		}),
 		createCollapsedTierColumn(columnHelper, metalTiers),
 		createCollapsedChapterColumn(columnHelper, (x) => x.chapterGained),
