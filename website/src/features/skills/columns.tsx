@@ -2,7 +2,7 @@ import { Box, Chip, Grid, Stack, Typography } from "@mui/material";
 import { AttributeSummary } from "@/features/attributes";
 import { findByIds } from "@/data/helpers";
 import { ChaptersChip, IdealChip, RarityChip } from "@/components/chips";
-import type { Cell, ColumnDef } from "@tanstack/react-table";
+import { createColumnHelper, type Cell, type ColumnDef } from "@tanstack/react-table";
 import { useChapter, useSkills, useSkillTiers } from "@/data/api";
 import { createCollapsedTierColumn } from "@/components/AppTable/columns";
 import SkillButton from "./SkillButton";
@@ -10,11 +10,14 @@ import { getLevelOnChapter, getMaxLevel, getProgressGradient } from "./helpers";
 import { RichTextSpan } from "@/components/RichTextSpan";
 import { PrerequisiteList } from "./PrerequisiteList";
 import { WrappedRow } from "@/components/WrappedRow";
+import type { TableFeatures } from "@/components/AppTable";
 
 export const useColumns = () => {
 	const skillTiers = useSkillTiers();
 	const chapter = useChapter();
+	const columnHelper = createColumnHelper<TableFeatures, Skill>();
 
+	// todo: use columnHelper
 	return [
 		{
 			accessorKey: "name",
@@ -36,34 +39,32 @@ export const useColumns = () => {
 					</Grid>
 				);
 			},
-			meta: {
-				bodyColSpan: 3,
-				bodySx: (cell: Cell<Skill, unknown>) => {
-					const chapter = useChapter();
-					const row = cell.row.original;
-					const value = getLevelOnChapter(row, chapter);
-					const max = getMaxLevel(row, skillTiers);
 
-					if (value > max) return { backgroundColor: "error.main" };
-					if (value === max) return { backgroundColor: "#666" };
+			spanColumns: 3,
+			// todo: use column helper to remove this type def
+			bodySx: (cell: Cell<TableFeatures, Skill>) => {
+				const chapter = useChapter();
+				const row = cell.row.original;
+				const value = getLevelOnChapter(row, chapter);
+				const max = getMaxLevel(row, skillTiers);
 
-					const percent = ((1.0 * value) / max) * 100;
-					return {
-						background: getProgressGradient(percent, "#333333"),
-					};
-				},
+				if (value > max) return { backgroundColor: "error.main" };
+				if (value === max) return { backgroundColor: "#666" };
+
+				const percent = ((1.0 * value) / max) * 100;
+				return {
+					background: getProgressGradient(percent, "#333333"),
+				};
 			},
 		},
-		createCollapsedTierColumn<Skill>(skillTiers),
+		createCollapsedTierColumn(columnHelper, skillTiers),
 		{
 			id: "level",
 			accessorFn: (skill) => getLevelOnChapter(skill, chapter),
 			header: "Level",
 			size: 30,
 			enableSorting: true,
-			meta: {
-				bodyColSpan: 0,
-			},
+			spanColumns: 0,
 			sortingFn: "basic",
 		},
 		{
@@ -123,5 +124,5 @@ export const useColumns = () => {
 				);
 			},
 		},
-	] as ColumnDef<Skill>[];
+	] as ColumnDef<TableFeatures, Skill>[];
 };

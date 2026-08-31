@@ -11,49 +11,34 @@ import {
 	useMediaQuery,
 } from "@mui/material";
 import { type ReactElement } from "react";
-import {
-	getCoreRowModel,
-	getSortedRowModel,
-	useReactTable,
-	type Table,
-	type TableOptions,
-} from "@tanstack/react-table";
-import { ColSpanFeature } from "./features/ColSpanFeature";
-import { NarrowFeature } from "./features/NarrowFeature";
+import { useTable, type ReactTable, type RowData, type Table, type TableOptions } from "@tanstack/react-table";
 import HeaderCell from "./components/HeaderCell";
 import BodyCell from "./components/BodyCell";
-import { ClassNameFeature } from "./features/ClassNameFeature";
-import { SxFeature } from "./features/SxFeature";
-import { HoverTitleFeature } from "./features/HoverTitleFeature";
 import type { PropsWithStyle } from "@/types";
-import { HideHeaderFeature } from "./features/HideHeaderFeature";
+import { features, type TableFeatures } from "./features";
+export { type TableFeatures as TableFeatures } from "./features";
 
-type TableProps<T> = {
-	table: Table<T>;
+type TableProps<T extends RowData> = {
+	table: Table<TableFeatures, T>;
 	isLoading?: boolean;
 	size?: "small" | "medium";
 } & PropsWithStyle;
 
-export function useAppTable<T>(options: Partial<TableOptions<T>>) {
-	const features = [
-		NarrowFeature,
-		ColSpanFeature,
-		ClassNameFeature,
-		HoverTitleFeature,
-		HideHeaderFeature,
-		SxFeature,
-		...(options._features ?? []),
-	];
-	return useReactTable({
-		debugTable: true,
-		getCoreRowModel: getCoreRowModel(),
-		getSortedRowModel: getSortedRowModel(),
+export function useAppTable<T extends RowData>(
+	options: Partial<TableOptions<TableFeatures, T>>,
+): ReactTable<TableFeatures, T> {
+	return useTable({
 		...options,
-		_features: features,
-	} as TableOptions<T>);
+		features: features,
+	} as TableOptions<TableFeatures, T>);
 }
 
-export default function AppTable<T>({ sx, table, isLoading, size = "medium" }: TableProps<T>): ReactElement {
+export default function AppTable<T extends RowData>({
+	sx,
+	table,
+	isLoading,
+	size = "medium",
+}: TableProps<T>): ReactElement {
 	const theme = useTheme();
 
 	const isNarrow = useMediaQuery(theme.breakpoints.down(table.getNarrowBreakpoint()));

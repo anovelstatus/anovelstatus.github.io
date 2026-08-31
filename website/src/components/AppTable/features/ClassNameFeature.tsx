@@ -1,48 +1,63 @@
-/* eslint-disable @typescript-eslint/no-empty-object-type */
-import type { TableFeature, RowData, Cell, Column, Row, Table, Header } from "@tanstack/react-table";
+import {
+	type TableFeature,
+	type RowData,
+	type Cell,
+	type Table,
+	type Header,
+	type TableFeatures,
+	assignPrototypeAPIs,
+	type CellData,
+} from "@tanstack/react-table";
 
-// define types for our new feature's table options
-interface ClassNameOptions<T> {
-	/** ColSpan to use for header cell of column */
-	bodyClassName?: string | ((cell: Cell<T, unknown>) => string);
-	/** ColSpan to use for body cell of column */
-	headerClassName?: string | ((header: Header<T, unknown>) => string);
+export interface ColumnDef_ClassName<TFeatures extends TableFeatures, TData extends RowData> {
+	/** Styles to add to the table body cell */
+	bodyClassName?: string | ((cell: Cell<TFeatures, TData>, table: Table<TFeatures, TData>) => string);
+	/** Styles to add to the table header cell */
+	headerClassName?: string | ((header: Header<TFeatures, TData>, table: Table<TFeatures, TData>) => string);
 }
 
-interface ClassNameCell {
+export interface CellHeader_ClassName {
 	getClassName: () => string;
 }
 
-// Use declaration merging to add our new feature APIs and state types to TanStack Table's existing types.
 declare module "@tanstack/react-table" {
-	interface ColumnMeta<TData extends RowData, TValue> extends ClassNameOptions<TData> {}
-	interface Cell<TData extends RowData, TValue> extends ClassNameCell {}
-	interface Header<TData extends RowData, TValue> extends ClassNameCell {}
+	interface Plugins {
+		classNamePlugin: TableFeature;
+	}
+	interface Cell_FeatureMap {
+		classNamePlugin: CellHeader_ClassName;
+	}
+	interface Header_FeatureMap {
+		classNamePlugin: CellHeader_ClassName;
+	}
+	interface ColumnDef_FeatureMap<TFeatures extends TableFeatures, TData extends RowData, TValue extends CellData> {
+		classNamePlugin: ColumnDef_ClassName<TFeatures, TData>;
+	}
 }
 
-// Export feature to use in useReactTable's _features array
 export const ClassNameFeature: TableFeature = {
-	// if you need to add cell instance APIs...
-	createCell: <TData extends RowData>(
-		cell: Cell<TData, unknown>,
-		column: Column<TData>,
-		_row: Row<TData>,
-		_table: Table<TData>,
-	): void => {
-		cell.getClassName = () => {
-			const value = column.columnDef.meta?.bodyClassName;
-			if (typeof value === "string") return value;
-			if (typeof value === "function") return value(cell);
-			return "";
-		};
+	assignCellPrototype(prototype, table) {
+		assignPrototypeAPIs("sxPlugin", prototype, table, {
+			cell_getClassName: {
+				fn: (cell) => {
+					const value = cell.column.columnDef.bodyClassName;
+					if (typeof value === "string") return value;
+					if (typeof value === "function") return value(cell, table);
+					return "";
+				},
+			},
+		});
 	},
-	// if you need to add header instance APIs...
-	createHeader: <TData extends RowData>(header: Header<TData, unknown>, _table: Table<TData>): void => {
-		header.getClassName = () => {
-			const value = header.column.columnDef.meta?.headerClassName;
-			if (typeof value === "string") return value;
-			if (typeof value === "function") return value(header);
-			return "";
-		};
+	assignHeaderPrototype(prototype, table) {
+		assignPrototypeAPIs("sxPlugin", prototype, table, {
+			header_getClassName: {
+				fn: (header) => {
+					const value = header.column.columnDef.headerClassName;
+					if (typeof value === "string") return value;
+					if (typeof value === "function") return value(header, table);
+					return "";
+				},
+			},
+		});
 	},
 };

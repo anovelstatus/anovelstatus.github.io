@@ -1,7 +1,6 @@
 import AppTable, { useAppTable } from "@/components/AppTable";
 import { useAchievements, useChapter, useMetalTiers } from "@/data/api";
 import { RarityButtonChip } from "@/components/chips";
-import { getFilteredRowModel } from "@tanstack/react-table";
 import { Chip, Grid, Typography } from "@mui/material";
 import { useState, useEffect } from "react";
 import { useColumns } from "./columns";
@@ -46,7 +45,6 @@ export default function AchievementTable() {
 		},
 		narrowBreakpoint: "md",
 		renderNarrowRow: ({ original }) => <AchievementCard achievement={original} />,
-		getFilteredRowModel: getFilteredRowModel(),
 		state: { globalFilter: filters },
 		globalFilterFn: (row, _, filterValue: FilterOptions) => {
 			return showAchievement(row.original, filterValue);

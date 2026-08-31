@@ -1,49 +1,63 @@
-/* eslint-disable @typescript-eslint/no-empty-object-type */
 import type { SxProps } from "@mui/material";
-import type { TableFeature, RowData, Cell, Column, Row, Table, Header } from "@tanstack/react-table";
+import {
+	type TableFeature,
+	type RowData,
+	type Cell,
+	type Header,
+	type TableFeatures,
+	assignPrototypeAPIs,
+	type CellData,
+} from "@tanstack/react-table";
 
-// define types for our new feature's table options
-interface ClassNameOptions<T> {
+export interface ColumnDef_Sx {
 	/** Styles to add to the table body cell */
-	bodySx?: SxProps | ((cell: Cell<T, unknown>, table: Table<T>) => SxProps);
+	bodySx?: SxProps | ((cell: Cell<TableFeatures, RowData>) => SxProps);
 	/** Styles to add to the table header cell */
-	headerSx?: SxProps | ((header: Header<T, unknown>, table: Table<T>) => SxProps);
+	headerSx?: SxProps | ((header: Header<TableFeatures, RowData>) => SxProps);
 }
 
-interface ClassNameCell {
+export interface CellHeader_Sx {
 	getSx: () => SxProps;
 }
 
-// Use declaration merging to add our new feature APIs and state types to TanStack Table's existing types.
 declare module "@tanstack/react-table" {
-	interface ColumnMeta<TData extends RowData, TValue> extends ClassNameOptions<TData> {}
-	interface Cell<TData extends RowData, TValue> extends ClassNameCell {}
-	interface Header<TData extends RowData, TValue> extends ClassNameCell {}
+	interface Plugins {
+		sxPlugin: TableFeature;
+	}
+	interface Cell_FeatureMap {
+		sxPlugin: CellHeader_Sx;
+	}
+	interface Header_FeatureMap {
+		sxPlugin: CellHeader_Sx;
+	}
+	interface ColumnDef_FeatureMap<TFeatures extends TableFeatures, TData extends RowData, TValue extends CellData> {
+		sxPlugin: ColumnDef_Sx;
+	}
 }
 
-// Export feature to use in useReactTable's _features array
 export const SxFeature: TableFeature = {
-	// if you need to add cell instance APIs...
-	createCell: <TData extends RowData>(
-		cell: Cell<TData, unknown>,
-		column: Column<TData>,
-		_row: Row<TData>,
-		table: Table<TData>,
-	): void => {
-		cell.getSx = () => {
-			const value = column.columnDef.meta?.bodySx;
-			if (typeof value === "object") return value;
-			if (typeof value === "function") return value(cell, table);
-			return {};
-		};
+	assignCellPrototype(prototype, table) {
+		assignPrototypeAPIs("sxPlugin", prototype, table, {
+			cell_getSx: {
+				fn: (cell) => {
+					const value = cell.column.columnDef.bodySx;
+					if (typeof value === "object") return value;
+					if (typeof value === "function") return value(cell, table);
+					return {};
+				},
+			},
+		});
 	},
-	// if you need to add header instance APIs...
-	createHeader: <TData extends RowData>(header: Header<TData, unknown>, table: Table<TData>): void => {
-		header.getSx = () => {
-			const value = header.column.columnDef.meta?.headerSx;
-			if (typeof value === "object") return value;
-			if (typeof value === "function") return value(header, table);
-			return {};
-		};
+	assignHeaderPrototype(prototype, table) {
+		assignPrototypeAPIs("sxPlugin", prototype, table, {
+			header_getSx: {
+				fn: (header) => {
+					const value = header.column.columnDef.headerSx;
+					if (typeof value === "object") return value;
+					if (typeof value === "function") return value(header, table);
+					return {};
+				},
+			},
+		});
 	},
 };

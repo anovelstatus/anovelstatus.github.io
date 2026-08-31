@@ -5,7 +5,6 @@ import SkillCard from "./SkillCard";
 import AppTable, { useAppTable } from "@/components/AppTable";
 import { useChapter, useSkills } from "@/data/api";
 import { useColumns } from "./columns";
-import { getFilteredRowModel } from "@tanstack/react-table";
 import SkillFilters from "./SkillFilters";
 import { showSkill, type SkillFiltersOptions } from "./helpers";
 
@@ -45,7 +44,6 @@ export default function SkillTable() {
 		},
 		narrowBreakpoint: "md",
 		renderNarrowRow: ({ original }) => <SkillCard key={toIdString(original)} id={original} />,
-		getFilteredRowModel: getFilteredRowModel(),
 		state: { globalFilter: filters, columnVisibility },
 		globalFilterFn: (row, _, filterValue: SkillFiltersOptions) => {
 			return showSkill(row.original, filterValue);
@@ -60,7 +58,7 @@ export default function SkillTable() {
 				control={<Switch onChange={toggleNotesColumn} value={columnVisibility.gains} />}
 			/>
 			<Typography>
-				Showing {table.getRowCount()}/{skills.length} skills
+				Showing {table.getRowModel().rows.length}/{skills.length} skills
 			</Typography>
 			<AppTable isLoading={isLoading} table={table} />
 		</>

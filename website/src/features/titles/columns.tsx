@@ -1,11 +1,12 @@
 import { Button, Stack, Typography, type SxProps, type Theme } from "@mui/material";
 import { SubdirectoryArrowRight, ExpandLess, ExpandMore } from "@mui/icons-material";
 import { ChaptersChip, RarityChip } from "@/components/chips";
-import type { ColumnDef } from "@tanstack/react-table";
+import { createColumnHelper, type ColumnDef } from "@tanstack/react-table";
 import { createCollapsedChapterColumn, createCollapsedTierColumn } from "@/components/AppTable/columns";
 import { useMetalTiers } from "@/data/api";
 import { RichTextSpan } from "@/components/RichTextSpan";
 import { WrappedRow } from "@/components/WrappedRow";
+import type { TableFeatures } from "@/components/AppTable";
 
 export const columnstyles: SxProps<Theme> = {
 	".nested": {
@@ -15,6 +16,9 @@ export const columnstyles: SxProps<Theme> = {
 
 export const useColumns = () => {
 	const metalTiers = useMetalTiers();
+	const columnHelper = createColumnHelper<TableFeatures, Title>();
+
+	// todo: use columnHelper
 	return [
 		{
 			accessorKey: "name",
@@ -39,28 +43,24 @@ export const useColumns = () => {
 					) : null}
 				</Stack>
 			),
-			meta: {
-				bodyColSpan: 3,
-				bodyClassName: (cell) => {
-					if (cell.row.depth > 0) return "nested";
-					return;
-				},
+			spanColumns: 3,
+			bodyClassName: (cell) => {
+				if (cell.row.depth > 0) return "nested";
+				return;
 			},
 		},
-		createCollapsedTierColumn<Title>(metalTiers),
-		createCollapsedChapterColumn<Title>((x) => x.chapter),
+		createCollapsedTierColumn(columnHelper, metalTiers),
+		createCollapsedChapterColumn(columnHelper, (x) => x.chapter),
 		{
 			accessorKey: "notes",
 			header: "Notes",
 			size: 1000,
 			enableSorting: false,
 			cell: ({ row }) => <RichTextSpan data={row.original.note} />,
-			meta: {
-				bodyClassName: (cell) => {
-					if (cell.row.depth > 0) return "nested";
-					return;
-				},
+			bodyClassName: (cell) => {
+				if (cell.row.depth > 0) return "nested";
+				return;
 			},
 		},
-	] as ColumnDef<Title>[];
+	] as ColumnDef<TableFeatures, Title>[];
 };

@@ -1,11 +1,12 @@
 import { Button, Stack, Typography, type SxProps, type Theme } from "@mui/material";
 import { SubdirectoryArrowRight, ExpandLess, ExpandMore } from "@mui/icons-material";
 import { ChaptersChip, RarityChip } from "@/components/chips";
-import type { ColumnDef } from "@tanstack/react-table";
+import { createColumnHelper, type ColumnDef } from "@tanstack/react-table";
 import { createCollapsedChapterColumn, createCollapsedTierColumn } from "@/components/AppTable/columns";
 import { useMetalTiers } from "@/data/api";
 import { RichTextSpan } from "@/components/RichTextSpan";
 import { WrappedRow } from "@/components/WrappedRow";
+import type { TableFeatures } from "@/components/AppTable";
 
 export const columnstyles: SxProps<Theme> = {
 	".nested": {
@@ -21,6 +22,9 @@ export const columnstyles: SxProps<Theme> = {
 
 export const useColumns = () => {
 	const metalTiers = useMetalTiers();
+	const columnHelper = createColumnHelper<TableFeatures, Talent>();
+
+	// todo: use columnHelper
 	return [
 		{
 			accessorKey: "name",
@@ -44,31 +48,27 @@ export const useColumns = () => {
 					) : null}
 				</Stack>
 			),
-			meta: {
-				bodyColSpan: 3,
-				bodyClassName: (cell) => {
-					const depth = cell.row.depth;
-					if (depth > 0) return `nested nested-${depth}`;
-					return "";
-				},
-				bodySx: { verticalAlign: "top" },
+			spanColumns: 3,
+			bodyClassName: (cell) => {
+				const depth = cell.row.depth;
+				if (depth > 0) return `nested nested-${depth}`;
+				return "";
 			},
+			bodySx: { verticalAlign: "top" },
 		},
-		createCollapsedTierColumn<Talent>(metalTiers),
-		createCollapsedChapterColumn<Talent>((x) => x.chapterGained),
+		createCollapsedTierColumn(columnHelper, metalTiers),
+		createCollapsedChapterColumn(columnHelper, (x) => x.chapterGained),
 		{
 			accessorKey: "note",
 			header: "Description",
 			size: 800,
 			enableSorting: false,
 			cell: ({ row }) => <RichTextSpan data={row.original.note} />,
-			meta: {
-				bodyClassName: (cell) => {
-					const depth = cell.row.depth;
-					if (depth > 0) return `nested nested-${depth}`;
-					return "";
-				},
+			bodyClassName: (cell) => {
+				const depth = cell.row.depth;
+				if (depth > 0) return `nested nested-${depth}`;
+				return "";
 			},
 		},
-	] as ColumnDef<Talent>[];
+	] as ColumnDef<TableFeatures, Talent>[];
 };

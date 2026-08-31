@@ -5,7 +5,7 @@ import TitleCard from "./TitleCard";
 import AppTable, { useAppTable } from "@/components/AppTable";
 import { useChapter, useMetalTiers, useTitles } from "@/data/api";
 import { useColumns, columnstyles } from "./columns";
-import { getExpandedRowModel, getFilteredRowModel, type ExpandedState } from "@tanstack/react-table";
+import { type ExpandedState } from "@tanstack/react-table";
 import { getPreviousTitleChain } from "./helpers";
 import { RarityButtonChip } from "@/components/chips";
 import { WrappedRow } from "@/components/WrappedRow";
@@ -56,12 +56,10 @@ export default function TitleTable() {
 		narrowBreakpoint: "md",
 		renderNarrowRow: ({ original }) => <TitleCard key={toIdString(original)} id={original} />,
 
-		getFilteredRowModel: getFilteredRowModel(),
 		globalFilterFn: (row, _, filterValue: FilterOptions) => {
 			return showTitle(row.original, filterValue);
 		},
 
-		getExpandedRowModel: getExpandedRowModel(),
 		maxLeafRowFilterDepth: 0,
 		getRowCanExpand: (row) => !row.parentId && row.subRows.length > 0,
 		getIsRowExpanded: (row) => !row.parentId && (expanded === true || expanded[row.id] === true),
@@ -106,7 +104,7 @@ export default function TitleTable() {
 				</Button>
 			</WrappedRow>
 			<Typography>
-				Showing {table.getRowCount()}/{titles.length} titles
+				Showing {table.getRowModel().rows.length}/{titles.length} titles
 			</Typography>
 			<AppTable table={table} isLoading={isLoading} sx={columnstyles} />
 		</Stack>
