@@ -2,7 +2,7 @@ import { Box, Chip, Grid, Stack, Typography } from "@mui/material";
 import { AttributeSummary } from "@/features/attributes";
 import { findByIds } from "@/data/helpers";
 import { ChaptersChip, IdealChip, RarityChip } from "@/components/chips";
-import type { Cell, ColumnDef } from "@tanstack/react-table";
+import { createColumnHelper } from "@tanstack/react-table";
 import { useChapter, useSkills, useSkillTiers } from "@/data/api";
 import { createCollapsedTierColumn } from "@/components/AppTable/columns";
 import SkillButton from "./SkillButton";
@@ -10,14 +10,15 @@ import { getLevelOnChapter, getMaxLevel, getProgressGradient } from "./helpers";
 import { RichTextSpan } from "@/components/RichTextSpan";
 import { PrerequisiteList } from "./PrerequisiteList";
 import { WrappedRow } from "@/components/WrappedRow";
+import type { AppTableFeatures } from "@/components/AppTable";
 
 export const useColumns = () => {
 	const skillTiers = useSkillTiers();
 	const chapter = useChapter();
+	const columnHelper = createColumnHelper<AppTableFeatures, Skill>();
 
-	return [
-		{
-			accessorKey: "name",
+	return columnHelper.columns([
+		columnHelper.accessor("name", {
 			header: "Skill",
 			size: 120,
 			enableSorting: true,
@@ -36,38 +37,33 @@ export const useColumns = () => {
 					</Grid>
 				);
 			},
-			meta: {
-				bodyColSpan: 3,
-				bodySx: (cell: Cell<Skill, unknown>) => {
-					const chapter = useChapter();
-					const row = cell.row.original;
-					const value = getLevelOnChapter(row, chapter);
-					const max = getMaxLevel(row, skillTiers);
 
-					if (value > max) return { backgroundColor: "error.main" };
-					if (value === max) return { backgroundColor: "#666" };
+			spanColumns: 3,
+			bodySx: (cell) => {
+				const chapter = useChapter();
+				const row = cell.row.original;
+				const value = getLevelOnChapter(row, chapter);
+				const max = getMaxLevel(row, skillTiers);
 
-					const percent = ((1.0 * value) / max) * 100;
-					return {
-						background: getProgressGradient(percent, "#333333"),
-					};
-				},
+				if (value > max) return { backgroundColor: "error.main" };
+				if (value === max) return { backgroundColor: "#666" };
+
+				const percent = ((1.0 * value) / max) * 100;
+				return {
+					background: getProgressGradient(percent, "#333333"),
+				};
 			},
-		},
-		createCollapsedTierColumn<Skill>(skillTiers),
-		{
+		}),
+		createCollapsedTierColumn(columnHelper, skillTiers),
+		columnHelper.accessor((x) => getLevelOnChapter(x, chapter), {
 			id: "level",
-			accessorFn: (skill) => getLevelOnChapter(skill, chapter),
 			header: "Level",
 			size: 30,
 			enableSorting: true,
-			meta: {
-				bodyColSpan: 0,
-			},
-			sortingFn: "basic",
-		},
-		{
-			accessorKey: "attributes",
+			spanColumns: 0,
+			sortFn: "basic",
+		}),
+		columnHelper.accessor("attributes", {
 			header: "Attributes",
 			size: 200,
 			enableSorting: false,
@@ -76,9 +72,8 @@ export const useColumns = () => {
 					<AttributeSummary gains={row.original.attributes} />
 				</Box>
 			),
-		},
-		{
-			accessorKey: "description",
+		}),
+		columnHelper.accessor("description", {
 			header: "Description",
 			enableSorting: false,
 			size: 1000,
@@ -102,9 +97,8 @@ export const useColumns = () => {
 					</Stack>
 				);
 			},
-		},
-		{
-			accessorKey: "gains",
+		}),
+		columnHelper.accessor("gains", {
 			header: "Levels Gained",
 			enableSorting: false,
 			cell: ({ row }) => {
@@ -122,6 +116,6 @@ export const useColumns = () => {
 					</Stack>
 				);
 			},
-		},
-	] as ColumnDef<Skill>[];
+		}),
+	]);
 };

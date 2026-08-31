@@ -1,8 +1,8 @@
-import AppTable, { useAppTable } from "@/components/AppTable";
+import AppTable, { useAppTable, type AppTableFeatures } from "@/components/AppTable";
 import { useAttributes, useChapter } from "@/data/api";
 import { Box, Grid, Stack, Typography } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
-import { createColumnHelper, getFilteredRowModel, type Cell, type ColumnDef } from "@tanstack/react-table";
+import { createColumnHelper, type ColumnHelper } from "@tanstack/react-table";
 import type { AttributeAnalysisRow } from "@/features/attributes/analysis/types";
 import { styles, getClass } from "@/features/attributes/analysis/styles";
 import { AnalysisStack } from "@/features/attributes/analysis/AnalysisStack";
@@ -33,18 +33,17 @@ export function AnalysisPanel() {
 	}, [chapter]);
 
 	const columns = useMemo(() => {
-		return [
-			createColumnHelper<AttributeAnalysisRow>().accessor("chapter", {
+		const columnHelper = createColumnHelper<AppTableFeatures, AttributeAnalysisRow>();
+		return columnHelper.columns([
+			columnHelper.accessor("chapter", {
 				header: "Chapter",
 				enableSorting: true,
-				meta: {
-					bodySx: { textAlign: "center" },
-					bodyClassName: (cell: Cell<AttributeAnalysisRow, unknown>) => (cell.row.original.note ? "ch-note" : ""),
-					title: (cell: Cell<AttributeAnalysisRow, unknown>) => cell.row.original.note,
-				},
+				bodySx: () => ({ textAlign: "center" }),
+				bodyClassName: (cell) => (cell.row.original.note ? "ch-note" : ""),
+				title: (cell) => cell.row.original.note,
 			}),
-			...attributes.map(createAttributeColumn),
-		] as ColumnDef<AttributeAnalysisRow>[];
+			...attributes.map((attr) => createAttributeColumn(attr, columnHelper)),
+		]);
 	}, [attributes]);
 
 	const tableData = useAttributeAnalysis();
@@ -55,7 +54,6 @@ export function AnalysisPanel() {
 		enableSorting: false,
 		getRowId: (row) => row.chapter.toString(),
 		renderNarrowRow: (row) => <AnalysisCard key={row.id} data={row.original} />,
-		getFilteredRowModel: getFilteredRowModel(),
 		state: { globalFilter: filters },
 		globalFilterFn: (row, _, filterValue: AnalysisFilterOptions) => {
 			return row.original.chapter <= filterValue.chapter;
@@ -84,15 +82,16 @@ export function AnalysisPanel() {
 	);
 }
 
-function createAttributeColumn(attribute: Attribute.Details) {
-	return createColumnHelper<AttributeAnalysisRow>().display({
+function createAttributeColumn(
+	attribute: Attribute.Details,
+	columnHelper: ColumnHelper<AppTableFeatures, AttributeAnalysisRow>,
+) {
+	return columnHelper.display({
 		id: attribute.name,
 		header: attribute.name,
 		enableSorting: false,
 		enableGlobalFilter: false,
-		meta: {
-			bodyClassName: (cell) => getClass(cell.row.original.attributes[attribute.index]!),
-		},
+		bodyClassName: (cell) => getClass(cell.row.original.attributes[attribute.index]!),
 		cell: ({ row }) => {
 			const analysis = row.original.attributes[attribute.index]!;
 			return useMemo(() => <AnalysisStack analysis={analysis} />, [analysis]);

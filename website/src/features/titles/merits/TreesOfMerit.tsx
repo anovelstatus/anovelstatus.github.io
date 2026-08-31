@@ -5,7 +5,6 @@ import AppTable, { useAppTable } from "@/components/AppTable";
 import { toIdString } from "@/data/helpers";
 import { columnstyles, getMerit, toChain, useColumns } from "./columns";
 import { useEffect, useState } from "react";
-import { getFilteredRowModel } from "@tanstack/react-table";
 import { WrappedRow } from "@/components/WrappedRow";
 import { range } from "es-toolkit";
 
@@ -31,7 +30,6 @@ export default function TreesOfMerit() {
 		},
 		state: { globalFilter: filters },
 
-		getFilteredRowModel: getFilteredRowModel(),
 		globalFilterFn: (row, _, filterValue: FilterOptions) => {
 			return showTitle(row.original, filterValue);
 		},
