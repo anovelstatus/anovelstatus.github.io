@@ -29,12 +29,12 @@ declare module "@tanstack/react-table" {
 /** Adds ability to render something other than a table on narrow screens */
 export const NarrowFeature: TableFeature = {
 	getDefaultTableOptions: (_table) => {
-		return { narrowBreakpoint: "sm" };
+		return { narrowBreakpoint: "md" };
 	},
 	constructTableAPIs(table) {
 		assignTableAPIs("narrowPlugin", table, {
 			table_getNarrowBreakpoint: {
-				fn: () => (table.options as TableOptions_Narrow<TableFeatures, RowData>).narrowBreakpoint ?? "sm",
+				fn: () => (table.options as TableOptions_Narrow<TableFeatures, RowData>).narrowBreakpoint ?? "md",
 			},
 		});
 	},
