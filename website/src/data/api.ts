@@ -47,9 +47,13 @@ export function useBasicInfo() {
 			latest: 1,
 			unlocked: false,
 			// Placeholders to avoid things breaking when trying to use names or colors
-			tiers: range(10).map(
-				(i): TierInfo => ({ metalName: "?", skillName: "?", tier: i, bgColor: "#000", fgColor: "#fff" }),
-			),
+			tiers: range(10).map((i): TierInfo => ({
+				metalName: "?",
+				skillName: "?",
+				tier: i,
+				bgColor: "#000",
+				fgColor: "#fff",
+			})),
 			shortcuts: [],
 			attributes: [],
 		},
