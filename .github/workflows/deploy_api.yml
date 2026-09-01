@@ -8,7 +8,8 @@ on:
       - "api/**"
       - ".github/workflows/deploy_api.yml"
       - "config-clasp.ts"
-      - "package-lock.json"
+    # Leaving this out, to avoid creating too many versions
+    # - "package-lock.json"
 
   workflow_dispatch:
 
@@ -50,6 +51,11 @@ jobs:
           CLASPRC: ${{ secrets.CLASPRC }}
           SCRIPT_ID: ${{ secrets.SCRIPT_ID_API }}
           DEPLOYMENT_ID: ${{ secrets.DEPLOYMENT_ID_API }}
+      # Cannot create more versions: Script has reached the limit of 200 versions. To create more, delete a version from the project history page.
+      # If you see that error,
+      # - go to the script's Project History
+      # - click the Trash icon to open a Bulk Delete modal
+      # - delete all but the first and last one
       - run: cd api/dist/ && ls -a
       - name: Deploy script
         run: npm run deploy-api
