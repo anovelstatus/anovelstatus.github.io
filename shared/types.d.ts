@@ -187,7 +187,7 @@ declare type TierInfo = {
 	tier: number;
 	skillName: string;
 	metalName: string;
-	chapterRevealed: number | undefined;
+	chapterRevealed?: number;
 	fgColor: string;
 	bgColor: string;
 };

@@ -1,6 +1,6 @@
 import { useQuery, type UseQueryResult } from "@tanstack/react-query";
-import { orderBy } from "es-toolkit";
-import { useContext } from "react";
+import { orderBy, range } from "es-toolkit";
+import { useContext, useMemo } from "react";
 import { ChapterContext } from "./ChapterContext";
 
 /** Make data not optional because we can guarantee a placeholder */
@@ -27,17 +27,17 @@ export function useLatestChapter() {
 
 export function useSkillTiers() {
 	const { data } = useBasicInfo();
-	return data.tiers.map((x) => x.skillName);
+	return useMemo(() => data.tiers.map((x) => x.skillName), [data]);
 }
 
 export function useMetalTiers() {
 	const { data } = useBasicInfo();
-	return data.tiers.map((x) => x.metalName);
+	return useMemo(() => data.tiers.map((x) => x.metalName), [data]);
 }
 
 export function useTimelineShortcuts(): LoadableData<Shortcut[]> {
 	const { data } = useBasicInfo();
-	return { data: data.shortcuts, isLoading: data.shortcuts.length == 0 };
+	return useMemo(() => ({ data: data.shortcuts, isLoading: data.shortcuts.length == 0 }), [data]);
 }
 
 export function useBasicInfo() {
@@ -46,7 +46,10 @@ export function useBasicInfo() {
 		placeholderData: {
 			latest: 1,
 			unlocked: false,
-			tiers: [],
+			// Placeholders to avoid things breaking when trying to use names or colors
+			tiers: range(10).map(
+				(i): TierInfo => ({ metalName: "?", skillName: "?", tier: i, bgColor: "#000", fgColor: "#fff" }),
+			),
 			shortcuts: [],
 			attributes: [],
 		},
