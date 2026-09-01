@@ -24,15 +24,13 @@ type TableProps<T extends RowData> = {
 	size?: "small" | "medium";
 } & PropsWithStyle;
 
-// type PartialTableOptions<T> = Omit<Partial<TableOptions<T>> & Pick<TableOptions<T>, "data" | "columns">, "_features">;
-// todo: switch to tableOptions helper or createTableHook to provide a base but require columns + data?
 export function useAppTable<T extends RowData>(
-	options: Partial<TableOptions<AppTableFeatures, T>>,
+	options: Omit<TableOptions<AppTableFeatures, T>, "features">,
 ): ReactTable<AppTableFeatures, T> {
 	return useTable({
 		...options,
 		features: features,
-	} as TableOptions<AppTableFeatures, T>);
+	});
 }
 
 export default function AppTable<T extends RowData>({

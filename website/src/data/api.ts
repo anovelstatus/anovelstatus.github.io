@@ -46,9 +46,15 @@ export function useBasicInfo() {
 		placeholderData: {
 			latest: 1,
 			unlocked: false,
-			// Placeholder tiers for when page data is loaded before this, somehow
+			// Placeholders to avoid things breaking when trying to use names or colors
 			tiers: range(10).map(
-				(i): TierInfo => ({ metalName: "?", skillName: "?", tier: i, bgColor: "#000", fgColor: "#fff" }),
+				(i): TierInfo => ({
+					metalName: "?",
+					skillName: "?",
+					tier: i,
+					bgColor: "#000",
+					fgColor: "#fff",
+				}),
 			),
 			shortcuts: [],
 			attributes: [],
