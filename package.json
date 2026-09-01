@@ -12,10 +12,10 @@
 		"build-website": "cd website && tsc -b && vite build",
 		"build-api": "cd api && tsc && node build.ts",
 		"config-api": "node config-clasp.ts api",
-		"deploy-api": "clasp --project api/dist/.clasp.json push -f && clasp --project api/dist/.clasp.json update-deployment $DEPLOYMENT_ID",
+		"deploy-api": "cd api/dist/ && clasp push -f && clasp update-deployment $DEPLOYMENT_ID",
 		"build-spreadsheet": "cd spreadsheet && tsc && node build.ts",
 		"config-spreadsheet": "node config-clasp.ts spreadsheet",
-		"deploy-spreadsheet": "clasp --project spreadsheet/dist/.clasp.json push",
+		"deploy-spreadsheet": "cd spreadsheet/dist/ && clasp push",
 		"test-spreadsheet": "cd spreadsheet && vitest",
 		"build-all": "npm run build-api && npm run build-spreadsheet && npm run build-website"
 	},
@@ -49,7 +49,7 @@
 		"react-dom": "^19.2.8",
 		"rolldown": "^1.2.6",
 		"typescript": "^6.0.3",
-		"typescript-eslint": "^8.68.0",
+		"typescript-eslint": "^8.69.0",
 		"vite": "^8.2.2",
 		"vitest": "^4.1.11"
 	}
