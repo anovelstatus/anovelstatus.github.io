@@ -8,7 +8,7 @@ import { WrappedRow } from "@/components/WrappedRow";
 import { useMemo } from "react";
 import { getPreviousTitleChain } from "../helpers";
 import { maxBy } from "es-toolkit";
-import { useTheme } from "@/data/useTheme";
+import { useTierThemes } from "@/data/useTheme";
 import type { AppTableFeatures } from "@/components/AppTable";
 
 export const columnstyles: SxProps<Theme> = {
@@ -29,6 +29,7 @@ export const columnstyles: SxProps<Theme> = {
 export const useColumns = () => {
 	const columnHelper = createColumnHelper<AppTableFeatures, Title>();
 	const metalTiers = useMetalTiers();
+	const tierThemes = useTierThemes();
 	const chapter = useChapter();
 	const columns = columnHelper.columns([
 		columnHelper.accessor("name", {
@@ -56,7 +57,7 @@ export const useColumns = () => {
 	for (let i = 0; i < 10; i++) {
 		const columnTierNumber = Math.max(0, i - 2);
 		const columnTier = metalTiers[columnTierNumber]!;
-		const tierTheme = useTheme(columnTierNumber);
+		const tierTheme = tierThemes[columnTierNumber]!;
 		columns.push(
 			columnHelper.display({
 				id: "tier-" + i,
