@@ -52,6 +52,7 @@ jobs:
           SCRIPT_ID: ${{ secrets.SCRIPT_ID_API }}
           DEPLOYMENT_ID: ${{ secrets.DEPLOYMENT_ID_API }}
       # Cannot create more versions: Script has reached the limit of 200 versions. To create more, delete a version from the project history page.
+      # https://developers.google.com/apps-script/guides/services/quotas
       # If you see that error,
       # - go to the script's Project History
       # - click the Trash icon to open a Bulk Delete modal
