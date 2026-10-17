@@ -18,6 +18,7 @@ export default function TreesOfMerit() {
 	}, [chapter]);
 
 	const table = useAppTable<Title>({
+		key: "merit-table",
 		data: titles,
 		columns,
 		getRowId: (row) => toIdString(row),

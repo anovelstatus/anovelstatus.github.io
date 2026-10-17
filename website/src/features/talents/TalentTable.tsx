@@ -13,6 +13,7 @@ export default function TalentTable({ data }: TalentTableProps) {
 	const columns = useColumns();
 
 	const table = useAppTable({
+		key: "talent-table",
 		data,
 		columns,
 		hideHeader: true,

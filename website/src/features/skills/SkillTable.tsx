@@ -36,6 +36,7 @@ export default function SkillTable() {
 	};
 
 	const table = useAppTable<Skill>({
+		key: "skill-table",
 		data: skills,
 		columns,
 		getRowId: (row) => toIdString(row),

@@ -37,6 +37,7 @@ export default function AchievementTable() {
 	);
 
 	const table = useAppTable({
+		key: "achievement-table",
 		data,
 		columns: useColumns(),
 		getRowId: (row) => row.chapter + toPlainText(row.description),
