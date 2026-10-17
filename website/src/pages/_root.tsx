@@ -8,6 +8,8 @@ import { useIsUnlocked, useLatestChapter } from "@/data/api";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { useQueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { TanStackDevtools } from "@tanstack/react-devtools";
+import { tableDevtoolsPlugin } from "@tanstack/react-table-devtools";
 
 export function App() {
 	const [chapter, setChapter] = useState(1);
@@ -42,6 +44,7 @@ export function App() {
 					>
 						<>
 							<Outlet />
+							<TanStackDevtools plugins={[tableDevtoolsPlugin()]} />
 							<TanStackRouterDevtools />
 							<ReactQueryDevtools />
 						</>
