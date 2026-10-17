@@ -2,6 +2,7 @@
 /// <reference path="../../shared/types.d.ts" />
 
 interface ImportMetaEnv {
+	DEV: boolean;
 	/** URL to deployed Apps Script web app, loaded from environment variable */
 	readonly VITE_API_URL: string;
 }

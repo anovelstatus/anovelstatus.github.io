@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import { type ReactElement } from "react";
 import { useTable, type ReactTable, type RowData, type Table, type TableOptions } from "@tanstack/react-table";
+import { useTanStackTableDevtools } from "@tanstack/react-table-devtools";
 import HeaderCell from "./components/HeaderCell";
 import BodyCell from "./components/BodyCell";
 import type { PropsWithStyle } from "@/types";
@@ -27,10 +28,12 @@ type TableProps<T extends RowData> = {
 export function useAppTable<T extends RowData>(
 	options: Omit<TableOptions<AppTableFeatures, T>, "features">,
 ): ReactTable<AppTableFeatures, T> {
-	return useTable({
+	const table = useTable({
 		...options,
 		features: features,
 	});
+	useTanStackTableDevtools(table);
+	return table;
 }
 
 export default function AppTable<T extends RowData>({

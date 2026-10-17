@@ -41,6 +41,7 @@ export default function TitleTable() {
 	};
 
 	const table = useAppTable<Title>({
+		key: "title-table",
 		data: titles,
 		columns,
 		getRowId: (row, _, parent) => toIdString(row) + toIdString(parent?.original),

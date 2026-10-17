@@ -49,6 +49,7 @@ export function AnalysisPanel() {
 	const tableData = useAttributeAnalysis();
 
 	const table = useAppTable<AttributeAnalysisRow>({
+		key: "analysis-table",
 		data: tableData,
 		columns: columns,
 		enableSorting: false,

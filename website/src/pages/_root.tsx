@@ -5,11 +5,29 @@ import { useEffect, useState } from "react";
 import NavBar from "@/components/header/NavBar";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { useIsUnlocked, useLatestChapter } from "@/data/api";
-import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
+import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { useQueryClient } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import { tableDevtoolsPlugin } from "@tanstack/react-table-devtools";
+
+const DevTools = import.meta.env.DEV
+	? () => (
+			<TanStackDevtools
+				plugins={[
+					tableDevtoolsPlugin(),
+					{
+						name: "TanStack Query",
+						render: <ReactQueryDevtoolsPanel />,
+					},
+					{
+						name: "TanStack Router",
+						render: <TanStackRouterDevtoolsPanel />,
+					},
+				]}
+			/>
+		)
+	: () => null;
 
 export function App() {
 	const [chapter, setChapter] = useState(1);
@@ -44,9 +62,7 @@ export function App() {
 					>
 						<>
 							<Outlet />
-							<TanStackDevtools plugins={[tableDevtoolsPlugin()]} />
-							<TanStackRouterDevtools />
-							<ReactQueryDevtools />
+							<DevTools />
 						</>
 					</ErrorBoundary>
 				</Container>
