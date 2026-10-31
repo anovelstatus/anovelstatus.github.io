@@ -52,7 +52,7 @@ function getHighTribulations(info: SpreadsheetInfo) {
 		{ key: "chapter", source: { type: "exact", name: "Chapter" }, parse: "number" },
 		{ key: "tier", source: { type: "exact", name: "Tier" }, parse: "number" },
 		{ key: "note", source: { type: "exact", name: "Update" }, parse: "rich" },
-		{ key: "done", source: { type: "exact", name: "Pass" }, parse: "string" },
+		{ key: "done", source: { type: "exact", name: "Pass" }, parse: "bool", optional: true },
 	];
 	const data = mapTable(info, range, fields);
 	return data;
