@@ -88,7 +88,7 @@ export function useRaces() {
 }
 
 export function useSoul() {
-	return useSpreadsheet<SoulDetails>("soul", { supremacies: {} });
+	return useSpreadsheet<SoulDetails>("soul", { supremacies: {}, highTribulations: [] });
 }
 
 export function useTalents() {
