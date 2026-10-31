@@ -5,6 +5,7 @@ type InternalSupremacy = SupremacyStage & { supremacy: string };
 export function getSoul(info: SpreadsheetInfo): SoulDetails {
 	return {
 		supremacies: getSupremacies(info),
+		highTribulations: getHighTribulations(info),
 	};
 }
 
@@ -29,6 +30,7 @@ function getSupremacies(info: SpreadsheetInfo): Supremacies {
 export function limitSoul(data: SoulDetails, info: LimiterInfo): SoulDetails {
 	return {
 		supremacies: limitSupremacies(data.supremacies, info),
+		highTribulations: limitTribulations(data.highTribulations, info),
 	};
 }
 
@@ -42,4 +44,20 @@ function limitSupremacies(data: Supremacies, info: LimiterInfo) {
 			// then remove any supremacy without any stages
 			.filter((x) => x[1].length > 0),
 	);
+}
+
+function getHighTribulations(info: SpreadsheetInfo) {
+	const range = getEntireSheet(info, "High Tribulations");
+	const fields: Fields<HighTribulationUpdate> = [
+		{ key: "chapter", source: { type: "exact", name: "Chapter" }, parse: "number" },
+		{ key: "tier", source: { type: "exact", name: "Tier" }, parse: "number" },
+		{ key: "note", source: { type: "exact", name: "Update" }, parse: "rich" },
+		{ key: "done", source: { type: "exact", name: "Pass" }, parse: "string" },
+	];
+	const data = mapTable(info, range, fields);
+	return data;
+}
+
+function limitTribulations(data: HighTribulationUpdate[], info: LimiterInfo) {
+	return data.filter(chapterFilter(info.chapterLimit, "chapter"));
 }

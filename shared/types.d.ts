@@ -148,6 +148,7 @@ declare namespace Body {
 
 declare type SoulDetails = {
 	supremacies: Supremacies;
+	highTribulations: HighTribulationUpdate[];
 };
 
 declare type Supremacies = Record<string, SupremacyStage[]>;
@@ -157,6 +158,13 @@ declare type SupremacyStage = {
 	stage: number;
 	note: RichTextSpans;
 	bonus: string;
+};
+
+declare type HighTribulationUpdate = {
+	chapter: number;
+	tier: number;
+	note: RichTextSpans;
+	done?: boolean;
 };
 
 declare type OfficialStatus = {
