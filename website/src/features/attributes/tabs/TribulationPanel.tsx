@@ -16,6 +16,7 @@ import { formatNumber } from "@/data/helpers";
 import { useRaceOnChapter } from "@/features/body/helpers";
 import { ThresholdCard } from "../tribulation/ThresholdCard";
 import { adjustStatus } from "../tribulation/helpers";
+import { useSoulTierOnChapter } from "@/features/soul/helpers";
 
 export function TribulationPanel() {
 	const chapter = useChapter();
@@ -25,6 +26,7 @@ export function TribulationPanel() {
 
 	const { data: attributes } = useAttributes();
 	const race = useRaceOnChapter(chapter);
+	const soulTier = useSoulTierOnChapter(chapter);
 	const { data: skills } = useSkills();
 
 	const baseValues = useMemo(
@@ -38,11 +40,11 @@ export function TribulationPanel() {
 
 	const tempStatus = adjustStatus(baseValues, changes, baseBoosts, extraBoosts);
 
-	const officialThresholds = useTribulationThresholds(officialStatus?.attributes, race);
-	const baseThresholds = useTribulationThresholds(status, race);
-	const thresholds = useTribulationThresholds(tempStatus, race);
+	const officialThresholds = useTribulationThresholds(officialStatus?.attributes, race, soulTier);
+	const baseThresholds = useTribulationThresholds(status, race, soulTier);
+	const thresholds = useTribulationThresholds(tempStatus, race, soulTier);
 
-	if (!race || !status) return <LoadingPlaceholder text="Loading race tier, skill levels, and titles..." />;
+	if (!race || !status) return <LoadingPlaceholder text="Loading race tier, soul tier, skill levels, and titles..." />;
 
 	return (
 		<Stack spacing={2}>
