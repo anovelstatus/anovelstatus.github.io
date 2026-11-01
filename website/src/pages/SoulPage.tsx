@@ -2,57 +2,45 @@ import { Stack, Typography, Grid, Card, CardHeader, CardContent } from "@mui/mat
 import { TierChip } from "@/components/chips";
 import { LoreSection } from "@/components/LoreSection";
 import Section from "@/components/Section";
-import { useSoul } from "@/data/api";
+import { useChapter, useSoul } from "@/data/api";
 import { SupremacyCard } from "@/features/soul/SupremacyCard";
 import LoadingPlaceholder from "@/components/LoadingPlaceholder";
+import { useSoulTierOnChapter } from "@/features/soul/helpers";
+import { groupBy, uniqBy } from "es-toolkit";
+import { HighTribulationCard } from "@/features/soul/HighTribulationCard";
 
 export function SoulPage() {
+	const chapter = useChapter();
 	const cardSize = { xs: 12, md: 6 };
 	const { data: soul, isLoading } = useSoul();
+	const soulTier = useSoulTierOnChapter(chapter);
 
-	// remove ? and || once API is up
-	const supremacies = Object.keys(soul?.supremacies || {}).toSorted();
+	const highTribs = groupBy(soul.highTribulations, (x) => x.tier);
+	const tribTiers = uniqBy(soul.highTribulations, (x) => x.tier)
+		.map((x) => x.tier)
+		.toSorted();
+	const supremacies = Object.keys(soul.supremacies).toSorted();
 
 	return (
-		<Stack>
+		<Stack spacing={2}>
 			<Typography variant="h3" gutterBottom>
-				Priam's Soul <TierChip tier={0} />
+				Priam's Soul <TierChip tier={soulTier} />
 			</Typography>
 			<LoreSection topic="Soul" />
-			<Section
-				title={
-					<>
-						Soul Tier <TierChip tier={0} />
-					</>
-				}
-			>
+			<Section title="High Tribulations">
+				<LoreSection topic="High Tribulation" />
 				<Grid container spacing={1}>
-					<Grid size={cardSize}>
-						<Card>
-							<CardHeader title="High Tribulation" />
-							<CardContent>
-								<LoreSection topic="High Tribulation" />
-							</CardContent>
-							<CardContent>🚧 Under Construction</CardContent>
-						</Card>
-					</Grid>
-					<Grid size={cardSize}>
-						<Card>
-							<CardHeader title="Nirvana" />
-							<CardContent>
-								<LoreSection topic="Nirvana" />
-							</CardContent>
-						</Card>
-					</Grid>
-					<Grid size={cardSize}>
-						<Card>
-							<CardHeader title="Grace" />
-							<CardContent>
-								<LoreSection topic="Grace" />
-							</CardContent>
-						</Card>
-					</Grid>
+					{tribTiers.map((i) => {
+						return (
+							<Grid size={cardSize} key={i}>
+								<HighTribulationCard updates={highTribs[i] || []} />
+							</Grid>
+						);
+					})}
 				</Grid>
+			</Section>
+			<Section title="Nirvana">
+				<LoreSection topic="Nirvana" />
 			</Section>
 			<Section title="Heart Supremacies">
 				<Stack direction="column" spacing={2}>

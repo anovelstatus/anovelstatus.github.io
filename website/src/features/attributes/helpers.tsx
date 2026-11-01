@@ -145,16 +145,24 @@ export function useChapterGains(chapter: number): React.ReactNode[] {
 	return notes;
 }
 
-export function useTribulationThresholds(status: number[] | undefined, race: Race | undefined): TribulationThreshold[] {
+export function useTribulationThresholds(
+	status: number[] | undefined,
+	race: Race | undefined,
+	soulTier: number,
+): TribulationThreshold[] {
 	if (!status || !race) return [];
 
-	// Assuming thresholds of 100 * race tier, when 1/3/6/12 attributes cross that threshold
+	// When 1/3/6/12 attributes cross a threshold
 	const relevantCounts = [1, 3, 6, 12];
 	const stats = status;
 	const max = maxBy(stats, (x) => x) ?? 0;
-	const tier = 100 * (race.tier + 1);
+	console.log(status);
+	console.log(race);
+	console.log(soulTier);
+	const firstTreshold = 100 * (race.tier + 1) * Math.pow(soulTier + 1, 2);
+	console.log(firstTreshold);
 	const data: Record<number, number[]> = {};
-	for (let i = tier; i <= max; i += tier) {
+	for (let i = firstTreshold; i <= max; i += firstTreshold) {
 		const count = stats.filter((x) => x >= i).length;
 		for (const relevantCount of relevantCounts) {
 			if (count >= relevantCount) {
