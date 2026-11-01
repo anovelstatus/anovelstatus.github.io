@@ -22,7 +22,7 @@ export function SoulPage() {
 	const supremacies = Object.keys(soul.supremacies).toSorted();
 
 	return (
-		<Stack>
+		<Stack spacing={2}>
 			<Typography variant="h3" gutterBottom>
 				Priam's Soul <TierChip tier={soulTier} />
 			</Typography>
